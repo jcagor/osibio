@@ -1,0 +1,31 @@
+<div class="dashboard">
+    <mat-form-field appearance="outline" class="custom-mat-field">
+        <mat-label>Buscar</mat-label>
+        <input matInput (input)="onSearchInputChange($event)">
+        <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    
+    <div class="menu">
+        <ul>
+            <li><a href="administrador/perfil" mat-icon-button color="primary"  aria-label="Perfil" class="tooltip">
+                    <mat-icon>person</mat-icon>
+            </a></li>           
+            <li><a href="administrador/control" mat-icon-button color="primary"  aria-label="Permisos" class="tooltip">
+                <mat-icon>check</mat-icon>
+            </a></li>
+            <li><a href="administrador/consulta" mat-icon-button color="primary"  aria-label="Participacion" class="tooltip">
+                <mat-icon>group</mat-icon>
+            </a></li>
+            <li><a href="administrador/estados" mat-icon-button color="primary"  aria-label="Estado" class="tooltip">
+                <mat-icon>grading</mat-icon>
+            </a></li>
+            <li><a href="#" mat-icon-button color="primary" aria-label="Notificaciones" class="tooltip">
+                <mat-icon>notifications_outline</mat-icon>
+            </a></li>
+            <li><a href="#" mat-icon-button color="primary" aria-label="Cerrar Sesion" class="tooltip">
+                <mat-icon>exit_to_app</mat-icon>
+            </a></li>
+        </ul>
+    </div>
+    <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,84 @@
+.dashboard {
+  display: flex;
+  justify-content: flex-end; /* Alinea los elementos hacia la derecha */
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
+  width: 100vw;
+  height: 100vh;
+}
+
+.custom-mat-field {
+  width: 350px; /* Ancho del campo de búsqueda */
+  position: absolute;
+  top: 20px; /* Ajusta la posición vertical */
+  right: 25px; /* Ajusta la posición horizontal */
+}
+
+.menu {
+  border-right: 1px solid #ccc; /* Para separar del contenido */
+  width: 54px; /* Ancho del menú */
+  min-height: 60vh; /* Altura mínima del menú */
+  background-color: #6AABA0;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  position: absolute;
+  top: 100px; /* Ajusta la posición vertical */
+  margin-right: 23px; /* Aleja el menú del borde derecho */
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  margin: 0;
+}
+
+.menu ul li {
+  margin-bottom: 10px;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  transition: color 0.3s;
+}
+
+.menu ul li a:hover {
+  color: #000;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .mat-icon {
+  font-size: 24px; /* Tamaño de icono predeterminado */
+}
+
+.tooltip:hover::after {
+  content: attr(aria-label);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  position: absolute;
+  top: -35px; 
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.tooltip:hover::before {
+  content: '';
+  position: absolute;
+  top: -10px; 
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+}

@@ -1,0 +1,51 @@
+
+.tabs {
+  position: absolute; 
+  top: 100px;
+  left: 150px;
+  width: 70%;
+  height: 60%;
+}
+
+.mat-tab-group {
+  margin-bottom: 48px;
+}
+
+.item-container {
+  display: flex;
+  align-items: center; 
+}
+
+.align-right {
+  margin-left: auto; 
+}
+
+
+.rol {
+  margin-left: 450px;
+}
+
+.titulo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.titulo p:first-child {
+  margin-right: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  
+}
+
+
+.button-container button {
+  position: fixed; /* Mantener los botones en una posición fija en la pantalla */
+  z-index: 999; /* Asegurar que estén por encima de otros elementos */
+  /* Ajustar las coordenadas según sea necesario */
+  top: 50px;
+  right: 50px;
+}
+
