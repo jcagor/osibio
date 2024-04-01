@@ -79,7 +79,10 @@
                       </p>
                       <p>Fecha
                         <mat-form-field>
-                          <input matInput  placeholder="" required formControlName="fecha">
+                            <mat-label>Seleccione</mat-label>
+                            <input matInput [matDatepicker]="picker" formControlName="fecha">
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
                         </mat-form-field>
                       </p>
                     </div>
@@ -130,7 +133,11 @@
                       </p>
                       <p>Origen
                         <mat-form-field>
-                          <input matInput  placeholder="" required formControlName="origen">
+                          <mat-select placeholder="Origen" #origenValue formControlName="origen">
+                            <mat-option  *ngFor="let data of origenData" [value]="data.value">
+                              {{data.viewValue}}
+                            </mat-option>
+                          </mat-select>
                         </mat-form-field>
                       </p>
                       <p>Convocatoria
@@ -142,12 +149,20 @@
                     <div class="titulo2">
                       <p>Estado
                         <mat-form-field>
-                          <input matInput  placeholder="" required formControlName="estadoProyecto">
+                          <mat-select placeholder="Seleccione" #origenValue formControlName="estadoProyecto">
+                            <mat-option  *ngFor="let data of estadoProcesoData" [value]="data.value">
+                              {{data.viewValue}}
+                            </mat-option>
+                          </mat-select>
                         </mat-form-field>
                       </p>
-                      <p>Modalida
+                      <p>Modalidad
                         <mat-form-field>
-                          <input matInput placeholder="" required formControlName="modalidadProyecto">
+                          <mat-select placeholder="Seleccione" #origenValue formControlName="modalidadProyecto">
+                            <mat-option  *ngFor="let data of modalidadData" [value]="data.value">
+                              {{data.viewValue}}
+                            </mat-option>
+                          </mat-select>
                         </mat-form-field>
                       </p>
                     </div>
@@ -155,7 +170,11 @@
 
                       <p>Nivel de riesgo
                         <mat-form-field>
-                          <input matInput placeholder="" required formControlName="nivelRiesgoEtico">
+                          <mat-select placeholder="Seleccione" #origenValue formControlName="nivelRiesgoEtico">
+                            <mat-option  *ngFor="let data of nivelRiesgoEticoData" [value]="data.value">
+                              {{data.viewValue}}
+                            </mat-option>
+                          </mat-select>
                         </mat-form-field>
                       </p>
                       <p>Linea de investigación
@@ -297,8 +316,11 @@
                         <p>descripcion</p>
                       </div>
                       <div class="reg">
-                        <mat-form-field class="form-field-spacing" appearance="fill">
-                          <input matInput formControlName="fecha" autocomplete="off">
+                        <mat-form-field class="form-field-spacing" appearance="fill">                        
+                            <mat-label>Seleccione</mat-label>
+                            <input matInput [matDatepicker]="picker2" formControlName="fecha_transacciones">
+                            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
                         </mat-form-field>
                         <mat-form-field class="form-field-spacing" appearance="fill">
                           <input matInput formControlName="acta" autocomplete="off">

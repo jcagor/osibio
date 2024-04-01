@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Investigador } from '../modelo/investigador';
 import { AutenticacionService } from '../services/autenticacion';
 import { InvestigadorService } from '../services/registroInvestigador';
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-navbar',
@@ -60,6 +61,12 @@ export class NavbarComponent {
             } else {
               // Si el investigador está inactivo
               console.log('El investigador no está activo');
+              Swal.fire({
+                title: 'Usuario Inactivo !!!',
+                text: 'Contacta al administrador para activar tu usuario',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+              });
               // Aquí podrías mostrar un mensaje al usuario o tomar otra acción
             }
           } else if (rolInvestigador === 'Administrador') {
@@ -186,7 +193,12 @@ export class NavbarComponent {
         const confirmarContrasena = this.registroForm.get('confirmarContrasena')?.value;
     
         if (contrasena !== confirmarContrasena) {
-          alert('Las contraseñas no coinciden. Por favor, verifica.');
+          Swal.fire({
+            title: 'Error credenciales !!!',
+            text: 'Las contraseñas no coinciden. Por favor verifica',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
           return;
         }
       const investigador: Investigador = {
@@ -213,16 +225,31 @@ export class NavbarComponent {
       this.InvestigadorService.registrarInvestigador(investigador).subscribe(
         (resp) => {
           console.log('Se ha registrado el usuario exitosamente:', resp);
-          alert('Se ha registrado el usuario exitosamente.');
+          Swal.fire({
+            title: 'Registro Exitoso !!!',
+            text: 'Tu usuario se encuentra preparado para activación',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
           this.registroForm.reset();
         },
         (error) => {
           console.error('Error al registrar el usuario:', error);
-          alert('Error al registrar el usuario. Por favor, inténtalo de nuevo.');
+          Swal.fire({
+            title: 'Oops...',
+            text: 'Error al registrar el usuario. Contacta al administrador si el error persiste',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       );
     } else {
-      alert('Por favor, completa el formulario correctamente.');
+      Swal.fire({
+        title: 'Datos incompletos !!!',
+        text: 'Por favor, completa el formulario correctamente.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar'
+      });
     }
   }
   }

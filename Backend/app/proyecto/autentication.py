@@ -8,9 +8,10 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView, exception_handler
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone, dateformat
 
 from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
-                     Contrato, EntidadPostulo, EntregableAdministrativo,
+                     Contrato, EntidadPostulo, EntregableAdministrativo, EstadoProyecto,
                      Estudiantes, Eventos, Financiacion, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,
@@ -96,8 +97,20 @@ class CrearProyecto(APIView):
     def post(self, request, *args, **kwargs):
         soporte = request.FILES.get('Soporte')
         data =request.data.get('proyecto')
+        print('*****************************')
+        print('*****************************')
+        print('*****************************')
+        formatted_date = dateformat.format(
+            timezone.localtime(timezone.now()),
+            'Y-m-d H:i:s',
+        )
+        print('request.data =>', request.data)
+        print('timezone.now =>', formatted_date)
+        print('*****************************')
+        print('*****************************')
+        print('*****************************')
 
-        entidadPostulo_data= data.get('entidadPostulo')
+        entidadPostulo_data= request.data.get('entidadPostulo')
         entidadPostulo_id = entidadPostulo_data.get('id')
         entidadPostulo_nombreIntitucion = entidadPostulo_data.get('nombreInstitucion')
         entidadPostulo_nombreGrupo = entidadPostulo_data.get('nombreGrupo')
@@ -107,7 +120,7 @@ class CrearProyecto(APIView):
             nombreGrupo=entidadPostulo_nombreGrupo
         )
         
-        financiacion_data = data.get('financiacion')
+        financiacion_data = request.data.get('financiacion')
         financiacion_id = financiacion_data.get('id')
         financiacion_valorPropuestoFin = financiacion_data.get('valorPropuestoFin')
         financiacion_valorEjecutadoFin = financiacion_data.get('valorEjecutadoFin')
@@ -117,9 +130,9 @@ class CrearProyecto(APIView):
             valorEjecutadoFin=financiacion_valorEjecutadoFin
         )
 
-        transacciones_data = data.get('transacciones')
+        transacciones_data = request.data.get('transacciones')
         transacciones_id= transacciones_data.get('id')
-        transacciones_fecha=transacciones_data.get('fecha')
+        transacciones_fecha=transacciones_data.get('fecha_transacciones')
         transacciones_acta=transacciones_data.get('acta')
         transacciones_descripcion=transacciones_data.get('descripcion')
         transacciones,_=Transacciones.objects.get_or_create(
@@ -129,7 +142,7 @@ class CrearProyecto(APIView):
             descripcion=transacciones_descripcion
         )
 
-        ubicacionProyecto_data = data.get('ubicacionProyecto')
+        ubicacionProyecto_data = request.data.get('ubicacionProyecto')
         ubicacionProyecto_id= ubicacionProyecto_data.get('id')
         ubicacionProyecto_instalacion= ubicacionProyecto_data.get('instalacion')
         ubicacionProyecto_municipio=ubicacionProyecto_data.get('municipio')
@@ -143,7 +156,7 @@ class CrearProyecto(APIView):
             departamento=ubicacionProyecto_departamento
         )
         
-        entregableAdministrativo_data = data.get('entregableAdministrativo')
+        entregableAdministrativo_data = request.data.get('entregableAdministrativo')
         entregableAdministrativo_id=entregableAdministrativo_data.get('id')
         entregableAdministrativo_nombre=entregableAdministrativo_data.get('nombre')
         entregableAdministrativo_titulo=entregableAdministrativo_data.get('titulo')
@@ -160,28 +173,30 @@ class CrearProyecto(APIView):
             pendiente=entregableAdministrativo_pendiente,
             clasificacion=entregableAdministrativo_clasificacion
         )
-
+        
+        estado_instancia = EstadoProyecto.objects.get(pk=1)
+        print('estado_instancia => ',estado_instancia)
         
         proyecto_data = {
-            'codigo': data.get('codigo'),
-            'fecha': data.get('fecha'),
-            'titulo': data.get('titulo'),
-            'investigadores': data.get('investigadores'),
-            'area': data.get('area'),
-            'porcentajeEjecucionCorte': data.get('porcentajeEjecucionCorte'),
-            'grupoInvestigacionPro': data.get('grupoInvestigacionPro'),
-            'porcentajeEjecucionFinCorte': data.get('porcentajeEjecucionFinCorte'),
-            'porcentajeAvance': data.get('porcentajeAvance'),
-            'origen': data.get('origen'),
-            'convocatoria': data.get('convocatoria'),
-            'estado': data.get('estado'),
-            'modalidad': data.get('modalidad'),
-            'nivelRiesgoEtico': data.get('nivelRiesgoEtico'),
-            'lineaInvestigacion': data.get('lineaInvestigacion'),
-            'etapa': data.get('etapa'),
-            'unidadAcademica': data.get('unidadAcademica'),
+            'codigo': request.data.get('codigo'),
+            'fecha': request.data.get('fecha'),
+            'titulo': request.data.get('titulo'),
+            'investigador': request.data.get('investigador'),
+            'area': request.data.get('area'),
+            'porcentajeEjecucionCorte': int(request.data.get('porcentajeEjecucionCorte')),
+            'grupoInvestigacionPro': request.data.get('grupoInvestigacionPro'),
+            'porcentajeEjecucionFinCorte': int(request.data.get('porcentajeEjecucionFinCorte')),
+            'porcentajeAvance': int(request.data.get('porcentajeAvance')),
+            'origen': request.data.get('origen'),
+            'convocatoria': request.data.get('convocatoria'),
+            'estado': EstadoProyecto.objects.get(pk=1),
+            'modalidad': request.data.get('modalidadProyecto'),
+            'nivelRiesgoEtico': request.data.get('nivelRiesgoEtico'),
+            'lineaInvestigacion': request.data.get('lineaInvestigacion'),
+            'estadoProceso': request.data.get('estadoProyecto'),
+            'unidadAcademica': request.data.get('unidadAcademica'),
         }
-  
+
         proyecto_data['entidadPostulo'] = entidadPostulo
         proyecto_data['financiacion'] = financiacion
         proyecto_data['transacciones'] = transacciones
@@ -191,10 +206,10 @@ class CrearProyecto(APIView):
         
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 
-        coinvestigadores_ids = data.get('coinvestigadores')
+        coinvestigadores_ids = request.data.get('coinvestigadores')
         coinvestigadores = Investigador.objects.filter(numerodocumento__in=coinvestigadores_ids)
 
-        proyecto.coinvestigadores.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()
+        proyecto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
 
         if soporte:
             proyecto.Soporte = soporte

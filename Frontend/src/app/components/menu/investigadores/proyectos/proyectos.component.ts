@@ -47,6 +47,8 @@ import { Coinvestigador, Proyecto } from '../../modelo/proyectos';
 import { ProyectoyproductoService } from '../../services/proyectoyproducto';
 import { InvestigadorService } from '../../services/registroInvestigador';
 import { SearchService } from '../../services/search.service';
+import * as moment from 'moment';
+import Swal from 'sweetalert2'
 @Component({
   selector: 'app-proyectos',
   templateUrl: './proyectos.component.html',
@@ -91,13 +93,28 @@ export class ProyectosComponent implements OnInit {
   activeInvestigators: { nombre: string; apellidos: string }[] = [];
   selectedInvestigators: string[] = [];
   proyecto: Proyecto = {};
-  // Función para generar un ID secuencial
-  private idCounter: number = 1;
-  generateSequentialId() {
-    const currentId = this.idCounter;
-    this.idCounter++;
-    return currentId;
-  }
+  generalIndex: number = this.getProyecto.length+1;
+  origenData: any[] = [
+    {value: 'nacional', viewValue: 'nacional'},
+    {value: 'internacional', viewValue: 'internacional'},
+  ];
+  modalidadData: any[] = [
+    {value: 'general', viewValue: 'general'},
+    {value: 'clinical', viewValue: 'clinical'},
+    {value: 'creación', viewValue: 'creación'},
+  ];
+  nivelRiesgoEticoData: any[] = [
+    {value: 'Alto', viewValue: 'Alto'},
+    {value: 'Medio', viewValue: 'Medio'},
+    {value: 'Bajo', viewValue: 'Bajo'},
+    {value: 'Sin riesgo', viewValue: 'Sin riesgo'},
+  ];
+  estadoProcesoData: any[] = [
+    {value: 'Aprobado', viewValue: 'Aprobado'},
+    {value: 'Rechazado', viewValue: 'Rechazado'},
+    {value: 'Corregir', viewValue: 'Corregir'},
+    {value: 'Espera', viewValue: 'Espera'},
+  ];
 
   @ViewChild('investigatorInput')
   investigatorInput!: ElementRef<HTMLInputElement>;
@@ -120,12 +137,12 @@ export class ProyectosComponent implements OnInit {
       area: [''],
       porcentajeEjecucionCorte: [''],
       entidadPostulo: this.formBuilder.group({
-        id: [this.generateSequentialId()],
+        id: [this.generalIndex],
         nombreInstitucion: [''],
         nombreGrupo: [''],
       }),
       financiacion: this.formBuilder.group({
-        id: [this.generateSequentialId()],
+        id: [this.generalIndex],
         valorPropuestoFin: [''],
         valorEjecutadoFin: [''],
       }),
@@ -134,15 +151,15 @@ export class ProyectosComponent implements OnInit {
       porcentajeAvance: [''],
       soporte: ['',this.selectedFileProyecto],
       transacciones: this.formBuilder.group({
-        id: [this.generateSequentialId()],
-        fecha: [''],
+        id: [this.generalIndex],
+        fecha_transacciones: [''],
         acta: [''],
         descripcion: [''],
       }),
       origen: [''],
       convocatoria: [''],
       ubicacionProyecto: this.formBuilder.group({
-        id: [this.generateSequentialId()],
+        id: [this.generalIndex],
         instalacion: [''],
         municipio: [''],
         departamento: [''],
@@ -153,7 +170,7 @@ export class ProyectosComponent implements OnInit {
       nivelRiesgoEtico: [''],
       lineaInvestigacion: [''],
       entregableAdministrativo: this.formBuilder.group({
-        id: [this.generateSequentialId()],
+        id: [this.generalIndex],
         titulo: [''],
         nombre: [''],
         calidad: [''],
@@ -169,38 +186,38 @@ export class ProyectosComponent implements OnInit {
         investigador: [''],
         listaProducto: this.formBuilder.group({
           articulo: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fuente:[''],
           }),
           capitulo: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             nombrepublicacion:[''],
             isbn :[''],
             fecha:[''],
             editorial:[''],
           }),
           software: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             tiporegistro:[''],
             numero:[''],
             fecha:[''],
             pais:[''],
           }),
           libro: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             isbn:[''],
             fecha:[''],
             editorial:[''],
             luegarpublicacion:[''],
           }),
           prototipoIndustrial: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fecha:[''],
             pais:[''],
             insitutofinanciador:[''],
           }),
           evento: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fechainicio:[''],
             fechafin:[''],
             numparticinerno:[''],
@@ -208,37 +225,37 @@ export class ProyectosComponent implements OnInit {
             tipoevento:[''],
           }),
           reconocimiento: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fecha:[''],
             nombentidadotorgada:[''],
           }),
           consultoria: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             año:[''],
             contrato:this.formBuilder.group({
-              id:[this.generateSequentialId()],
+              id:[this.generalIndex],
               nombre:[''],
               numero:[''],
             }),
             nombreEntidad:[''],
           }),
           contenido: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             paginaWeb:[''],
             nombreEntidad:[''],
           }),
           pregFinalizadoyCurso: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fechaInicio:[''],
             reconocimientos:[''],
             numeroPaginas:[''],
           }),
           apropiacion: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fechainicio:[''],
             fechaFin:[''],
             licencia:this.formBuilder.group({
-              id:[this.generateSequentialId()],
+              id:[this.generalIndex],
               nombre:[''],
             }),
             formato:[''],
@@ -246,7 +263,7 @@ export class ProyectosComponent implements OnInit {
             nombreEntidad:[''],
           }),
           maestria: this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             fechaInicio:[''],
             institucion:[''],
           }),
@@ -275,40 +292,40 @@ export class ProyectosComponent implements OnInit {
       rolProducto: [''],
       investigador: [''],
       listaProducto: this.formBuilder.group({
-        id:[this.generateSequentialId()],
+        id:[this.generalIndex],
         articulo: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fuente:[''],
         }),
         capitulo: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           nombrepublicacion:[''],
           isbn :[''],
           fecha:[''],
           editorial:[''],
         }),
         software: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           tiporegistro:[''],
           numero:[''],
           fecha:[''],
           pais:[''],
         }),
         libro: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           isbn:[''],
           fecha:[''],
           editorial:[''],
           luegarpublicacion:[''],
         }),
         prototipoIndustrial: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fecha:[''],
           pais:[''],
           insitutofinanciador:[''],
         }),
         evento: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fechainicio:[''],
           fechafin:[''],
           numparticinerno:[''],
@@ -316,37 +333,37 @@ export class ProyectosComponent implements OnInit {
           tipoevento:[''],
         }),
         reconocimiento: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fecha:[''],
           nombentidadotorgada:[''],
         }),
         consultoria: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           año:[''],
           contrato:this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             nombre:[''],
             numero:[''],
           }),
           nombreEntidad:[''],
         }),
         contenido: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           paginaWeb:[''],
           nombreEntidad:[''],
         }),
         pregFinalizadoyCurso: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fechaInicio:[''],
           reconocimientos:[''],
           numeroPaginas:[''],
         }),
         apropiacion: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fechainicio:[''],
           fechaFin:[''],
           licencia:this.formBuilder.group({
-            id:[this.generateSequentialId()],
+            id:[this.generalIndex],
             nombre:[''],
           }),
           formato:[''],
@@ -354,7 +371,7 @@ export class ProyectosComponent implements OnInit {
           nombreEntidad:[''],
         }),
         maestria: this.formBuilder.group({
-          id:[this.generateSequentialId()],
+          id:[this.generalIndex],
           fechaInicio:[''],
           institucion:[''],
         }),
@@ -399,7 +416,12 @@ export class ProyectosComponent implements OnInit {
     this.SearchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
     });
+
+    //obtener índices
+    this.generalIndex = this.getProyecto.length + 1;
+  
   }
+
   addCoinvestigador(investigador: {
     nombre: string;
     apellidos: string;
@@ -752,24 +774,62 @@ export class ProyectosComponent implements OnInit {
           'entregableAdministrativo'
         )?.value,
       };
+
       // Llamar a la función crearProyecto para guardar el proyecto en el servidor
       this.ProyectoyproductoService.crearProyecto(proyecto).subscribe(
         (resp: any) => {
           console.log('Se ha registrado el proyecto exitosamente:', resp);
-          alert('Se ha registrado el proyecto exitosamente.');
+          Swal.fire({
+            title: 'Registro Exitoso !!!',
+            text: 'Se ha registrado el proyecto exitosamente.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
           this.firstFormGroup.reset();
           this.secondFormGroup.reset();
         },
         (error: any) => {
           console.error('Error al registrar el proyecto:', error);
-          alert(
-            'Error al registrar el proyecto. Por favor, inténtalo de nuevo.'
-          );
+          Swal.fire({
+            title: 'Oops...',
+            text: 'Error al registrar el proyecto. Contacta al administrador si el error persiste',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       );
     } else {
-      alert('Por favor, completa el formulario correctamente.');
+      Swal.fire({
+        title: 'Datos incompletos !!!',
+        text: 'Por favor, completa el formulario correctamente.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar'
+      });
     }
+  }
+
+  getProyecto() {
+    this.ProyectoyproductoService.getProyecto().subscribe(
+      (resp: any) => {
+        console.log('Proyecto:', resp);
+        //this.firstFormGroup.get('entidadPostulo')?.setValue(resp);
+      },
+      (error: any) => {
+        console.error('Error al obtener Proyectos:', error);
+      }
+    );
+  }
+
+  getEstadoProyecto() {
+    this.ProyectoyproductoService.getEstadoProyecto().subscribe(
+      (resp: any) => {
+        console.log('Estado Proyecto:', resp);
+        //this.firstFormGroup.get('entidadPostulo')?.setValue(resp);
+      },
+      (error: any) => {
+        console.error('Error al obtener Estado Proyecto:', error);
+      }
+    );
   }
 
   //--------------------------------------------------------------------------------------
