@@ -196,7 +196,7 @@ export class NavbarComponent {
           Swal.fire({
             title: 'Error credenciales !!!',
             text: 'Las contraseñas no coinciden. Por favor verifica',
-            icon: 'error',
+            icon: 'question',
             confirmButtonText: 'Aceptar'
           });
           return;

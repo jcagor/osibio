@@ -50,6 +50,7 @@ import { SearchService } from '../../services/search.service';
 import * as moment from 'moment';
 import Swal from 'sweetalert2'
 import { AutenticacionService } from '../../services/autenticacion';
+import { UsuarioSesion } from '../../modelo/usuario';
 @Component({
   selector: 'app-proyectos',
   templateUrl: './proyectos.component.html',
@@ -94,6 +95,7 @@ export class ProyectosComponent implements OnInit {
   activeInvestigators: { correo: string; }[] = [];
   selectedInvestigators: string[] = [];
   proyecto: Proyecto = {};
+  usuarioSesion!: UsuarioSesion;
   origenData: any[] = [
     {value: 'nacional', viewValue: 'nacional'},
     {value: 'internacional', viewValue: 'internacional'},
@@ -140,7 +142,7 @@ export class ProyectosComponent implements OnInit {
       unidadAcademica: [''],
       coinvestigadores: ['', this.selectedInvestigators],
       area: [''],
-      porcentajeEjecucionCorte: [''],
+      porcentajeEjecucionCorte: [0],
       entidadPostulo: this.formBuilder.group({
         id: [''],
         nombreInstitucion: [''],
@@ -152,8 +154,8 @@ export class ProyectosComponent implements OnInit {
         valorEjecutadoFin: [''],
       }),
       grupoInvestigacionPro: [''],
-      porcentajeEjecucionFinCorte: [''],
-      porcentajeAvance: [''],
+      porcentajeEjecucionFinCorte: [0],
+      porcentajeAvance: [0],
       soporte: ['',this.selectedFileProyecto],
       transacciones: this.formBuilder.group({
         id: [''],
@@ -403,20 +405,29 @@ export class ProyectosComponent implements OnInit {
     this.obtenerProyectos();
     this.obtenerUsuarios();
     this.configurarDatasource();
+    this.obtenerDatosUsuarioSesion();
+  }
+
+  obtenerDatosUsuarioSesion(){
+    this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
   }
 
   obtenerUsuarios(){
     this.activeInvestigators = []; // Inicializa activeInvestigators como un array vacío
     this.selectedInvestigators = []; // Asegúrate de que selectedInvestigators esté vacío al principio
     this.investigatorService.getUsuarios().subscribe((data) => {      
-      this.activeInvestigators = data.map((investigador) => ({
+      /*this.activeInvestigators = data.map((investigador) => ({
+        correo: investigador.correo,
+      }));*/
+
+      const activeInvestigators = data.filter(x => x.correo !== this.usuarioSesion.correo).map((investigador) => ({
         correo: investigador.correo,
       }));
 
       this.filteredInvestigators = this.investigatorCtrl.valueChanges.pipe(
         startWith(''),
         map((value: string | null) =>
-          value ? this._filter(value) : this.activeInvestigators.slice()
+          value ? this._filter(value) : activeInvestigators.slice()
         )
       );
     });
@@ -799,7 +810,7 @@ export class ProyectosComponent implements OnInit {
         proyecto.ubicacionProyecto.id = this.generalIndex.toString();
       }       
       proyecto.estadoProyecto = "Espera";
-      proyecto.investigador = this.AutenticacionService.obtenerDatosUsuario().numerodocumento;
+      proyecto.investigador = this.usuarioSesion.numerodocumento;
 
       // Llamar a la función crearProyecto para guardar el proyecto en el servidor
       this.ProyectoyproductoService.crearProyecto(proyecto).subscribe(

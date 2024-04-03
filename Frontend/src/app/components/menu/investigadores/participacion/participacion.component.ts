@@ -5,6 +5,9 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ProyectoyproductoService } from '../../services/proyectoyproducto';
 import { SearchService } from '../../services/search.service';
+import { forkJoin } from 'rxjs';
+import { UsuarioSesion } from '../../modelo/usuario';
+import { AutenticacionService } from '../../services/autenticacion';
 
 @Component({
   selector: 'app-participacion',
@@ -14,61 +17,83 @@ import { SearchService } from '../../services/search.service';
   imports: [MatCardModule, MatTableModule, MatPaginatorModule, MatIconModule],
 })
 export class ParticipacionComponent {
-  
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
- 
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private searchService: SearchService, private ProyectoyproductoService:ProyectoyproductoService) {}
+  displayedColumns: string[] = ['tipo', 'titulo', 'fecha', 'estado', 'etapa', 'acciones'];
+  dataSource = new MatTableDataSource<any>([]);
+  usuarioSesion!: UsuarioSesion;
+
+  constructor(
+    private searchService: SearchService,
+    private AutenticacionService:AutenticacionService,
+    private ProyectoyproductoService:ProyectoyproductoService) {}
 
   ngOnInit() {
-    
     this.dataSource.paginator = this.paginator;
     this.searchService.getSearchQuery().subscribe(query => {
     this.dataSource.filter = query.trim().toLowerCase();
+    this.obtenerDatosUsuarioSesion();
+    this.obtenerProyectos();
+    });
+  }
+
+
+  obtenerDatosUsuarioSesion(){
+    this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
+  }
+
+  obtenerProyectos(){
+    this.ProyectoyproductoService.getProyectos().subscribe(resp => {
     });
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    forkJoin([
+      this.ProyectoyproductoService.getProyectosDelUsuario(),
+      this.ProyectoyproductoService.getProyectos()
+    ]).subscribe(([productos, proyectos]) => {
+
+      // Ajustar los datos de los productos para asegurarse de que tengan todas las propiedades definidas en la interfaz Producto
+      const productosAjustados = productos.map(producto => ({
+        ...producto,
+        tipo: 'Producto',
+        id:producto.id,
+        tituloProducto: producto.titulo_producto || '', // Asegurar que todas las propiedades definidas en la interfaz Producto estén presentes
+        fecha: producto.fecha || '',
+        estadoProducto: producto.estado_producto || '',
+        etapa:producto.etapa|| '',
+        tipologiaProducto: producto.tipologiaProducto || '',
+      }));
+      
+      // Convertir los datos de proyectos a la misma estructura que productos
+      const proyectosAjustados = proyectos.filter(x => x.coinvestigador.includes(this.usuarioSesion.numerodocumento)).reverse().map(proyecto => ({
+        tituloProducto: proyecto.titulo,
+        etapa: proyecto.etapa,
+        fecha: proyecto.fecha,
+        estadoProceso: proyecto.estadoProceso,
+        tipo: 'Proyecto',
+        // Añadir las demás propiedades según sea necesario
+      }));
+    
+      // Concatenar los datos ajustados de proyectos con los datos de productos
+      const combinedData = [...proyectosAjustados, ...productosAjustados];
+      
+      // Asignar los datos combinados a dataSource
+      this.dataSource.data = combinedData;
+      //obj.sort((a, b) => (a > b ? -1 : 1))
+    });
   }
 
-  buttonClicked(element: PeriodicElement): void {
-    // Aquí puedes implementar la lógica para manejar el clic del botón
-    console.log('Botón clickeado para el elemento:', element.symbol);
-    // Puedes acceder a las propiedades del elemento para realizar acciones específicas
-    // Por ejemplo: element.symbol, element.name, etc.
+
+  accionUno(element: any) {
+    console.log("Editar")
+  }
+
+  accionDos(element: any) {
+    console.log("Editar")
   }
 
 }
 
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
-  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
-  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
-  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
-  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
-  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
-  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
-  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
-  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
-  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
-];
