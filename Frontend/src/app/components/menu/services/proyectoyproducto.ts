@@ -16,7 +16,6 @@ export class ProyectoyproductoService {
   //Mostrar proyectos y productos
 
   private apiUrl3 = 'http://localhost:8000/proyecto';
-  private apiProyecto = 'http://localhost:8000/proyecto';
   private apiEstadoProyecto = 'http://localhost:8000/estadoproyecto';
 
   getProyectos(): Observable<any[]> {
@@ -65,10 +64,6 @@ export class ProyectoyproductoService {
     const datos = { producto };
     console.log(datos);
     return this.http.post<Producto>(this.apiUrl2, datos);
-  }
-
-  getProyecto(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiProyecto}`);
   }
 
   getEstadoProyecto(): Observable<any[]> {

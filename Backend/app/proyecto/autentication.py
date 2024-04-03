@@ -96,20 +96,6 @@ class CrearProyecto(APIView):
     parser_class = (FileUploadParser,)
     def post(self, request, *args, **kwargs):
         soporte = request.FILES.get('Soporte')
-        data =request.data.get('proyecto')
-        print('*****************************')
-        print('*****************************')
-        print('*****************************')
-        formatted_date = dateformat.format(
-            timezone.localtime(timezone.now()),
-            'Y-m-d H:i:s',
-        )
-        print('request.data =>', request.data)
-        print('timezone.now =>', formatted_date)
-        print('*****************************')
-        print('*****************************')
-        print('*****************************')
-
         entidadPostulo_data= request.data.get('entidadPostulo')
         entidadPostulo_id = entidadPostulo_data.get('id')
         entidadPostulo_nombreIntitucion = entidadPostulo_data.get('nombreInstitucion')
@@ -193,7 +179,7 @@ class CrearProyecto(APIView):
             'modalidad': request.data.get('modalidadProyecto'),
             'nivelRiesgoEtico': request.data.get('nivelRiesgoEtico'),
             'lineaInvestigacion': request.data.get('lineaInvestigacion'),
-            'estadoProceso': request.data.get('estadoProyecto'),
+            'estadoProceso': 'Espera',
             'unidadAcademica': request.data.get('unidadAcademica'),
         }
 
@@ -207,7 +193,7 @@ class CrearProyecto(APIView):
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 
         coinvestigadores_ids = request.data.get('coinvestigadores')
-        coinvestigadores = Investigador.objects.filter(numerodocumento__in=coinvestigadores_ids)
+        coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
 
         proyecto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
 

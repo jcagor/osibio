@@ -1,5 +1,5 @@
 <div class="tabs">
-  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [(selectedIndex)]="demo1TabIndex">
     <mat-tab label="Proyectos y Productos">
       <!-- tabla -->
       <div class="mat-elevation-z8">
@@ -23,7 +23,7 @@
         
           <ng-container matColumnDef="estado">
             <th mat-header-cell *matHeaderCellDef> Estado </th>
-            <td mat-cell *matCellDef="let element"> {{element.estadoProducto}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.estadoProceso}} </td>
           </ng-container>
         
           <ng-container matColumnDef="etapa">
@@ -87,21 +87,21 @@
                       </p>
                     </div>
                     <div class="titulo2">
-                      <p>Investigador
+                      <!--<p>Investigador
                         <mat-form-field>
                           <input matInput placeholder="" required formControlName="investigador">
                         </mat-form-field>
-                      </p>
+                      </p>-->
 
-                      <p>Coinvestigador</p>
+                      <p>Coinvestigador
                       <mat-form-field class="example-chip-list">
-                        <mat-chip-grid formControlName="coinvestigadores" #chipGrid aria-label="Active Investigators">
-                          <mat-chip-row
+                        <mat-chip-grid  formControlName="coinvestigadores" #chipGrid aria-label="Active Investigators">
+                          <mat-chip-row formControlName="coinvestigadores"
                             *ngFor="let investigator of activeInvestigators; let i = index; trackBy: trackByFn"
                             (removed)="remove(investigator)">
-                            {{ investigator.nombre }} {{ investigator.apellidos }}
+                            {{ investigator.correo }}
                             <button matChipRemove
-                              [attr.aria-label]="'remove ' + investigator.nombre + ' ' + investigator.apellidos"
+                              [attr.aria-label]="'remove ' + investigator.correo"
                               (click)="removeCoinvestigador(investigator)">
                               <mat-icon>cancel</mat-icon>
                             </button>
@@ -117,7 +117,7 @@
                           </mat-option>
                         </mat-autocomplete>
                       </mat-form-field>
-
+                    </p>
 
                       <p>Unidad academica
                         <mat-form-field>
@@ -140,14 +140,14 @@
                           </mat-select>
                         </mat-form-field>
                       </p>
+                    </div>
+                    <div class="titulo2">
                       <p>Convocatoria
                         <mat-form-field>
                           <input matInput  placeholder="" required formControlName="convocatoria">
                         </mat-form-field>
                       </p>
-                    </div>
-                    <div class="titulo2">
-                      <p>Estado
+                      <!--<p>Estado
                         <mat-form-field>
                           <mat-select placeholder="Seleccione" #origenValue formControlName="estadoProyecto">
                             <mat-option  *ngFor="let data of estadoProcesoData" [value]="data.value">
@@ -155,7 +155,7 @@
                             </mat-option>
                           </mat-select>
                         </mat-form-field>
-                      </p>
+                      </p>-->
                       <p>Modalidad
                         <mat-form-field>
                           <mat-select placeholder="Seleccione" #origenValue formControlName="modalidadProyecto">
