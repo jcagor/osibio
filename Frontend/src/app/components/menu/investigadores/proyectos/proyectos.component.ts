@@ -43,14 +43,19 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Investigador } from '../../modelo/investigador';
 import { Producto } from '../../modelo/productos';
-import { Coinvestigador, Proyecto } from '../../modelo/proyectos';
+import { Coinvestigador, Estudiantes, ParticipanteExterno, Proyecto } from '../../modelo/proyectos';
 import { ProyectoyproductoService } from '../../services/proyectoyproducto';
+import { EstudiantesService } from '../../services/estudiantes';
 import { InvestigadorService } from '../../services/registroInvestigador';
 import { SearchService } from '../../services/search.service';
 import * as moment from 'moment';
 import Swal from 'sweetalert2'
 import { AutenticacionService } from '../../services/autenticacion';
 import { UsuarioSesion } from '../../modelo/usuario';
+import { DialogoCreacionEstudiantesComponent } from '../../dialogo-creacion-estudiantes/dialogo-creacion-estudiantes.component';
+import { ParticipantesExternosService } from '../../services/participantesExternos';
+import { DialogoCreacionParticipantesComponent } from '../../dialogo-creacion-participantes/dialogo-creacion-participantes.component';
+
 @Component({
   selector: 'app-proyectos',
   templateUrl: './proyectos.component.html',
@@ -84,7 +89,9 @@ import { UsuarioSesion } from '../../modelo/usuario';
     MatRadioModule,
     CommonModule,
     HttpClientModule,
-    MatButtonModule, MatDialogModule
+    MatButtonModule, 
+    MatDialogModule, 
+    DialogoCreacionEstudiantesComponent
   ],
 })
 export class ProyectosComponent implements OnInit {
@@ -122,6 +129,7 @@ export class ProyectosComponent implements OnInit {
   // índice de las pestaña Proyectos y Nuevo
   demo1TabIndex!: number;
 
+
   @ViewChild('investigatorInput')
   investigatorInput!: ElementRef<HTMLInputElement>;
 
@@ -131,6 +139,8 @@ export class ProyectosComponent implements OnInit {
     private investigatorService: InvestigadorService,
     private SearchService:SearchService,
     private AutenticacionService:AutenticacionService,
+    private estudiantesService: EstudiantesService,
+    private participantesExternosService: ParticipantesExternosService,
     public dialog: MatDialog
     
   ) {
@@ -283,6 +293,7 @@ export class ProyectosComponent implements OnInit {
         tipologiaProducto: [''],
         publicacion: [''],
         estudiantes: [''],
+        participantesExternos: [''],
         estadoProdIniSemestre: [''],
         porcentanjeAvanFinSemestre: [''],
         observaciones: [''],
@@ -388,6 +399,7 @@ export class ProyectosComponent implements OnInit {
       }),
       publicacion: [''],
       estudiantes: [''],
+      participantesExternos: [''],
       estadoProdIniSemestre: [''],
       porcentanjeAvanFinSemestre: [''],
       observaciones: [''],
@@ -406,10 +418,27 @@ export class ProyectosComponent implements OnInit {
     this.obtenerUsuarios();
     this.configurarDatasource();
     this.obtenerDatosUsuarioSesion();
+    this.obtenerEstudiantes();
+    this.obtenerParticipantesExternos();
   }
+
+  estudiantesData: Estudiantes[] = [];
+  participanteExternoData: ParticipanteExterno[] = [];
 
   obtenerDatosUsuarioSesion(){
     this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
+  }
+
+  obtenerEstudiantes(){
+    this.estudiantesService.getEstudiantes().subscribe((data) => {    
+      this.estudiantesData = data;
+    });
+  }
+
+  obtenerParticipantesExternos(){
+    this.participantesExternosService.getParticipantesExternos().subscribe((data) => {    
+      this.participanteExternoData = data;
+    });
   }
 
   obtenerUsuarios(){
@@ -443,6 +472,53 @@ export class ProyectosComponent implements OnInit {
   obtenerProyectos(){
     this.ProyectoyproductoService.getProyectos().subscribe(resp => {
       this.generalIndex = resp.length + 1;
+    });
+  }
+
+
+  openDialogEstudiante(): void {
+    const dialogRef = this.dialog.open(DialogoCreacionEstudiantesComponent, {
+      data: {
+        title: 'Creación Estudiante',
+        buttonTitle: 'CREAR',
+      },
+      width: '30%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado un nuevo estudiante',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        this.obtenerEstudiantes();
+      } 
+    });
+  }
+
+  openDialogParticipante(): void {
+    const dialogRef = this.dialog.open(DialogoCreacionParticipantesComponent, {
+      data: {
+        title: 'Creación Participante',
+        buttonTitle: 'CREAR',
+      },
+      width: '30%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado un nuevo participnate',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        this.obtenerParticipantesExternos();
+      } 
     });
   }
 
@@ -789,6 +865,10 @@ export class ProyectosComponent implements OnInit {
         entregableAdministrativo: this.firstFormGroup.get(
           'entregableAdministrativo'
         )?.value,
+        estudiantes: this.firstFormGroup.get('estudiantes')?.value,
+        participantesExternos: this.firstFormGroup.get(
+          'participantesExternos'
+        )?.value,
       };
 
       if(proyecto.entidadPostulo?.id !== undefined) {
@@ -897,6 +977,9 @@ export class ProyectosComponent implements OnInit {
   }
   get estudiantes() {
     return this.productoFormGroup.get('estudiantes');
+  }
+  get participantesExternos() {
+    return this.productoFormGroup.get('participantesExternos');
   }
   get estadoProdIniSemestre() {
     return this.productoFormGroup.get('estadoProdIniSemestre');

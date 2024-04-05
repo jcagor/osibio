@@ -359,7 +359,48 @@
                         </mat-form-field>
                       </div>
                     </div>
-
+                    <div class="titulo2">
+                      <p>Estudiantes</p>
+                    </div>
+                    <div class="reg">
+                      <mat-form-field class="form-field-spacing" appearance="fill">
+                        <mat-select formControlName="estudiantes" multiple>
+                          <mat-option *ngFor="let data of estudiantesData" [value]="data">
+                            {{data.numeroDocumento}} - {{data.nombres}} {{data.apellidos}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="example-button-row">
+                        <div class="example-flex-container">
+                          <div class="example-button-container">
+                            <button (click)="openDialogEstudiante()" mat-mini-fab color="accent" aria-label="Example icon button with a plus one icon">
+                              <mat-icon>plus_one</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="titulo2">
+                      <p>Participantes Externos</p>
+                    </div>
+                    <div class="reg">
+                      <mat-form-field class="form-field-spacing" appearance="fill">
+                        <mat-select formControlName="participantesExternos" multiple>
+                          <mat-option *ngFor="let data of participanteExternoData" [value]="data">
+                            {{data.numerodocumento}} - {{data.nombre}} {{data.apellidos}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="example-button-row">
+                        <div class="example-flex-container">
+                          <div class="example-button-container">
+                            <button (click)="openDialogParticipante()" mat-mini-fab color="accent" aria-label="Example icon button with a plus one icon">
+                              <mat-icon>plus_one</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <button mat-button matStepperNext>Next</button>
