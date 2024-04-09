@@ -15,7 +15,7 @@ from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
                      Estudiantes, Eventos, Financiacion, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,
-                     Software, Transacciones, UbicacionProyecto)
+                     Software, Transacciones, UbicacionProyecto, ParticipantesExternos)
 from .serializer import (investigadorSerializer, productoSerializer,
                          proyectoSerializer)
 
@@ -192,10 +192,20 @@ class CrearProyecto(APIView):
         
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 
+        # vinculación coinvestigadores
         coinvestigadores_ids = request.data.get('coinvestigadores')
         coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
-
         proyecto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
+        
+        # vinculación estudiantes
+        estudiantes_ids = request.data.get('estudiantes')
+        estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
+        proyecto.estudiantes.set(estudiantes)
+        
+        # vinculación participantesExternos
+        participantesExternos_ids = request.data.get('participantesExternos')
+        participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
+        proyecto.participantesExternos.set(participantes_externos)
 
         if soporte:
             proyecto.Soporte = soporte

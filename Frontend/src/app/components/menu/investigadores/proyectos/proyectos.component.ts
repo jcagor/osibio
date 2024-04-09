@@ -151,6 +151,8 @@ export class ProyectosComponent implements OnInit {
       investigador: [''],
       unidadAcademica: [''],
       coinvestigadores: ['', this.selectedInvestigators],
+      estudiantesProyecto: ['', this.estudiantesData],
+      participantesExternosProyecto: ['', this.participanteExternoData],
       area: [''],
       porcentajeEjecucionCorte: [0],
       entidadPostulo: this.formBuilder.group({
@@ -784,6 +786,12 @@ export class ProyectosComponent implements OnInit {
   get entregableAdministrativo() {
     return this.firstFormGroup.get('entregableAdministrativo');
   }
+  get estudiantesProyecto() {
+    return this.firstFormGroup.get('estudiantesProyecto');
+  }
+  get participantesExternosProyecto() {
+    return this.firstFormGroup.get('participantesExternosProyecto');
+  }
 
   onSaveForm(): void {
     console.log('Producto:', this.secondFormGroup.value);
@@ -792,8 +800,6 @@ export class ProyectosComponent implements OnInit {
 
   guardarProyecto() {
     if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
-      console.log('investigatorCtrl ===> ', this.secondFormGroup.get('investigatorCtrl')?.value);
-
       const proyecto: Proyecto = {
         codigo: this.firstFormGroup.get('codigo')?.value,
         fecha: this.firstFormGroup.get('fecha')?.value,
@@ -865,9 +871,9 @@ export class ProyectosComponent implements OnInit {
         entregableAdministrativo: this.firstFormGroup.get(
           'entregableAdministrativo'
         )?.value,
-        estudiantes: this.firstFormGroup.get('estudiantes')?.value,
+        estudiantes: this.firstFormGroup.get('estudiantesProyecto')?.value,
         participantesExternos: this.firstFormGroup.get(
-          'participantesExternos'
+          'participantesExternosProyecto'
         )?.value,
       };
 

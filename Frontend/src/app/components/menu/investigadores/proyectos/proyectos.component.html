@@ -364,8 +364,8 @@
                     </div>
                     <div class="reg">
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <mat-select formControlName="estudiantes" multiple>
-                          <mat-option *ngFor="let data of estudiantesData" [value]="data">
+                        <mat-select formControlName="estudiantesProyecto" multiple>
+                          <mat-option *ngFor="let data of estudiantesData" [value]="data.numeroDocumento">
                             {{data.numeroDocumento}} - {{data.nombres}} {{data.apellidos}}
                           </mat-option>
                         </mat-select>
@@ -385,8 +385,8 @@
                     </div>
                     <div class="reg">
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <mat-select formControlName="participantesExternos" multiple>
-                          <mat-option *ngFor="let data of participanteExternoData" [value]="data">
+                        <mat-select formControlName="participantesExternosProyecto" multiple>
+                          <mat-option *ngFor="let data of participanteExternoData" [value]="data.numerodocumento">
                             {{data.numerodocumento}} - {{data.nombre}} {{data.apellidos}}
                           </mat-option>
                         </mat-select>
