@@ -38,12 +38,9 @@ export class ProyectoyproductoService {
 
   getProductosDelUsuario(): Observable<any[]> {
     const numeroDocumento = this.AutenticacionService.obtenerDatosUsuario().numerodocumento;
-    console.log('Número de documento del usuario:', numeroDocumento);
-
-    return this.http.get<any[]>(this.apiUrl5).pipe(
+    return this.http.get<any[]>(this.apiUrl4).pipe(
         map((productos: any[]) => {
-            console.log('Productos obtenidos del servidor:', productos.filter(producto => producto.investigador.numerodocumento === numeroDocumento));
-            return productos.filter(producto => producto.investigador.numerodocumento === numeroDocumento);
+            return productos.filter(producto => producto.investigador === numeroDocumento);
         })
     );
 }

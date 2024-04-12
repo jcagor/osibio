@@ -847,14 +847,6 @@
               </mat-form-field>
             </div>
             <div class="titulo">
-              <p>Investigador</p>
-            </div>
-            <div class="reg">
-              <mat-form-field class="form-field-spacing" appearance="fill">
-                <input formControlName="investigador"  matInput autocomplete="off">
-              </mat-form-field>
-            </div>
-            <div class="titulo">
               <p>publicación</p>
               <p>Nombre estudiantes</p>
               <p>Estado inicio semestre</p>
@@ -928,16 +920,65 @@
             </div>
             <div class="reg">
               <mat-form-field class="form-field-spacing" appearance="fill">
-                <input matInput [matDatepicker]="picker" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fecha">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
+                <input matInput [matDatepicker]="pickerProducto" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fechaProducto">
+                <mat-datepicker-toggle matSuffix [for]="pickerProducto"></mat-datepicker-toggle>
+                <mat-datepicker #pickerProducto></mat-datepicker>
               </mat-form-field>
               <mat-form-field class="form-field-spacing" appearance="fill">
                 <input formControlName="origen"  type="text" matInput autocomplete="off">
               </mat-form-field>
               <input formControlName="Soporte" type="file" (change)="onFileSelected2($event)" />
             </div>
-            
+            <div class="titulo">
+              <p>Estudiantes</p>
+              <p>Participantes Externos</p>
+              <p>Coinvestigadores</p>
+            </div>
+            <div class="reg">
+              <mat-form-field class="form-field-spacing" appearance="fill">
+                <mat-select formControlName="estudiantesProducto" multiple>
+                  <mat-option *ngFor="let data of estudiantesData" [value]="data.numeroDocumento">
+                    {{data.numeroDocumento}} - {{data.nombres}} {{data.apellidos}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="example-button-row">
+                <div class="example-flex-container">
+                  <div class="example-button-container">
+                    <button (click)="openDialogEstudiante()" mat-mini-fab color="accent" aria-label="Example icon button with a plus one icon">
+                      <mat-icon>plus_one</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <mat-form-field class="form-field-spacing" appearance="fill">
+                <mat-select formControlName="participantesExternosProducto" multiple>
+                  <mat-option *ngFor="let data of participanteExternoData" [value]="data.numerodocumento">
+                    {{data.numerodocumento}} - {{data.nombre}} {{data.apellidos}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="example-button-row">
+                <div class="example-flex-container">
+                  <div class="example-button-container">
+                    <button (click)="openDialogParticipante()" mat-mini-fab color="accent" aria-label="Example icon button with a plus one icon">
+                      <mat-icon>plus_one</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <mat-form-field class="form-field-spacing" appearance="fill">
+                <mat-select formControlName="coinvestigadoresProducto" multiple>
+                  <mat-option *ngFor="let data of usuariosData" [value]="data.correo">
+                    {{data.correo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+
+           
             <div formGroupName="listaProducto">
               <mat-tab-group class="nuevo vertical-tabs" mat-stretch-tabs="false" mat-align-tabs="end">
                 <mat-tab label="Capitulos">
@@ -1273,7 +1314,7 @@
               </mat-tab-group>
             </div>
             
-            <button class="anchoGuardar" mat-raised-button style="background-color: #6AABA0;" (click)="guardarProducto()">Guardar</button>
+            <button class="anchoGuardar" mat-raised-button style="background-color: #6AABA0;" (click)="guardarProducto()">Guardar2</button>
           </form>
         </mat-tab>
       </mat-tab-group>

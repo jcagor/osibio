@@ -15,7 +15,8 @@ from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
                      Estudiantes, Eventos, Financiacion, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,
-                     Software, Transacciones, UbicacionProyecto, ParticipantesExternos)
+                     Software, Transacciones, UbicacionProyecto, ParticipantesExternos, EstadoProducto,
+                     CategoriaMinciencias,CuartilEsperado)
 from .serializer import (investigadorSerializer, productoSerializer,
                          proyectoSerializer)
 
@@ -223,8 +224,7 @@ class CrearNuevoProducto(APIView):
     def post(self, request, *args, **kwargs):
         soporte = request.FILES.get('Soporte')
         data = request.data.get('producto')
-        print("Datos resividos",data)
-
+        
         # Extraer los datos de listaProducto
         lista_producto_data = data.get('listaProducto')
         
@@ -232,16 +232,16 @@ class CrearNuevoProducto(APIView):
         # Crear o obtener otros objetos relacionados según sea necesario
         # Crear o obtener objetos relacionados según sea necesario
         evento_data = lista_producto_data.get('evento', {})
+        
         evento = None
-        if evento_data:
-            evento_id = evento_data.get('id')
+        if evento_data.get('fechainicio') != '':
             evento_fechainicio = evento_data.get('fechainicio')
             evento_fechafin = evento_data.get('fechafin')
             evento_numparticinerno = evento_data.get('numparticinerno')
             evento_numparticexterno = evento_data.get('numparticexterno')
             evento_tipoevento = evento_data.get('tipoevento')
             evento, _ = Eventos.objects.get_or_create(
-                id=evento_id,
+                id=Eventos.objects.count() + 1,
                 fechainicio=evento_fechainicio,
                 fechafin=evento_fechafin,
                 numparticinerno=evento_numparticinerno,
@@ -251,24 +251,22 @@ class CrearNuevoProducto(APIView):
 
         articulo_data = lista_producto_data.get('articulo', {})
         articulo = None
-        if articulo_data:
-            articulo_id = articulo_data.get('id')
+        if articulo_data.get('fuente') != '':
             articulo_fuente = articulo_data.get('fuente')
             articulo, _ = Articulos.objects.get_or_create(
-                id=articulo_id,
+                id=Articulos.objects.count() + 1,
                 fuente=articulo_fuente
             )
 
         capitulo_data = lista_producto_data.get('capitulo', {})
         capitulo = None
-        if capitulo_data:
-            capitulo_id = capitulo_data.get('id')
+        if capitulo_data.get('nombrepublicacion') != '':
             capitulo_nombrepublicacion = capitulo_data.get('nombrepublicacion')
             capitulo_isbn = capitulo_data.get('isbn')
             capitulo_fecha = capitulo_data.get('fecha')
             capitulo_editorial = capitulo_data.get('editorial')
             capitulo, _ = Capitulos.objects.get_or_create(
-                id=capitulo_id,
+                id=Capitulos.objects.count() + 1,
                 nombrepublicacion=capitulo_nombrepublicacion,
                 isbn=capitulo_isbn,
                 fecha=capitulo_fecha,
@@ -277,14 +275,13 @@ class CrearNuevoProducto(APIView):
 
         libro_data = lista_producto_data.get('libro', {})
         libro = None
-        if libro_data:
-            libro_id = libro_data.get('id')
+        if libro_data.get('isbn') != '':
             libro_isbn = libro_data.get('isbn')
             libro_fecha = libro_data.get('fecha')
             libro_editorial = libro_data.get('editorial')
             libro_luegarpublicacion = libro_data.get('luegarpublicacion')
             libro, _ = Libros.objects.get_or_create(
-                id=libro_id,
+                id=Libros.objects.count() + 1,
                 isbn=libro_isbn,
                 fecha=libro_fecha,
                 editorial=libro_editorial,
@@ -293,14 +290,13 @@ class CrearNuevoProducto(APIView):
 
         software_data = lista_producto_data.get('software', {})
         software = None
-        if software_data:
-            software_id = software_data.get('id')
+        if software_data.get('tiporegistro') != '':
             software_tiporegistro = software_data.get('tiporegistro')
             software_numero = software_data.get('numero')
             software_fecha = software_data.get('fecha')
             software_pais = software_data.get('pais')
             software, _ = Software.objects.get_or_create(
-                id=software_id,
+                id=Software.objects.count() + 1,
                 tiporegistro=software_tiporegistro,
                 numero=software_numero,
                 fecha=software_fecha,
@@ -309,13 +305,12 @@ class CrearNuevoProducto(APIView):
 
         prototipoIndustrial_data = lista_producto_data.get('prototipoIndustrial', {})
         prototipoIndustrial = None
-        if prototipoIndustrial_data:
-            prototipoIndustrial_id = prototipoIndustrial_data.get('id')
+        if prototipoIndustrial_data.get('fecha') !='' :
             prototipoIndustrial_fecha = prototipoIndustrial_data.get('fecha')
             prototipoIndustrial_pais = prototipoIndustrial_data.get('pais')
             prototipoIndustrial_insitutofinanciador = prototipoIndustrial_data.get('insitutofinanciador')
             prototipoIndustrial, _ = Industrial.objects.get_or_create(
-                id=prototipoIndustrial_id,
+                id=Industrial.objects.count() + 1,
                 fecha=prototipoIndustrial_fecha,
                 pais=prototipoIndustrial_pais,
                 insitutofinanciador=prototipoIndustrial_insitutofinanciador
@@ -323,12 +318,11 @@ class CrearNuevoProducto(APIView):
 
         reconocimiento_data = lista_producto_data.get('reconocimiento', {})
         reconocimiento = None
-        if reconocimiento_data:
-            reconocimiento_id = reconocimiento_data.get('id')
+        if reconocimiento_data.get('fecha') != '':
             reconocimiento_fecha = reconocimiento_data.get('fecha')
             reconocimiento_nombentidadotorgada = reconocimiento_data.get('nombentidadotorgada')
             reconocimiento, _ = Reconocimientos.objects.get_or_create(
-                id=reconocimiento_id,
+                id=Reconocimientos.objects.count() + 1,
                 fecha=reconocimiento_fecha,
                 nombentidadotorgada=reconocimiento_nombentidadotorgada
             )
@@ -336,23 +330,21 @@ class CrearNuevoProducto(APIView):
         consultoria_data = lista_producto_data.get('consultoria', {})
         contrato = None
         consultoria = None
-        if consultoria_data:
+        if consultoria_data.get('año') != '':
             contrato_data = consultoria_data.get('contrato', {})
             contrato = None
-            if contrato_data:
-                contrato_id = contrato_data.get('id')
+            if contrato_data.get('nombre') != '':
                 contrato_nombre = contrato_data.get('nombre')
                 contrato_numero = contrato_data.get('numero')
                 contrato, _ = Contrato.objects.get_or_create(
-                    id=contrato_id,
+                    id=Contrato.objects.count() + 1,
                     nombre=contrato_nombre,
                     numero=contrato_numero
                 )
-            consultoria_id = consultoria_data.get('id')
             consultoria_ano = consultoria_data.get('año')
             consultoria_nombreEntidad = consultoria_data.get('nombreEntidad')
             consultoria, _ = Consultoria.objects.get_or_create(
-                id=consultoria_id,
+                id=Consultoria.objects.count() + 1,
                 año=consultoria_ano,
                 contrato=contrato,
                 nombreEntidad=consultoria_nombreEntidad
@@ -362,24 +354,22 @@ class CrearNuevoProducto(APIView):
         licencias = None
         apropiacion = None
 
-        if apropiacion_data:
+        if apropiacion_data.get('fechainicio') != '':
             licencia_data = apropiacion_data.get('licencia', {})
             licencias = None
-            if licencia_data:
-                licencia_id = licencia_data.get('id')
+            if licencia_data.get('nombre') != '':
                 licencia_nombre = licencia_data.get('nombre')
                 licencias, _ = Licencia.objects.get_or_create(
-                    id=licencia_id,
+                    id=Licencia.objects.count() + 1,
                     nombre=licencia_nombre
                     )
-            apropiacion_id = apropiacion_data.get('id')
             apropiacion_fechainicio = apropiacion_data.get('fechainicio')
             apropiacion_fechaFin = apropiacion_data.get('fechaFin')
             apropiacion_formato = apropiacion_data.get('formato')
             apropiacion_medio = apropiacion_data.get('medio')
             apropiacion_nombreEntidad = apropiacion_data.get('nombreEntidad')
             apropiacion, _ = Apropiacion.objects.get_or_create(
-                id=apropiacion_id,
+                id=Apropiacion.objects.count() + 1,
                 fechainicio=apropiacion_fechainicio,
                 fechaFin=apropiacion_fechaFin,
                 licencia=licencias,
@@ -388,30 +378,25 @@ class CrearNuevoProducto(APIView):
                 nombreEntidad=apropiacion_nombreEntidad
                 )
 
-
-
         contenido_data = lista_producto_data.get('contenido', {})
         contenido = None
-        if contenido_data:
-            contenido_id = contenido_data.get('id')
+        if contenido_data.get('paginaWeb') != '':
             contenido_nombreEntidad = contenido_data.get('nombreEntidad')
             contenido_paginaWeb = contenido_data.get('paginaWeb')
             contenido, _ = Contenido.objects.get_or_create(
-                id=contenido_id,
+                id=Contenido.objects.count() + 1,
                 nombreEntidad=contenido_nombreEntidad,
                 paginaWeb=contenido_paginaWeb
             )
 
-
         pregFinalizadoyCurso_data = lista_producto_data.get('pregFinalizadoyCurso',{})
         pregFinalizadoyCurso= None
-        if pregFinalizadoyCurso_data:
-            pregFinalizadoyCurso_id = pregFinalizadoyCurso_data.get('id')
+        if pregFinalizadoyCurso_data.get('fechaInicio') != '':
             pregFinalizadoyCurso_fechaInicio= pregFinalizadoyCurso_data.get('fechaInicio')
             pregFinalizadoyCurso_reconocimientos= pregFinalizadoyCurso_data.get('reconocimientos')
             pregFinalizadoyCurso_numeroPaginas= pregFinalizadoyCurso_data.get('numeroPaginas')
             pregFinalizadoyCurso, _ = PregFinalizadoyCurso.objects.get_or_create(
-                id=pregFinalizadoyCurso_id,
+                id=PregFinalizadoyCurso.objects.count() + 1,
                 fechaInicio=pregFinalizadoyCurso_fechaInicio,
                 reconocimientos=pregFinalizadoyCurso_reconocimientos,
                 numeroPaginas=pregFinalizadoyCurso_numeroPaginas
@@ -419,24 +404,21 @@ class CrearNuevoProducto(APIView):
 
         maestria_data = lista_producto_data.get('maestria', {})
         maestria = None
-        if maestria_data:
-            maestria_id = maestria_data.get('id')
+        if maestria_data.get('fechaInicio') != '':
             maestria_fechaInicio = maestria_data.get('fechaInicio')
             maestria_institucion = maestria_data.get('institucion')
             maestria, _ = Maestria.objects.get_or_create(
-                id=maestria_id,
+                id=Maestria.objects.count() + 1,
                 fechaInicio=maestria_fechaInicio,
                 institucion=maestria_institucion
             )
 
-
-       # Crear o obtener el objeto ListaProducto
-        lista_producto_id = lista_producto_data.get('id')
+        # Crear o obtener el objeto ListaProducto
         lista_producto_proyectoCursoProducto = lista_producto_data.get('proyectoCursoProducto')
         lista_producto_proyectoFormuladoProducto = lista_producto_data.get('proyectoFormuladoProducto')
         lista_producto_proyectoRSUProducto= lista_producto_data.get('proyectoRSUProducto')
         lista_producto, _ = ListaProducto.objects.get_or_create(
-            id=lista_producto_id,
+            id=ListaProducto.objects.count() + 1,
             evento=evento,
             articulo=articulo,
             capitulo=capitulo,
@@ -456,31 +438,39 @@ class CrearNuevoProducto(APIView):
         
 
         producto_data = {
-            'id': data.get('id'),
+            'id': Producto.objects.count() + 1,
             'tituloProducto': data.get('tituloProducto'),
             'investigador': data.get('investigador'),
             'publicacion': data.get('publicacion'),
-            'estudiantes': data.get('estudiantes'),
-            'estadoProdIniSemestre': data.get('estadoProdIniSemestre'),
             'porcentanjeAvanFinSemestre': data.get('porcentanjeAvanFinSemestre'),
             'observaciones': data.get('observaciones'),
-            'estadoProducto': data.get('estadoProducto'),
+            'estadoProducto': EstadoProducto.objects.get(pk=1),
             'porcentajeComSemestral': data.get('porcentajeComSemestral'),
             'porcentajeRealMensual': data.get('porcentajeRealMensual'),
             'fecha': data.get('fecha'),
             'origen': data.get('origen'),
+            'categoriaMinciencias': CategoriaMinciencias.objects.get(pk=1),
+            'cuartilEsperado': CuartilEsperado.objects.get(pk=1),
         }
-        producto_data['listaProducto'] = lista_producto.id
+        producto_data['listaProducto'] = lista_producto
 
-        serializer = productoSerializer(data=producto_data)
-        if serializer.is_valid():
-            producto = serializer.save()
-            if soporte:  # Verifica si se envió un archivo
-                producto.Soporte = soporte  # Asigna el archivo al campo 'Soporte'
-                producto.save()  # Guarda el producto con el archivo
+        producto = Producto.objects.create(**producto_data) 
+        # vinculación coinvestigadores
+        coinvestigadores_ids = data.get('coinvestigadoresProducto')
+        coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
+        producto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
+        # vinculación estudiantes
+        estudiantes_ids = data.get('estudiantesProducto')
+        estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
+        producto.estudiantes.set(estudiantes)
+        # vinculación participantesExternos
+        participantesExternos_ids = data.get('participantesExternosProducto')
+        participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
+        producto.participantesExternos.set(participantes_externos)
+        
+        serializer = productoSerializer(producto)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MostrarInvestigadores(APIView):
     def get(self, request, *args, **kwargs):

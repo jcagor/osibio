@@ -403,17 +403,19 @@ export class ProyectosComponent implements OnInit {
       estudiantes: [''],
       participantesExternos: [''],
       estadoProdIniSemestre: [''],
-      porcentanjeAvanFinSemestre: [''],
+      porcentanjeAvanFinSemestre: [0],
       observaciones: [''],
       estadoProducto: [''],
-      porcentajeComSemestral: [''],
-      porcentajeRealMensual: [''],
-      fecha:[new Date()],
+      porcentajeComSemestral: [0],
+      porcentajeRealMensual: [0],
+      fechaProducto:[new Date()],
       origen: [''],
       Soporte: ['',this.FileProducto],
+      estudiantesProducto: [''],
+      participantesExternosProducto: [''],
+      coinvestigadoresProducto: [''],
     });
   }
-  
 
   ngOnInit(): void {
     this.obtenerProyectos();
@@ -443,10 +445,13 @@ export class ProyectosComponent implements OnInit {
     });
   }
 
+  usuariosData: UsuarioSesion[] = [];
   obtenerUsuarios(){
     this.activeInvestigators = []; // Inicializa activeInvestigators como un array vacío
     this.selectedInvestigators = []; // Asegúrate de que selectedInvestigators esté vacío al principio
-    this.investigatorService.getUsuarios().subscribe((data) => {      
+    this.investigatorService.getUsuarios().subscribe((data) => {   
+      
+      this.usuariosData = data.filter(x => x.correo !== this.usuarioSesion.correo);
       /*this.activeInvestigators = data.map((investigador) => ({
         correo: investigador.correo,
       }));*/
@@ -476,7 +481,6 @@ export class ProyectosComponent implements OnInit {
       this.generalIndex = resp.length + 1;
     });
   }
-
 
   openDialogEstudiante(): void {
     const dialogRef = this.dialog.open(DialogoCreacionEstudiantesComponent, {
@@ -1005,8 +1009,8 @@ export class ProyectosComponent implements OnInit {
   get porcentajeRealMensual() {
     return this.productoFormGroup.get('porcentajeRealMensual');
   }
-  get fechaPrd() {
-    return this.productoFormGroup.get('fecha');
+  get fechaProducto() {
+    return this.productoFormGroup.get('fechaProducto');
   }
   get origenPrd() {
     return this.productoFormGroup.get('origen');
@@ -1019,6 +1023,15 @@ export class ProyectosComponent implements OnInit {
   }
   get fuente(){
     return this.productoFormGroup.get('fuente');
+  }
+  get estudiantesProducto() {
+    return this.productoFormGroup.get('estudiantesProducto');
+  }
+  get participantesExternosProducto() {
+    return this.productoFormGroup.get('participantesExternosProducto');
+  }
+  get coinvestigadoresProducto() {
+    return this.productoFormGroup.get('coinvestigadoresProducto');
   }
 
 
@@ -1121,132 +1134,143 @@ thumbLabel6 = false;
 
   guardarProducto() {
     if (this.productoFormGroup.valid) {
-        const producto: Producto = {
-            id: this.productoFormGroup.value.id,
-            tituloProducto: this.productoFormGroup.value.tituloProducto,
-            investigador: this.productoFormGroup.value.investigador,
-            listaProducto: {
-                id: this.productoFormGroup.value.listaProducto.id,
-                articulo: {
-                    id: this.productoFormGroup.value.listaProducto.capitulo.id,
-                    fuente: this.productoFormGroup.value.listaProducto.articulo.fuente
-                },
-                capitulo: {
-                    id: this.productoFormGroup.value.listaProducto.capitulo.id,
-                    nombrepublicacion: this.productoFormGroup.value.listaProducto.capitulo.nombrepublicacion,
-                    isbn: this.productoFormGroup.value.listaProducto.capitulo.isbn,
-                    fecha: new Date(this.productoFormGroup.value.listaProducto.capitulo.fecha).toISOString(), // Convertir fecha a ISO 8601
-                    editorial: this.productoFormGroup.value.listaProducto.capitulo.editorial
-                },
-                software: {
-                    id: this.productoFormGroup.value.listaProducto.software.id,
-                    tiporegistro: this.productoFormGroup.value.listaProducto.software.tiporegistro,
-                    numero: this.productoFormGroup.value.listaProducto.software.numero,
-                    fecha: new Date(this.productoFormGroup.value.listaProducto.software.fecha).toISOString(), // Convertir fecha a ISO 8601
-                    pais: this.productoFormGroup.value.listaProducto.software.pais
-                },
-                libro: {
-                    id: this.productoFormGroup.value.listaProducto.libro.id,
-                    isbn: this.productoFormGroup.value.listaProducto.libro.isbn,
-                    fecha: new Date(this.productoFormGroup.value.listaProducto.libro.fecha).toISOString(), // Convertir fecha a ISO 8601
-                    editorial: this.productoFormGroup.value.listaProducto.libro.editorial,
-                    luegarpublicacion: this.productoFormGroup.value.listaProducto.libro.luegarpublicacion
-                },
-                prototipoIndustrial: {
-                    id: this.productoFormGroup.value.listaProducto.prototipoIndustrial.id,
-                    fecha: new Date(this.productoFormGroup.value.listaProducto.prototipoIndustrial.fecha).toISOString(), // Convertir fecha a ISO 8601
-                    pais: this.productoFormGroup.value.listaProducto.prototipoIndustrial.pais,
-                    insitutofinanciador: this.productoFormGroup.value.listaProducto.prototipoIndustrial.insitutofinanciador
-                },
-                evento: {
-                    id: this.productoFormGroup.value.listaProducto.evento.id,
-                    fechainicio: new Date(this.productoFormGroup.value.listaProducto.evento.fechainicio).toISOString(), // Convertir fecha a ISO 8601
-                    fechafin: new Date(this.productoFormGroup.value.listaProducto.evento.fechafin).toISOString(), // Convertir fecha a ISO 8601
-                    numparticinerno: this.productoFormGroup.value.listaProducto.evento.numparticinerno,
-                    numparticexterno: this.productoFormGroup.value.listaProducto.evento.numparticexterno,
-                    tipoevento: this.productoFormGroup.value.listaProducto.evento.tipoevento
-                },
-                reconocimiento: {
-                    id: this.productoFormGroup.value.listaProducto.reconocimiento.id,
-                    fecha: new Date(this.productoFormGroup.value.listaProducto.reconocimiento.fecha).toISOString(), // Convertir fecha a ISO 8601
-                    nombentidadotorgada: this.productoFormGroup.value.listaProducto.reconocimiento.nombentidadotorgada
-                },
-                consultoria: {
-                    id: this.productoFormGroup.value.listaProducto.consultoria.id,
-                    año: this.productoFormGroup.value.listaProducto.consultoria.año,
-                    contrato: {
-                        id: this.productoFormGroup.value.listaProducto.consultoria.contrato.id,
-                        nombre: this.productoFormGroup.value.listaProducto.consultoria.contrato.nombre,
-                        numero: this.productoFormGroup.value.listaProducto.consultoria.contrato.numero
-                    },
-                    nombreEntidad: this.productoFormGroup.value.listaProducto.consultoria.nombreEntidad
-                },
-                contenido: {
-                    id: this.productoFormGroup.value.listaProducto.contenido.id,
-                    paginaWeb: this.productoFormGroup.value.listaProducto.contenido.paginaWeb,
-                    nombreEntidad: this.productoFormGroup.value.listaProducto.contenido.nombreEntidad
-                },
-                pregFinalizadoyCurso: {
-                    id: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.id,
-                    fechaInicio: new Date(this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.fechaInicio).toISOString(), // Convertir fecha a ISO 8601
-                    reconocimientos: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.reconocimientos,
-                    numeroPaginas: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.numeroPaginas
-                },
-                apropiacion: {
-                    id: this.productoFormGroup.value.listaProducto.apropiacion.id,
-                    fechainicio: new Date(this.productoFormGroup.value.listaProducto.apropiacion.fechainicio).toISOString(), // Convertir fecha a ISO 8601
-                    fechaFin: new Date(this.productoFormGroup.value.listaProducto.apropiacion.fechaFin).toISOString(), // Convertir fecha a ISO 8601
-                    licencia: {
-                        id: this.productoFormGroup.value.listaProducto.apropiacion.licencia.id,
-                        nombre: this.productoFormGroup.value.listaProducto.apropiacion.licencia.nombre
-                    },
-                    formato: this.productoFormGroup.value.listaProducto.apropiacion.formato,
-                    medio: this.productoFormGroup.value.listaProducto.apropiacion.medio,
-                    nombreEntidad: this.productoFormGroup.value.listaProducto.apropiacion.nombreEntidad
-                },
-                maestria: {
-                    id: this.productoFormGroup.value.listaProducto.maestria.id,
-                    fechaInicio: new Date(this.productoFormGroup.value.listaProducto.maestria.fechaInicio).toISOString(), // Convertir fecha a ISO 8601
-                    institucion: this.productoFormGroup.value.listaProducto.maestria.institucion
-                },
-                proyectoCursoProducto: this.productoFormGroup.value.listaProducto.proyectoCursoProducto,
-                proyectoFormuladoProducto: this.productoFormGroup.value.listaProducto.proyectoFormuladoProducto,
-                proyectoRSUProducto: this.productoFormGroup.value.listaProducto.proyectoRSUProducto
-            },
-            publicacion: this.productoFormGroup.value.publicacion,
-            estudiantes: this.productoFormGroup.value.estudiantes,
-            estadoProdIniSemestre: this.productoFormGroup.value.estadoProdIniSemestre,
-            porcentanjeAvanFinSemestre: this.productoFormGroup.value.porcentanjeAvanFinSemestre,
-            observaciones: this.productoFormGroup.value.observaciones,
-            estadoProducto: this.productoFormGroup.value.estadoProducto,
-            porcentajeComSemestral: this.productoFormGroup.value.porcentajeComSemestral,
-            porcentajeRealMensual: this.productoFormGroup.value.porcentajeRealMensual,
-            fecha: new Date(this.productoFormGroup.value.fecha).toISOString(), // Convertir fecha a ISO 8601
-            origen: this.productoFormGroup.value.origen,
-            Soporte: this.FileProducto,
-        };
-
-        this.ProyectoyproductoService.crearProducto(producto).subscribe(
-            (resp) => {
-                console.log('Se ha registrado el usuario exitosamente:', resp);
-                alert('Se ha registrado el usuario exitosamente.');
-                this.productoFormGroup.reset();
-            },
-            (error) => {
-                console.error('Error al registrar el usuario:', error);
-                alert('Error al registrar el usuario. Por favor, inténtalo de nuevo.');
-            }
-        );
+      const producto: Producto = {
+        id: this.productoFormGroup.value.id,
+        tituloProducto: this.productoFormGroup.value.tituloProducto,
+        investigador: this.usuarioSesion.numerodocumento,
+        listaProducto: {
+          id: this.productoFormGroup.value.listaProducto.id,
+          articulo: {
+            id: this.productoFormGroup.value.listaProducto.capitulo.id,
+            fuente: this.productoFormGroup.value.listaProducto.articulo.fuente
+          },
+          capitulo: {
+            id: this.productoFormGroup.value.listaProducto.capitulo.id,
+            nombrepublicacion: this.productoFormGroup.value.listaProducto.capitulo.nombrepublicacion,
+            isbn: this.productoFormGroup.value.listaProducto.capitulo.isbn,
+            fecha: this.productoFormGroup.value.listaProducto.capitulo.fecha,
+            editorial: this.productoFormGroup.value.listaProducto.capitulo.editorial
+          },
+          software: {
+            id: this.productoFormGroup.value.listaProducto.software.id,
+            tiporegistro: this.productoFormGroup.value.listaProducto.software.tiporegistro,
+            numero: this.productoFormGroup.value.listaProducto.software.numero,
+            fecha: this.productoFormGroup.value.listaProducto.software.fecha,
+            pais: this.productoFormGroup.value.listaProducto.software.pais
+          },
+          libro: {
+            id: this.productoFormGroup.value.listaProducto.libro.id,
+            isbn: this.productoFormGroup.value.listaProducto.libro.isbn,
+            fecha: this.productoFormGroup.value.listaProducto.libro.fecha,
+            editorial: this.productoFormGroup.value.listaProducto.libro.editorial,
+            luegarpublicacion: this.productoFormGroup.value.listaProducto.libro.luegarpublicacion
+          },
+          prototipoIndustrial: {
+              id: this.productoFormGroup.value.listaProducto.prototipoIndustrial.id,
+              fecha: this.productoFormGroup.value.listaProducto.prototipoIndustrial.fecha,
+              pais: this.productoFormGroup.value.listaProducto.prototipoIndustrial.pais,
+              insitutofinanciador: this.productoFormGroup.value.listaProducto.prototipoIndustrial.insitutofinanciador
+          },
+          evento: {
+              id: this.productoFormGroup.value.listaProducto.evento.id,
+              fechainicio: this.productoFormGroup.value.listaProducto.evento.fechainicio,
+              fechafin: this.productoFormGroup.value.listaProducto.evento.fechafin,
+              numparticinerno: this.productoFormGroup.value.listaProducto.evento.numparticinerno,
+              numparticexterno: this.productoFormGroup.value.listaProducto.evento.numparticexterno,
+              tipoevento: this.productoFormGroup.value.listaProducto.evento.tipoevento
+          },
+          reconocimiento: {
+              id: this.productoFormGroup.value.listaProducto.reconocimiento.id,
+              fecha: this.productoFormGroup.value.listaProducto.reconocimiento.fecha,
+              nombentidadotorgada: this.productoFormGroup.value.listaProducto.reconocimiento.nombentidadotorgada
+          },
+          consultoria: {
+              id: this.productoFormGroup.value.listaProducto.consultoria.id,
+              año: this.productoFormGroup.value.listaProducto.consultoria.año,
+              contrato: {
+                  id: this.productoFormGroup.value.listaProducto.consultoria.contrato.id,
+                  nombre: this.productoFormGroup.value.listaProducto.consultoria.contrato.nombre,
+                  numero: this.productoFormGroup.value.listaProducto.consultoria.contrato.numero
+              },
+              nombreEntidad: this.productoFormGroup.value.listaProducto.consultoria.nombreEntidad
+          },
+          contenido: {
+              id: this.productoFormGroup.value.listaProducto.contenido.id,
+              paginaWeb: this.productoFormGroup.value.listaProducto.contenido.paginaWeb,
+              nombreEntidad: this.productoFormGroup.value.listaProducto.contenido.nombreEntidad
+          },
+          pregFinalizadoyCurso: {
+              id: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.id,
+              fechaInicio: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.fechaInicio,
+              reconocimientos: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.reconocimientos,
+              numeroPaginas: this.productoFormGroup.value.listaProducto.pregFinalizadoyCurso.numeroPaginas
+          },
+          apropiacion: {
+              id: this.productoFormGroup.value.listaProducto.apropiacion.id,
+              fechainicio: this.productoFormGroup.value.listaProducto.apropiacion.fechainicio,
+              fechaFin: this.productoFormGroup.value.listaProducto.apropiacion.fechaFin,
+              licencia: {
+                  id: this.productoFormGroup.value.listaProducto.apropiacion.licencia.id,
+                  nombre: this.productoFormGroup.value.listaProducto.apropiacion.licencia.nombre
+              },
+              formato: this.productoFormGroup.value.listaProducto.apropiacion.formato,
+              medio: this.productoFormGroup.value.listaProducto.apropiacion.medio,
+              nombreEntidad: this.productoFormGroup.value.listaProducto.apropiacion.nombreEntidad
+          },
+          maestria: {
+              id: this.productoFormGroup.value.listaProducto.maestria.id,
+              fechaInicio: this.productoFormGroup.value.listaProducto.maestria.fechaInicio,
+              institucion: this.productoFormGroup.value.listaProducto.maestria.institucion
+          },
+          proyectoCursoProducto: this.productoFormGroup.value.listaProducto.proyectoCursoProducto,
+          proyectoFormuladoProducto: this.productoFormGroup.value.listaProducto.proyectoFormuladoProducto,
+          proyectoRSUProducto: this.productoFormGroup.value.listaProducto.proyectoRSUProducto
+        },
+        publicacion: this.productoFormGroup.value.publicacion,
+        estudiantes: this.productoFormGroup.value.estudiantes,
+        estadoProdIniSemestre: this.productoFormGroup.value.estadoProdIniSemestre,
+        porcentanjeAvanFinSemestre: this.productoFormGroup.value.porcentanjeAvanFinSemestre,
+        observaciones: this.productoFormGroup.value.observaciones,
+        estadoProducto: this.productoFormGroup.value.estadoProducto,
+        porcentajeComSemestral: this.productoFormGroup.value.porcentajeComSemestral,
+        porcentajeRealMensual: this.productoFormGroup.value.porcentajeRealMensual,
+        fecha: this.productoFormGroup.value.fechaProducto,
+        origen: this.productoFormGroup.value.origen,
+        Soporte: this.FileProducto,
+        estudiantesProducto:  this.productoFormGroup.value.estudiantesProducto,
+        participantesExternosProducto:  this.productoFormGroup.value.participantesExternosProducto,
+        coinvestigadoresProducto:  this.productoFormGroup.value.coinvestigadoresProducto,
+      };
+      this.ProyectoyproductoService.crearProducto(producto).subscribe(
+          (resp) => {
+              console.log('Se ha registrado el usuario exitosamente:', resp);
+              Swal.fire({
+                title: 'Registro Exitoso !!!',
+                text: 'Se ha registrado el producto exitosamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              });
+              this.productoFormGroup.reset();
+          },
+          (error) => {
+              console.error('Error al registrar el usuario:', error);
+              Swal.fire({
+                title: 'Oops...',
+                text: 'Error al registrar el producto. Contacta al administrador si el error persiste',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              });
+          }
+      );
     } else {
-        alert('Por favor, completa el formulario correctamente.');
+        Swal.fire({
+          title: 'Datos incompletos !!!',
+          text: 'Por favor, completa el formulario correctamente.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
     }
 }
-
-  
-
-
-
-
 
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------

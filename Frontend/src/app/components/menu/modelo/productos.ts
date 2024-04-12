@@ -1,3 +1,5 @@
+import { Coinvestigador, Estudiante, ParticipanteExterno } from "./proyectos";
+
 export interface Eventos {
     id?: string;
     fechainicio?: string;
@@ -119,4 +121,7 @@ export interface Eventos {
     fecha?: string;
     origen?: string;
     Soporte?: File;
+    estudiantesProducto?: Estudiante[];
+    participantesExternosProducto?: ParticipanteExterno[];
+    coinvestigadoresProducto?: Coinvestigador[];
   }
