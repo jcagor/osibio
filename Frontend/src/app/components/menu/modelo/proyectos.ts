@@ -190,7 +190,7 @@ export interface ubicacionProyecto{
 }
 export interface Proyecto {
   codigo?: string;
-  fecha?: Date;
+  fecha?: Date | string;
   titulo?: string;
   investigador?: string;
   unidadAcademica?: string;

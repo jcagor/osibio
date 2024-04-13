@@ -50,7 +50,7 @@
         
         </table> <!-- Esta etiqueta debe estar aquí -->
         
-        <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons aria-label="Select page of periodic elements">
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10]" showFirstLastButtons aria-label="Select page of periodic elements">
         </mat-paginator>
       </div>
     </mat-tab>
@@ -189,7 +189,6 @@
                       </p>
                     </div>
                     <!----Porcentajes-->
-
                     <div class="titulo2">
                       <div class="percentage-container">
                         <p>Porcentaje de ejecucion en el corte</p>
@@ -228,13 +227,11 @@
                         </mat-slider>
                       </div>
                     </div>
+                    <!----Soporte proyecto-->
                     <div class="titulo2">
-
-                      
                       <p>Soporte</p>
-                      <input formControlName="soporte" type="file" (change)="onFileSelected($event)" />
+                      <input formControlName="soporteProyecto" type="file" (change)="onFileSelected($event)" />
                     </div>
-
                     <div class="titulo2">
                       <p>Entregable administrativo</p>
                     </div>
@@ -1001,9 +998,9 @@
                     </div>
                     <div class="reg">
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input matInput [matDatepicker]="picker1" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fecha">
-                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                        <mat-datepicker #picker1></mat-datepicker>
+                        <input matInput [matDatepicker]="pickerCapitulo" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fecha">
+                        <mat-datepicker-toggle matSuffix [for]="pickerCapitulo"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerCapitulo></mat-datepicker>
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
                         <input formControlName="editorial" matInput autocomplete="off">
@@ -1011,7 +1008,7 @@
                     </div>
                   </div>
                 </mat-tab>
-                <mat-tab label="articulo">
+                <mat-tab label="articulo"> 
                     <div class="titulo">
                       <p>Funente</p>
                     </div>
@@ -1036,9 +1033,9 @@
                         <input formControlName="isbn" matInput autocomplete="off">
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input matInput [matDatepicker]="picker2" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fecha">
-                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
+                        <input matInput [matDatepicker]="pickerLibros" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fechaLibro">
+                        <mat-datepicker-toggle matSuffix [for]="pickerLibros"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerLibros></mat-datepicker>
                       </mat-form-field>
                     </div>
                     <div class="titulo">
@@ -1066,7 +1063,7 @@
                         <input formControlName="tiporegistro"  matInput autocomplete="off">
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input formControlName="numero" type="text" matInput autocomplete="off">
+                        <input formControlName="numero" type="number" matInput autocomplete="off">
                       </mat-form-field>
                     </div>
                     <div class="titulo">
@@ -1075,9 +1072,9 @@
                     </div>
                     <div class="reg">
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input matInput [matDatepicker]="picker3" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fecha">
-                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-                        <mat-datepicker #picker3></mat-datepicker>
+                        <input matInput [matDatepicker]="pickerSoftware" autocomplete="off" placeholder="Seleccione una fecha" formControlName="fechaSoftware">
+                        <mat-datepicker-toggle matSuffix [for]="pickerSoftware"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerSoftware></mat-datepicker>
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
                         <input formControlName="pais" type="text" matInput autocomplete="off">
@@ -1132,15 +1129,15 @@
                     </div>
                     <div class="reg">
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input formControlName="numparticinerno" matInput autocomplete="off">
+                        <input formControlName="numparticinerno" type="number" matInput autocomplete="off">
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input  formControlName="numparticexterno" type="text" matInput autocomplete="off">
+                        <input  formControlName="numparticexterno" type="number" matInput autocomplete="off">
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing2">
                         <mat-label>Seleccione</mat-label>
                         <mat-select formControlName="tipoevento">
-                            <mat-option *ngFor="let tipo of typeEventos" [value]="tipo">{{ tipo }}</mat-option>
+                            <mat-option *ngFor="let data of eventosData" [value]="data.id">{{ data.tipo }}</mat-option>
                         </mat-select>
                       </mat-form-field>
                     </div>
@@ -1270,7 +1267,7 @@
                         <input formControlName="reconocimientos" type="text" matInput autocomplete="off">
                       </mat-form-field>
                       <mat-form-field class="form-field-spacing" appearance="fill">
-                        <input formControlName="numeroPaginas" type="text" matInput autocomplete="off">
+                        <input formControlName="numeroPaginas" type="number" matInput autocomplete="off">
                       </mat-form-field>
                     </div>
                   </div>

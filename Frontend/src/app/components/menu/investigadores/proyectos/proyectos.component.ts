@@ -42,7 +42,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Investigador } from '../../modelo/investigador';
-import { Producto } from '../../modelo/productos';
+import { Evento, Producto } from '../../modelo/productos';
 import { Coinvestigador, Estudiantes, ParticipanteExterno, Proyecto } from '../../modelo/proyectos';
 import { ProyectoyproductoService } from '../../services/proyectoyproducto';
 import { EstudiantesService } from '../../services/estudiantes';
@@ -124,8 +124,6 @@ export class ProyectosComponent implements OnInit {
     {value: 'Corregir', viewValue: 'Corregir'},
     {value: 'Espera', viewValue: 'Espera'},
   ];
-  // indice dinámico para tablas
-  generalIndex!: number;
   // índice de las pestaña Proyectos y Nuevo
   demo1TabIndex!: number;
 
@@ -328,13 +326,13 @@ export class ProyectosComponent implements OnInit {
           id:[''],
           tiporegistro:[''],
           numero:[''],
-          fecha:[''],
+          fechaSoftware:[''],
           pais:[''],
         }),
         libro: this.formBuilder.group({
           id:[''],
           isbn:[''],
-          fecha:[''],
+          fechaLibro:[''],
           editorial:[''],
           luegarpublicacion:[''],
         }),
@@ -418,12 +416,12 @@ export class ProyectosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.obtenerProyectos();
     this.obtenerUsuarios();
     this.configurarDatasource();
     this.obtenerDatosUsuarioSesion();
     this.obtenerEstudiantes();
     this.obtenerParticipantesExternos();
+    this.obtenerEventos();
   }
 
   estudiantesData: Estudiantes[] = [];
@@ -442,6 +440,14 @@ export class ProyectosComponent implements OnInit {
   obtenerParticipantesExternos(){
     this.participantesExternosService.getParticipantesExternos().subscribe((data) => {    
       this.participanteExternoData = data;
+    });
+  }
+
+  eventosData: Evento[]= [];
+
+  obtenerEventos(){
+    const eventos = this.ProyectoyproductoService.getEventos().subscribe((data) => {    
+      this.eventosData = data;
     });
   }
 
@@ -473,12 +479,6 @@ export class ProyectosComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.SearchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
-    });
-  }
-
-  obtenerProyectos(){
-    this.ProyectoyproductoService.getProyectos().subscribe(resp => {
-      this.generalIndex = resp.length + 1;
     });
   }
 
@@ -760,8 +760,8 @@ export class ProyectosComponent implements OnInit {
   get porcentajeAvance() {
     return this.firstFormGroup.get('porcentajeAvance');
   }
-  get soporte() {
-    return this.firstFormGroup.get('Soporte');
+  get soporteProyecto() {
+    return this.firstFormGroup.get('soporteProyecto');
   }
   get transacciones() {
     return this.firstFormGroup.get('transacciones');
@@ -806,7 +806,7 @@ export class ProyectosComponent implements OnInit {
     if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
       const proyecto: Proyecto = {
         codigo: this.firstFormGroup.get('codigo')?.value,
-        fecha: this.firstFormGroup.get('fecha')?.value,
+        fecha: moment(this.firstFormGroup.get('fecha')?.value).format('YYYY-MM-DD'),
         titulo: this.firstFormGroup.get('titulo')?.value,
         investigador: this.firstFormGroup.get('investigador')?.value,
         unidadAcademica: this.firstFormGroup.get('unidadAcademica')?.value,
@@ -862,7 +862,7 @@ export class ProyectosComponent implements OnInit {
           'porcentajeEjecucionFinCorte'
         )?.value,
         porcentajeAvance: this.firstFormGroup.get('porcentajeAvance')?.value,
-        soporte: this.firstFormGroup.get('soporte')?.value,
+        soporte: this.selectedFileProyecto,
         transacciones: this.firstFormGroup.get('transacciones')?.value,
         origen: this.firstFormGroup.get('origen')?.value,
         convocatoria: this.firstFormGroup.get('convocatoria')?.value,
@@ -881,24 +881,6 @@ export class ProyectosComponent implements OnInit {
         )?.value,
       };
 
-      if(proyecto.entidadPostulo?.id !== undefined) {
-        proyecto.entidadPostulo.id = this.generalIndex.toString();
-      } 
-      if(proyecto.entregableAdministrativo?.id !== undefined) {
-        proyecto.entregableAdministrativo.id = this.generalIndex.toString();
-      } 
-      if(proyecto.financiacion?.id !== undefined) {
-        proyecto.financiacion.id = this.generalIndex.toString();
-      } 
-      if(proyecto.producto?.id !== undefined) {
-        proyecto.producto.id = this.generalIndex.toString();
-      }
-      if(proyecto.transacciones?.id !== undefined) {
-        proyecto.transacciones.id = this.generalIndex.toString();
-      } 
-      if(proyecto.ubicacionProyecto?.id !== undefined) {
-        proyecto.ubicacionProyecto.id = this.generalIndex.toString();
-      }       
       proyecto.estadoProyecto = "Espera";
       proyecto.investigador = this.usuarioSesion.numerodocumento;
 
@@ -1047,9 +1029,6 @@ changeEstado(e: Event) {
   }
 }
 
-// tipo de evento de eventos de lista productos
-typeEventos: string[] = ['Congreso', 'Seminario', 'Simposio', 'Conferencia', 'Feria', 'Encuentro academico'];
-
 changeEventos(e: Event) {
   const target = e.target as HTMLInputElement;
   if (target && this.tipoevento) {
@@ -1125,11 +1104,15 @@ showTicks6 = false;
 step6 = 1;
 thumbLabel6 = false;
 
+
+  selectedFileProduct: File = null!;
+
+
   //subir archivo producto
   FileProducto: File = null!;
 
   onFileSelected2(event: any) {
-    this.FileProducto = event.target.files[0] as File;
+    this.selectedFileProduct = event.target.files[0] as File;
   } 
 
   guardarProducto() {
@@ -1155,13 +1138,13 @@ thumbLabel6 = false;
             id: this.productoFormGroup.value.listaProducto.software.id,
             tiporegistro: this.productoFormGroup.value.listaProducto.software.tiporegistro,
             numero: this.productoFormGroup.value.listaProducto.software.numero,
-            fecha: this.productoFormGroup.value.listaProducto.software.fecha,
+            fecha: this.productoFormGroup.value.listaProducto.software.fechaSoftware,
             pais: this.productoFormGroup.value.listaProducto.software.pais
           },
           libro: {
             id: this.productoFormGroup.value.listaProducto.libro.id,
             isbn: this.productoFormGroup.value.listaProducto.libro.isbn,
-            fecha: this.productoFormGroup.value.listaProducto.libro.fecha,
+            fecha: this.productoFormGroup.value.listaProducto.libro.fechaLibro,
             editorial: this.productoFormGroup.value.listaProducto.libro.editorial,
             luegarpublicacion: this.productoFormGroup.value.listaProducto.libro.luegarpublicacion
           },
@@ -1234,9 +1217,9 @@ thumbLabel6 = false;
         estadoProducto: this.productoFormGroup.value.estadoProducto,
         porcentajeComSemestral: this.productoFormGroup.value.porcentajeComSemestral,
         porcentajeRealMensual: this.productoFormGroup.value.porcentajeRealMensual,
-        fecha: this.productoFormGroup.value.fechaProducto,
+        fecha: moment(this.productoFormGroup.value.fechaProducto).format('YYYY-MM-DD'),
         origen: this.productoFormGroup.value.origen,
-        Soporte: this.FileProducto,
+        Soporte: this.selectedFileProduct,
         estudiantesProducto:  this.productoFormGroup.value.estudiantesProducto,
         participantesExternosProducto:  this.productoFormGroup.value.participantesExternosProducto,
         coinvestigadoresProducto:  this.productoFormGroup.value.coinvestigadoresProducto,
@@ -1251,6 +1234,9 @@ thumbLabel6 = false;
                 confirmButtonText: 'Aceptar'
               });
               this.productoFormGroup.reset();
+              this.ngAfterViewInit();
+              this.ngOnInit();
+              this.demo1TabIndex = 0;
           },
           (error) => {
               console.error('Error al registrar el usuario:', error);
@@ -1294,13 +1280,13 @@ thumbLabel6 = false;
     ]).subscribe(([productos, proyectos]) => {
 
       // Ajustar los datos de los productos para asegurarse de que tengan todas las propiedades definidas en la interfaz Producto
-      const productosAjustados = productos.map(producto => ({
+      const productosAjustados = productos.reverse().map(producto => ({
         ...producto,
         tipo: 'Producto',
         id:producto.id,
-        tituloProducto: producto.titulo_producto || '', // Asegurar que todas las propiedades definidas en la interfaz Producto estén presentes
+        tituloProducto: producto.tituloProducto || '', // Asegurar que todas las propiedades definidas en la interfaz Producto estén presentes
         fecha: producto.fecha || '',
-        estadoProducto: producto.estado_producto || '',
+        estadoProducto: producto.estadoProceso || '',
         etapa:producto.etapa|| '',
         tipologiaProducto: producto.tipologiaProducto || '',
       }));
@@ -1320,7 +1306,6 @@ thumbLabel6 = false;
       
       // Asignar los datos combinados a dataSource
       this.dataSource.data = combinedData;
-      //obj.sort((a, b) => (a > b ? -1 : 1))
     });
   }
   

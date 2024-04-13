@@ -125,3 +125,8 @@ export interface Eventos {
     participantesExternosProducto?: ParticipanteExterno[];
     coinvestigadoresProducto?: Coinvestigador[];
   }
+
+  export interface Evento {
+    id?: string;
+    tipo?: string;
+  }

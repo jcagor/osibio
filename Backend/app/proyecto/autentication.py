@@ -9,6 +9,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView, exception_handler
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone, dateformat
+import json
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
                      Contrato, EntidadPostulo, EntregableAdministrativo, EstadoProyecto,
@@ -16,7 +19,7 @@ from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,
                      Software, Transacciones, UbicacionProyecto, ParticipantesExternos, EstadoProducto,
-                     CategoriaMinciencias,CuartilEsperado)
+                     CategoriaMinciencias,CuartilEsperado,TipoEventos)
 from .serializer import (investigadorSerializer, productoSerializer,
                          proyectoSerializer)
 
@@ -96,55 +99,50 @@ class ActualizarDatosUsuario(APIView):
 class CrearProyecto(APIView):
     parser_class = (FileUploadParser,)
     def post(self, request, *args, **kwargs):
-        soporte = request.FILES.get('Soporte')
-        entidadPostulo_data= request.data.get('entidadPostulo')
-        entidadPostulo_id = entidadPostulo_data.get('id')
+        soporte = request.FILES.get('soporte')
+        entidadPostulo_data= json.loads(request.data.get('entidadPostulo'))
         entidadPostulo_nombreIntitucion = entidadPostulo_data.get('nombreInstitucion')
         entidadPostulo_nombreGrupo = entidadPostulo_data.get('nombreGrupo')
         entidadPostulo,_=EntidadPostulo.objects.get_or_create(
-            id=entidadPostulo_id,
+            id=EntidadPostulo.objects.count()+1,
             nombreInstitucion=entidadPostulo_nombreIntitucion,
             nombreGrupo=entidadPostulo_nombreGrupo
         )
         
-        financiacion_data = request.data.get('financiacion')
-        financiacion_id = financiacion_data.get('id')
+        financiacion_data = json.loads(request.data.get('financiacion'))
         financiacion_valorPropuestoFin = financiacion_data.get('valorPropuestoFin')
         financiacion_valorEjecutadoFin = financiacion_data.get('valorEjecutadoFin')
         financiacion,_=Financiacion.objects.get_or_create(
-            id=financiacion_id,
+            id=Financiacion.objects.count()+1,
             valorPropuestoFin=financiacion_valorPropuestoFin,
             valorEjecutadoFin=financiacion_valorEjecutadoFin
         )
 
-        transacciones_data = request.data.get('transacciones')
-        transacciones_id= transacciones_data.get('id')
+        transacciones_data = json.loads(request.data.get('transacciones'))
         transacciones_fecha=transacciones_data.get('fecha_transacciones')
         transacciones_acta=transacciones_data.get('acta')
         transacciones_descripcion=transacciones_data.get('descripcion')
         transacciones,_=Transacciones.objects.get_or_create(
-            id=transacciones_id,
+            id=Transacciones.objects.count()+2,
             fecha=transacciones_fecha,
             acta=transacciones_acta,
             descripcion=transacciones_descripcion
         )
 
-        ubicacionProyecto_data = request.data.get('ubicacionProyecto')
-        ubicacionProyecto_id= ubicacionProyecto_data.get('id')
+        ubicacionProyecto_data = json.loads(request.data.get('ubicacionProyecto'))
         ubicacionProyecto_instalacion= ubicacionProyecto_data.get('instalacion')
         ubicacionProyecto_municipio=ubicacionProyecto_data.get('municipio')
         ubicacionProyecto_pais=ubicacionProyecto_data.get('pais')
         ubicacionProyecto_departamento=ubicacionProyecto_data.get('departamento')
         ubicacionProyecto,_=UbicacionProyecto.objects.get_or_create(
-            id=ubicacionProyecto_id,
+            id=UbicacionProyecto.objects.count()+1,
             instalacion=ubicacionProyecto_instalacion,
             municipio=ubicacionProyecto_municipio,
             pais=ubicacionProyecto_pais,
             departamento=ubicacionProyecto_departamento
         )
         
-        entregableAdministrativo_data = request.data.get('entregableAdministrativo')
-        entregableAdministrativo_id=entregableAdministrativo_data.get('id')
+        entregableAdministrativo_data = json.loads(request.data.get('entregableAdministrativo'))
         entregableAdministrativo_nombre=entregableAdministrativo_data.get('nombre')
         entregableAdministrativo_titulo=entregableAdministrativo_data.get('titulo')
         entregableAdministrativo_calidad=entregableAdministrativo_data.get('calidad')
@@ -152,7 +150,7 @@ class CrearProyecto(APIView):
         entregableAdministrativo_pendiente=entregableAdministrativo_data.get('pendiente')
         entregableAdministrativo_clasificacion=entregableAdministrativo_data.get('clasificacion')
         entregableAdministrativo,_=EntregableAdministrativo.objects.get_or_create(
-            id=entregableAdministrativo_id,
+            id=EntregableAdministrativo.objects.count()+1,
             nombre=entregableAdministrativo_nombre,
             titulo=entregableAdministrativo_titulo,
             calidad=entregableAdministrativo_calidad,
@@ -161,12 +159,9 @@ class CrearProyecto(APIView):
             clasificacion=entregableAdministrativo_clasificacion
         )
         
-        estado_instancia = EstadoProyecto.objects.get(pk=1)
-        print('estado_instancia => ',estado_instancia)
-        
         proyecto_data = {
             'codigo': request.data.get('codigo'),
-            'fecha': request.data.get('fecha'),
+            'fecha': make_aware(datetime.strptime(request.data.get('fecha'), "%Y-%m-%d")),
             'titulo': request.data.get('titulo'),
             'investigador': request.data.get('investigador'),
             'area': request.data.get('area'),
@@ -189,8 +184,7 @@ class CrearProyecto(APIView):
         proyecto_data['transacciones'] = transacciones
         proyecto_data['ubicacionProyecto']=ubicacionProyecto
         proyecto_data['entregableAdministrativo']=entregableAdministrativo
-    
-        
+
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 
         # vinculación coinvestigadores
@@ -223,16 +217,13 @@ class CrearNuevoProducto(APIView):
 
     def post(self, request, *args, **kwargs):
         soporte = request.FILES.get('Soporte')
-        data = request.data.get('producto')
-        
-        # Extraer los datos de listaProducto
-        lista_producto_data = data.get('listaProducto')
-        
+        lista_producto = json.loads(request.data.get('listaProducto'))
+        data_general = lista_producto
+        capitulo_data = data_general.get('capitulo')
 
         # Crear o obtener otros objetos relacionados según sea necesario
         # Crear o obtener objetos relacionados según sea necesario
-        evento_data = lista_producto_data.get('evento', {})
-        
+        evento_data = data_general.get('evento')
         evento = None
         if evento_data.get('fechainicio') != '':
             evento_fechainicio = evento_data.get('fechainicio')
@@ -246,10 +237,10 @@ class CrearNuevoProducto(APIView):
                 fechafin=evento_fechafin,
                 numparticinerno=evento_numparticinerno,
                 numparticexterno=evento_numparticexterno,
-                tipoevento=evento_tipoevento
+                tipoevento=TipoEventos.objects.get(pk=int(evento_tipoevento))
             )
 
-        articulo_data = lista_producto_data.get('articulo', {})
+        articulo_data = data_general.get('articulo')
         articulo = None
         if articulo_data.get('fuente') != '':
             articulo_fuente = articulo_data.get('fuente')
@@ -258,7 +249,7 @@ class CrearNuevoProducto(APIView):
                 fuente=articulo_fuente
             )
 
-        capitulo_data = lista_producto_data.get('capitulo', {})
+        capitulo_data = data_general.get('capitulo')
         capitulo = None
         if capitulo_data.get('nombrepublicacion') != '':
             capitulo_nombrepublicacion = capitulo_data.get('nombrepublicacion')
@@ -273,7 +264,7 @@ class CrearNuevoProducto(APIView):
                 editorial=capitulo_editorial
             )
 
-        libro_data = lista_producto_data.get('libro', {})
+        libro_data = data_general.get('libro')
         libro = None
         if libro_data.get('isbn') != '':
             libro_isbn = libro_data.get('isbn')
@@ -288,7 +279,7 @@ class CrearNuevoProducto(APIView):
                 luegarpublicacion=libro_luegarpublicacion
             )
 
-        software_data = lista_producto_data.get('software', {})
+        software_data = data_general.get('software')
         software = None
         if software_data.get('tiporegistro') != '':
             software_tiporegistro = software_data.get('tiporegistro')
@@ -303,7 +294,7 @@ class CrearNuevoProducto(APIView):
                 pais=software_pais
             )
 
-        prototipoIndustrial_data = lista_producto_data.get('prototipoIndustrial', {})
+        prototipoIndustrial_data = data_general.get('prototipoIndustrial')
         prototipoIndustrial = None
         if prototipoIndustrial_data.get('fecha') !='' :
             prototipoIndustrial_fecha = prototipoIndustrial_data.get('fecha')
@@ -316,7 +307,7 @@ class CrearNuevoProducto(APIView):
                 insitutofinanciador=prototipoIndustrial_insitutofinanciador
             )
 
-        reconocimiento_data = lista_producto_data.get('reconocimiento', {})
+        reconocimiento_data = data_general.get('reconocimiento')
         reconocimiento = None
         if reconocimiento_data.get('fecha') != '':
             reconocimiento_fecha = reconocimiento_data.get('fecha')
@@ -327,7 +318,7 @@ class CrearNuevoProducto(APIView):
                 nombentidadotorgada=reconocimiento_nombentidadotorgada
             )
 
-        consultoria_data = lista_producto_data.get('consultoria', {})
+        consultoria_data = data_general.get('consultoria')
         contrato = None
         consultoria = None
         if consultoria_data.get('año') != '':
@@ -350,7 +341,7 @@ class CrearNuevoProducto(APIView):
                 nombreEntidad=consultoria_nombreEntidad
             )
 
-        apropiacion_data = lista_producto_data.get('apropiacion', {})
+        apropiacion_data = data_general.get('apropiacion')
         licencias = None
         apropiacion = None
 
@@ -378,7 +369,7 @@ class CrearNuevoProducto(APIView):
                 nombreEntidad=apropiacion_nombreEntidad
                 )
 
-        contenido_data = lista_producto_data.get('contenido', {})
+        contenido_data = data_general.get('contenido')
         contenido = None
         if contenido_data.get('paginaWeb') != '':
             contenido_nombreEntidad = contenido_data.get('nombreEntidad')
@@ -389,7 +380,7 @@ class CrearNuevoProducto(APIView):
                 paginaWeb=contenido_paginaWeb
             )
 
-        pregFinalizadoyCurso_data = lista_producto_data.get('pregFinalizadoyCurso',{})
+        pregFinalizadoyCurso_data = data_general.get('pregFinalizadoyCurso')
         pregFinalizadoyCurso= None
         if pregFinalizadoyCurso_data.get('fechaInicio') != '':
             pregFinalizadoyCurso_fechaInicio= pregFinalizadoyCurso_data.get('fechaInicio')
@@ -402,7 +393,7 @@ class CrearNuevoProducto(APIView):
                 numeroPaginas=pregFinalizadoyCurso_numeroPaginas
             )      
 
-        maestria_data = lista_producto_data.get('maestria', {})
+        maestria_data = data_general.get('maestria')
         maestria = None
         if maestria_data.get('fechaInicio') != '':
             maestria_fechaInicio = maestria_data.get('fechaInicio')
@@ -414,9 +405,9 @@ class CrearNuevoProducto(APIView):
             )
 
         # Crear o obtener el objeto ListaProducto
-        lista_producto_proyectoCursoProducto = lista_producto_data.get('proyectoCursoProducto')
-        lista_producto_proyectoFormuladoProducto = lista_producto_data.get('proyectoFormuladoProducto')
-        lista_producto_proyectoRSUProducto= lista_producto_data.get('proyectoRSUProducto')
+        lista_producto_proyectoCursoProducto = data_general.get('proyectoCursoProducto')
+        lista_producto_proyectoFormuladoProducto = data_general.get('proyectoFormuladoProducto')
+        lista_producto_proyectoRSUProducto= data_general.get('proyectoRSUProducto')
         lista_producto, _ = ListaProducto.objects.get_or_create(
             id=ListaProducto.objects.count() + 1,
             evento=evento,
@@ -438,17 +429,17 @@ class CrearNuevoProducto(APIView):
         
 
         producto_data = {
-            'id': Producto.objects.count() + 1,
-            'tituloProducto': data.get('tituloProducto'),
-            'investigador': data.get('investigador'),
-            'publicacion': data.get('publicacion'),
-            'porcentanjeAvanFinSemestre': data.get('porcentanjeAvanFinSemestre'),
-            'observaciones': data.get('observaciones'),
+            'id': request.data.get('id'),
+            'tituloProducto': request.data.get('tituloProducto'),
+            'investigador': request.data.get('investigador'),
+            'publicacion': request.data.get('publicacion'),
+            'porcentanjeAvanFinSemestre': request.data.get('porcentanjeAvanFinSemestre'),
+            'observaciones': request.data.get('observaciones'),
             'estadoProducto': EstadoProducto.objects.get(pk=1),
-            'porcentajeComSemestral': data.get('porcentajeComSemestral'),
-            'porcentajeRealMensual': data.get('porcentajeRealMensual'),
-            'fecha': data.get('fecha'),
-            'origen': data.get('origen'),
+            'porcentajeComSemestral': request.data.get('porcentajeComSemestral'),
+            'porcentajeRealMensual': request.data.get('porcentajeRealMensual'),
+            'fecha':  make_aware(datetime.strptime(request.data.get('fecha'), "%Y-%m-%d")),
+            'origen': request.data.get('origen'),
             'categoriaMinciencias': CategoriaMinciencias.objects.get(pk=1),
             'cuartilEsperado': CuartilEsperado.objects.get(pk=1),
         }
@@ -456,17 +447,21 @@ class CrearNuevoProducto(APIView):
 
         producto = Producto.objects.create(**producto_data) 
         # vinculación coinvestigadores
-        coinvestigadores_ids = data.get('coinvestigadoresProducto')
+        coinvestigadores_ids = request.data.get('coinvestigadoresProducto')
         coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
         producto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
         # vinculación estudiantes
-        estudiantes_ids = data.get('estudiantesProducto')
+        estudiantes_ids = request.data.get('estudiantesProducto')
         estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
         producto.estudiantes.set(estudiantes)
         # vinculación participantesExternos
-        participantesExternos_ids = data.get('participantesExternosProducto')
+        participantesExternos_ids = request.data.get('participantesExternosProducto')
         participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
         producto.participantesExternos.set(participantes_externos)
+        
+        if soporte:
+            producto.Soporte = soporte
+            producto.save()
         
         serializer = productoSerializer(producto)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

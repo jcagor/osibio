@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -51,21 +51,51 @@ export class ProyectoyproductoService {
     
     
     crearProyecto(proyecto: Proyecto): Observable<Proyecto> {
-      return this.http.post<Proyecto>(this.apiUrl, proyecto);
+      return this.http.post<Proyecto>(this.apiUrl, this.convertirObjetoProyectoAFormData(proyecto));
+  }
+
+  convertirObjetoProyectoAFormData(datosFormulario: any): FormData {
+    datosFormulario.entidadPostulo = JSON.stringify(datosFormulario.entidadPostulo);
+    datosFormulario.entregableAdministrativo = JSON.stringify(datosFormulario.entregableAdministrativo);
+    datosFormulario.financiacion = JSON.stringify(datosFormulario.financiacion);
+    datosFormulario.producto= JSON.stringify(datosFormulario.producto);
+    datosFormulario.transacciones= JSON.stringify(datosFormulario.transacciones);
+    datosFormulario.ubicacionProyecto = JSON.stringify(datosFormulario.ubicacionProyecto);
+    const keys = Object.keys(datosFormulario);
+    const form = new FormData();
+    keys.forEach(key => {
+      form.append(key, datosFormulario[key]);
+    });
+    return form;
   }
     
     
     
   private apiUrl2 = 'http://localhost:8000/CrearProducto';
   crearProducto(producto: Producto): Observable<Producto> {
-    const datos = { producto };
-    console.log(datos);
-    return this.http.post<Producto>(this.apiUrl2, datos);
+    console.log('crearProducto => ',producto);
+    return this.http.post<Producto>(this.apiUrl2, this.convertirObjetoProductoAFormData(producto));
+  }
+
+  convertirObjetoProductoAFormData(datosFormulario: any): FormData {
+    datosFormulario.listaProducto = JSON.stringify(datosFormulario.listaProducto);
+    const keys = Object.keys(datosFormulario);
+    const form = new FormData();
+    keys.forEach(key => {
+      form.append(key, datosFormulario[key]);
+    });
+    return form;
   }
 
   getEstadoProyecto(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiEstadoProyecto}`);
   }
+
+  private apiEventos = 'http://localhost:8000/tipoEventos';
+  getEventos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiEventos}`);
+  }
+  
   
 
 }

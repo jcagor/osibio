@@ -14,7 +14,8 @@ import os
 from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -142,3 +143,12 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'numerodocumento',
     # Otras configuraciones JWT si es necesario
 }
+
+CORS_ORIGIN_ALLOW_ALL: True 
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200',
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+MEDIA_URL = '/media/'                          
