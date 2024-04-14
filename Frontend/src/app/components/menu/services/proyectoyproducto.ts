@@ -48,8 +48,6 @@ export class ProyectoyproductoService {
 
   //Crear proyectos y productos
     private apiUrl = 'http://localhost:8000/CrearProyecto';
-    
-    
     crearProyecto(proyecto: Proyecto): Observable<Proyecto> {
       return this.http.post<Proyecto>(this.apiUrl, this.convertirObjetoProyectoAFormData(proyecto));
   }

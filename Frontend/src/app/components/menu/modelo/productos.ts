@@ -118,7 +118,7 @@ export interface Eventos {
     estadoProducto?: string;
     porcentajeComSemestral?: number;
     porcentajeRealMensual?: number;
-    fecha?: string;
+    fecha?: string | Date;
     origen?: string;
     Soporte?: File;
     estudiantesProducto?: Estudiante[];

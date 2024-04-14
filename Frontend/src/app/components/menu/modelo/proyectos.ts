@@ -129,23 +129,23 @@ export interface EstadoProducto {
 export interface Producto {
   id?: string;
   tituloProducto?: string;
-  rolProducto?: RolProducto;
   investigador ?: string;
   listaProducto ?: ListaProducto;
-  cuartilEsperado?: CuartilEsperado;
-  categoriaMinciencias?: CategoriaMinciencias;
   tipologiaProducto?: string;
   publicacion?: string;
-  estudiantes?: Estudiantes;
+  estudiantes?:String;
   estadoProdIniSemestre?: string;
   porcentanjeAvanFinSemestre?: number;
   observaciones?: string;
-  estadoProducto?: EstadoProducto;
+  estadoProducto?: string;
   porcentajeComSemestral?: number;
-  porcentajeRealMensual?: string;
-  fecha?: Date;
+  porcentajeRealMensual?: number;
+  fecha?: string | Date;
   origen?: string;
   Soporte?: File;
+  estudiantesProducto?: Estudiante[];
+  participantesExternosProducto?: ParticipanteExterno[];
+  coinvestigadoresProducto?: Coinvestigador[];
 }
 
 //--------------------------------------------------- Proyecto --------------------
@@ -204,6 +204,7 @@ export interface Proyecto {
   porcentajeEjecucionFinCorte?: number;
   porcentajeAvance?: number;
   soporte?: File;
+  soporteProducto?: File;
   transacciones?: transacciones;
   origen?: string;
   convocatoria?: string;
