@@ -14,12 +14,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.css'],
   standalone: true,
-  imports: [MatTabsModule, MatSlideToggleModule, MatDividerModule, MatListModule, MatMenuModule, MatButtonModule,CommonModule,FormsModule,MatTableModule,MatIconModule,ReactiveFormsModule],
+  imports: [MatTabsModule, MatSlideToggleModule, MatDividerModule, MatListModule, MatMenuModule, MatButtonModule,CommonModule,FormsModule,MatTableModule,MatIconModule,ReactiveFormsModule,MatSnackBarModule],
 })
 export class ControlComponent {
   usuarios: any[] = [];
@@ -35,7 +36,10 @@ export class ControlComponent {
 
   
 
-  constructor(private investigadorService: InvestigadorService, private searchService: SearchService,) {
+  constructor(
+    private investigadorService: InvestigadorService, 
+    private searchService: SearchService,
+    private _snackBar: MatSnackBar) {
     
     this.dataSource = new MatTableDataSource<any>([]);
     this.dataSource2 = new MatTableDataSource<any>([]);
@@ -62,7 +66,9 @@ export class ControlComponent {
 
         console.log('Usuarios recuperados:', usuarios);
         this.usuarios = usuarios;
-        this.dataSource.data = usuarios;
+        const usuariosSort = usuarios.sort((a, b) => (a.nombre < b.nombre ? -1 : 1))
+
+        this.dataSource.data = usuariosSort;
       },
       (error) => {
         console.error('Error al obtener usuarios:', error);
@@ -74,7 +80,11 @@ export class ControlComponent {
     usuario.rolinvestigador = nuevoRol;
     this.investigadorService.actualizarInvestigador(usuario).subscribe(
       () => {
+        this._snackBar.open('Registro actualizado correctamente',  'Rol',{
+          duration: 2000,
+        });
         console.log('Rol actualizado correctamente');
+        this.ngOnInit();
       },
       (error) => {
         console.error('Error al actualizar rol:', error);
@@ -86,8 +96,11 @@ export class ControlComponent {
     usuario.estado = !usuario.estado; // Cambiar estado
     this.investigadorService.actualizarInvestigador(usuario).subscribe(
       () => {
+        this._snackBar.open('Registro actualizado correctamente', 'Estado',{
+          duration: 2000,
+        });
         console.log('Estado actualizado correctamente');
-           
+        this.ngOnInit();
       },
       (error) => {
         console.error('Error al actualizar estado:', error);

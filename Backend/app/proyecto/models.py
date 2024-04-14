@@ -94,10 +94,13 @@ class Investigador(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     def save(self, *args, **kwargs):
-        # Encriptar la contraseña antes de guardar el objeto Investigador
-        self.contrasena = make_password(self.contrasena)
-        super().save(*args, **kwargs)
-    
+        if Investigador.objects.filter(pk=self.numerodocumento).exists():
+            super().save(*args, **kwargs)        
+        else:
+            # Encriptar la contraseña antes de guardar el objeto Investigador
+            self.contrasena = make_password(self.contrasena)    
+            super().save(*args, **kwargs)
+
     def generate_token(self):
         token, created = Token.objects.get_or_create(user=self)  # Genera o recupera el token para este investigador
         return token.key 

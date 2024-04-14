@@ -16,6 +16,7 @@ import { MenuComponent } from './menu.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatFormFieldModule,
     FormsModule,
     MatSlideToggleModule,
+    MatSnackBarModule,
   ],
 })
 export class MenuModule {
