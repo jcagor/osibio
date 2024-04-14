@@ -942,9 +942,6 @@ export class ProyectosComponent implements OnInit {
         nivelRiesgoEtico: this.firstFormGroup.get('nivelRiesgoEtico')?.value,
         lineaInvestigacion:
           this.firstFormGroup.get('lineaInvestigacion')?.value,
-        entregableAdministrativo: this.firstFormGroup.get(
-          'entregableAdministrativo'
-        )?.value,
         estudiantes: this.firstFormGroup.get('estudiantesProyecto')?.value,
         participantesExternos: this.firstFormGroup.get(
           'participantesExternosProyecto'

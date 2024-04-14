@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.hashers import make_password
 from django.db import models, transaction
 from rest_framework.authtoken.models import Token
+from django.utils import timezone
 
 # Se crean las clases para los modelos
 # colocamos los atributos de la clase
@@ -90,6 +91,8 @@ class Investigador(models.Model):
     lineainvestigacion = models.CharField(max_length=50)
     ies = models.CharField(max_length=50)
     ubicacion = models.ForeignKey(Ubicacion,null=False,blank=False,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     def save(self, *args, **kwargs):
         # Encriptar la contraseña antes de guardar el objeto Investigador
         self.contrasena = make_password(self.contrasena)
@@ -320,8 +323,22 @@ class Producto(models.Model):
     cuartilEsperado=models.ForeignKey(CuartilEsperado,null=False,blank=False,on_delete=models.CASCADE)
     categoriaMinciencias=models.ForeignKey(CategoriaMinciencias,null=False,blank=False,on_delete=models.CASCADE)
     participantesExternos = models.ManyToManyField(ParticipantesExternos)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     class Meta:
         db_table = 'proyecto_Producto'
+        
+class EntregableAdministrativoProducto(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
+    nombre = models.CharField(max_length=50)
+    titulo = models.CharField(max_length=50)
+    calidad = models.CharField(max_length=50)
+    entregable = models.CharField(max_length=50)
+    pendiente = models.CharField(max_length=50)
+    clasificacion = models.CharField(max_length=50)
+    producto_id = models.ForeignKey(Producto,null=False,blank=False,on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'proyecto_EntregableAdministrativoProducto'
 
 #---------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------- Proyecto -----------------------
@@ -357,17 +374,6 @@ class UbicacionProyecto(models.Model):
     departamento = models.CharField(max_length=50)
     class Meta:
         db_table = 'proyecto_Ubicacionproyecto'
-
-class EntregableAdministrativo(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
-    nombre = models.CharField(max_length=50)
-    titulo = models.CharField(max_length=50)
-    calidad = models.CharField(max_length=50)
-    entregable = models.CharField(max_length=50)
-    pendiente = models.CharField(max_length=50)
-    clasificacion = models.CharField(max_length=50)
-    class Meta:
-        db_table = 'proyecto_Entregableadministrativo'
 
 class EstadoProyecto(models.Model):
     id = models.AutoField(primary_key=True)
@@ -421,12 +427,25 @@ class Proyecto(models.Model):
         ("Espera","Espera")
     ]
     estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
-    entregableAdministrativo = models.ForeignKey(EntregableAdministrativo,null=False,blank=False,on_delete=models.CASCADE)
+    #entregableAdministrativo = models.ForeignKey(EntregableAdministrativo,null=False,blank=False,on_delete=models.CASCADE)
     estudiantes = models.ManyToManyField(Estudiantes)
     participantesExternos = models.ManyToManyField(ParticipantesExternos)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     class Meta:
         db_table = 'proyecto_Proyecto'
 
+class EntregableAdministrativoProyecto(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
+    nombre = models.CharField(max_length=50)
+    titulo = models.CharField(max_length=50)
+    calidad = models.CharField(max_length=50)
+    entregable = models.CharField(max_length=50)
+    pendiente = models.CharField(max_length=50)
+    clasificacion = models.CharField(max_length=50)
+    proyecto_id = models.ForeignKey(Proyecto,null=False,blank=False,on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'proyecto_EntregableAdministrativoProyecto'
 
 #--------------------------Actividades o avances ----------
 class AvanceProyecto(models.Model):

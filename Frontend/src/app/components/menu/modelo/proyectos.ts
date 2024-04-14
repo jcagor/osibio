@@ -213,7 +213,6 @@ export interface Proyecto {
   modalidadProyecto?: string;
   nivelRiesgoEtico?: string;
   lineaInvestigacion?: string;
-  entregableAdministrativo?: EntregableAdministrativo;
   estudiantes?: Estudiante[];
   participantesExternos?: ParticipanteExterno[];
 }

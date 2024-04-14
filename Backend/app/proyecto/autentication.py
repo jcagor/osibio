@@ -15,7 +15,7 @@ from django.utils.timezone import make_aware
 import ast
 
 from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
-                     Contrato, EntidadPostulo, EntregableAdministrativo, EstadoProyecto,
+                     Contrato, EntidadPostulo, EntregableAdministrativoProyecto, EntregableAdministrativoProducto, EstadoProyecto,
                      Estudiantes, Eventos, Financiacion, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,
@@ -134,7 +134,7 @@ class CrearProyecto(APIView):
         transacciones_acta=transacciones_data.get('acta')
         transacciones_descripcion=transacciones_data.get('descripcion')
         transacciones,_=Transacciones.objects.get_or_create(
-            id=Transacciones.objects.count()+2,
+            id=Transacciones.objects.count()+1,
             fecha=transacciones_fecha,
             acta=transacciones_acta,
             descripcion=transacciones_descripcion
@@ -152,24 +152,7 @@ class CrearProyecto(APIView):
             pais=ubicacionProyecto_pais,
             departamento=ubicacionProyecto_departamento
         )
-        
-        entregableAdministrativo_data = json.loads(request.data.get('entregableAdministrativo'))
-        entregableAdministrativo_nombre=entregableAdministrativo_data.get('nombre')
-        entregableAdministrativo_titulo=entregableAdministrativo_data.get('titulo')
-        entregableAdministrativo_calidad=entregableAdministrativo_data.get('calidad')
-        entregableAdministrativo_entregable=entregableAdministrativo_data.get('entregable')
-        entregableAdministrativo_pendiente=entregableAdministrativo_data.get('pendiente')
-        entregableAdministrativo_clasificacion=entregableAdministrativo_data.get('clasificacion')
-        entregableAdministrativo,_=EntregableAdministrativo.objects.get_or_create(
-            id=EntregableAdministrativo.objects.count()+1,
-            nombre=entregableAdministrativo_nombre,
-            titulo=entregableAdministrativo_titulo,
-            calidad=entregableAdministrativo_calidad,
-            entregable=entregableAdministrativo_entregable,
-            pendiente=entregableAdministrativo_pendiente,
-            clasificacion=entregableAdministrativo_clasificacion
-        )
-        
+
         proyecto_data = {
             'codigo': request.data.get('codigo'),
             'fecha': make_aware(datetime.strptime(request.data.get('fecha'), "%Y-%m-%d")),
@@ -195,7 +178,6 @@ class CrearProyecto(APIView):
         proyecto_data['financiacion'] = financiacion
         proyecto_data['transacciones'] = transacciones
         proyecto_data['ubicacionProyecto']=ubicacionProyecto
-        proyecto_data['entregableAdministrativo']=entregableAdministrativo
 
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 

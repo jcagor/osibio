@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
-                     CuartilEsperado, EntidadPostulo, EntregableAdministrativo,
+                     CuartilEsperado, EntidadPostulo, EntregableAdministrativoProyecto, EntregableAdministrativoProducto,
                      EstadoProducto, EstadoProyecto, Estudiantes, Eventos,
                      Financiacion, Grupoinvestigacion, Imagen, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
@@ -21,7 +21,7 @@ from .serializer import (apropiacionSerializer, articulosSerializer,
                          categoriaMincienciasSerializer, consultoriaSerializer,
                          contenidoSerializer, contratoSerializer,
                          cuartilEsperadoSerializer, entidadPostuloSerializer,
-                         entregableAdministrativoSerializer,
+                         entregableAdministrativoProyectoSerializer,entregableAdministrativoProductoSerializer,
                          estadoProductoSerializer, estadoProyecotSerializer,
                          estudiantesSerializer, eventosSerializer,
                          financiacionSerializer, grupoinvestigacionSerializer,
@@ -271,9 +271,13 @@ class avanceProyectoList(generics.ListCreateAPIView):
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
 
-class entregableAdministrativoList(generics.ListCreateAPIView):
-    queryset = EntregableAdministrativo.objects.all()
-    serializer_class = entregableAdministrativoSerializer
+class entregableAdministrativoProyectoList(generics.ListCreateAPIView):
+    queryset = EntregableAdministrativoProyecto.objects.all()
+    serializer_class = entregableAdministrativoProyectoSerializer
+    
+class entregableAdministrativoProductoList(generics.ListCreateAPIView):
+    queryset = EntregableAdministrativoProducto.objects.all()
+    serializer_class = entregableAdministrativoProductoSerializer
 
 class estadoProyectoList(generics.ListCreateAPIView):
     queryset = EstadoProyecto.objects.all()
@@ -303,9 +307,13 @@ class avanceProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView)
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
 
-class entregableAdministrativoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EntregableAdministrativo.objects.all()
-    serializer_class = entregableAdministrativoSerializer
+class entregableAdministrativoProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = EntregableAdministrativoProyecto.objects.all()
+    serializer_class = entregableAdministrativoProyectoSerializer
+    
+class entregableAdministrativoProductoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = EntregableAdministrativoProducto.objects.all()
+    serializer_class = entregableAdministrativoProductoSerializer
 
 class proyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyecto.objects.all()
