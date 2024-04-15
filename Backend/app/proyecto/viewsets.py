@@ -275,6 +275,22 @@ class entregableAdministrativoProyectoList(generics.ListCreateAPIView):
     queryset = EntregableAdministrativoProyecto.objects.all()
     serializer_class = entregableAdministrativoProyectoSerializer
     
+    def post(self, request, *args, **kwargs):
+        admin_data = {
+            'id': EntregableAdministrativoProyecto.objects.count()+1,
+            'nombre': request.data.get('nombre'),
+            'titulo': request.data.get('titulo'),
+            'calidad': request.data.get('calidad'),
+            'entregable': request.data.get('entregable'),
+            'pendiente': request.data.get('pendiente'),
+            'clasificacion': request.data.get('clasificacion'),
+            'proyecto_id': Proyecto.objects.get(pk=request.data.get('proyecto_id_id')),
+        }
+        admin = EntregableAdministrativoProyecto.objects.create(**admin_data)
+        serializer = entregableAdministrativoProyectoSerializer(admin) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 class entregableAdministrativoProductoList(generics.ListCreateAPIView):
     queryset = EntregableAdministrativoProducto.objects.all()
     serializer_class = entregableAdministrativoProductoSerializer
@@ -318,3 +334,8 @@ class entregableAdministrativoProductoRetrieveUpdateDestroy(generics.RetrieveUpd
 class proyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyecto.objects.all()
     serializer_class = proyectoSerializer
+    def put(self, request, *args, **kwargs):
+        obj = Proyecto.objects.get(pk=request.data.get('codigo'))
+        obj.estadoProceso = request.data.get('estadoProceso')
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

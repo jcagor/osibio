@@ -119,7 +119,7 @@ urlpatterns = [
     path('avanceProyecto/<int:pk>', avanceProyectoRetrieveUpdateDestroy.as_view(), name='avanceProyecto-detail'),
     path('entregableAdministrativoProyecto/<int:pk>', entregableAdministrativoProyectoRetrieveUpdateDestroy.as_view(), name='entregableAdministrativoProyecto-detail'),
     path('entregableAdministrativoProducto/<int:pk>', entregableAdministrativoProductoRetrieveUpdateDestroy.as_view(), name='entregableAdministrativoProducto-detail'),
-    path('proyecto/<int:pk>', proyectoRetrieveUpdateDestroy.as_view(), name='proyecto-detail'),
+    path('proyecto/<pk>', proyectoRetrieveUpdateDestroy.as_view(), name='proyecto-detail'),
     path('imagen', imagenList.as_view(), name='create-imagen-list'),
     path('imagen/<int:pk>', imagenRetrieveUpdateDestroy.as_view(), name='imagen-detail'),
 ]

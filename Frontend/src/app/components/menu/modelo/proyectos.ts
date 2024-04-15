@@ -210,6 +210,7 @@ export interface Proyecto {
   convocatoria?: string;
   ubicacionProyecto?: ubicacionProyecto;
   estadoProyecto?: string;
+  estadoProceso?: string;
   modalidadProyecto?: string;
   nivelRiesgoEtico?: string;
   lineaInvestigacion?: string;

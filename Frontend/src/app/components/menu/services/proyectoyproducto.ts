@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Producto } from '../modelo/productos';
 import { Proyecto } from '../modelo/proyectos';
@@ -93,7 +93,47 @@ export class ProyectoyproductoService {
   getEventos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiEventos}`);
   }
+
+  private apiProyecto = 'http://localhost:8000/proyecto'; 
+  actualizarProyecto(proyecto: Proyecto) {
+    console.log('actualizarProyecto =>',proyecto);
+
+    const url = `${this.apiProyecto}/${proyecto.codigo}`;
   
+    return this.http.put(url, proyecto).pipe(
   
+      catchError(error => {
+  
+        if(error instanceof HttpErrorResponse) {
+  
+          switch (error.status) {
+            case 404:
+              // El investigador no existe
+              return throwError('Investigador no encontrado');
+  
+            case 400:
+              // Datos inválidos
+              return throwError('Datos de investigador inválidos'); 
+  
+            default:
+              return throwError('Error al actualizar investigador');
+          
+          }
+  
+        }
+  
+        return throwError('Error desconocido');
+  
+      })
+  
+    );
+  
+  }
+  
+  private apiEntregableProyecto = 'http://localhost:8000/entregableAdministrativoProyecto'; 
+  crearEntregableAdministrativoProyecto(entregable: any): Observable<Producto> {
+    console.log('entregable => ',entregable);
+    return this.http.post<any>(this.apiEntregableProyecto, entregable);
+  }
 
 }
