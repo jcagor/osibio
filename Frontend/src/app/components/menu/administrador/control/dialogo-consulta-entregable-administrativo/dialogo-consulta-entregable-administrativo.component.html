@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<mat-dialog-content class="mat-typography">
+    <div class="example-container">
+
+        <div class="container-fluid">
+            <ul class="timeline">
+                <li *ngFor="let item of entregables; index as i;" >
+                    <div class="timeline-badge done" [ngClass]="{'done': i === 0, 'fail' : i !== 0 }"><i class="glyphicon glyphicon-hand-left"></i></div>
+                    <div class="timeline-panel">
+                        <div class="timeline-body">
+                            <ul>
+                                <li>calidad = {{item.calidad}}</li>
+                                <li>clasificacion = {{item.clasificacion}}</li>
+                                <li>entregable = {{item.entregable}}</li>
+                                <li>nombre = {{item.nombre}}</li>
+                                <li>pendiente = {{item.pendiente}}</li>
+                                <li>titulo = {{item.titulo}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancelar</button>
+</mat-dialog-actions>

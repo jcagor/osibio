@@ -79,6 +79,9 @@
                             <button  matTooltip="Notificar" matTooltipPosition="above" mat-icon-button color="primary" (click)="openDialogEntregableAdministrativo(proyecto, 'Proyecto')">
                                 <mat-icon>notifications</mat-icon>
                             </button>
+                            <button  matTooltip="Historial" matTooltipPosition="above" mat-icon-button color="warn" (click)="openDialogHistorialEntregableAdministrativo(proyecto, 'Proyecto')">
+                                <mat-icon>history</mat-icon>
+                            </button>
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="['codigo', 'lider', 'estado','updated_at','created_at','accion']; sticky: true"></tr>

@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogoTramiteEntregableAdministrativoComponent } from './dialogo-tramite-entregable-administrativo/dialogo-tramite-entregable-administrativo.component';
 import Swal from 'sweetalert2'
+import { DialogoConsultaEntregableAdministrativoComponent } from './dialogo-consulta-entregable-administrativo/dialogo-consulta-entregable-administrativo.component';
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
@@ -154,13 +155,38 @@ export class ControlComponent {
     );
   }
 
-  openDialogEntregableAdministrativo(proyecto: Proyecto, tipo:string): void {
+  openDialogEntregableAdministrativo(data: any, tipo:string): void {
     const dialogRef = this.dialog.open(DialogoTramiteEntregableAdministrativoComponent, {
       data: {
         title: 'Entregable Administrativo',
         buttonTitle: 'CREAR',
         type:tipo,
-        data:proyecto,
+        data:data,
+      },
+      width: '30%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado una notificación',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        
+      } 
+    });
+  }
+
+  openDialogHistorialEntregableAdministrativo(data: any, tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoConsultaEntregableAdministrativoComponent, {
+      data: {
+        title: 'Historial Entregable Administrativo',
+        buttonTitle: 'CREAR',
+        type:tipo,
+        data:data,
       },
       width: '30%',
       disableClose: true,

@@ -136,4 +136,8 @@ export class ProyectoyproductoService {
     return this.http.post<any>(this.apiEntregableProyecto, entregable);
   }
 
+  obtenerEntregableAdministrativoProyecto(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiEntregableProyecto);
+  }
+
 }
