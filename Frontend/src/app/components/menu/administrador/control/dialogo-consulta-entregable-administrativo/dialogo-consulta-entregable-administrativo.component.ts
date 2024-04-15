@@ -44,19 +44,32 @@ export class DialogoConsultaEntregableAdministrativoComponent implements OnInit 
     if(this.type =='Proyecto'){
       this.obtenerEntregableAdministrativoProyecto(this.data);
     }
+
+    if(this.type =='Producto'){
+      this.obtenerEntregableAdministrativoProducto(this.data);
+    }
   }
 
   
   obtenerEntregableAdministrativoProyecto(data:any): void {
-
-    console.log('obtenerEntregableAdministrativoProyecto =>',data)
     const codigo = data.codigo;
-
     this.proyectoyproductoService.obtenerEntregableAdministrativoProyecto().subscribe(
       (data) => {        
         const dataSort = data.filter(a => a.proyecto_id === codigo);
         this.entregables = dataSort.sort((a, b) => (a.id > b.id ? -1 : 1));
-        console.log('entregables =>',this.entregables)
+      },
+      (error) => {
+        console.error('Error al obtener entregables:', error);
+      }
+    );
+  }
+
+  obtenerEntregableAdministrativoProducto(data:any): void {
+    const codigo = data.id;
+    this.proyectoyproductoService.obtenerEntregableAdministrativoProducto().subscribe(
+      (data) => {                
+        const dataSort = data.filter(a => a.producto_id === codigo);
+        this.entregables = dataSort.sort((a, b) => (a.id > b.id ? -1 : 1));
       },
       (error) => {
         console.error('Error al obtener entregables:', error);

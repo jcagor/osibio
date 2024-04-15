@@ -50,7 +50,7 @@ export class ControlComponent {
 
   dataSource: MatTableDataSource<any>;
   dataSourceProyecto: MatTableDataSource<any>;
-  dataSource3: MatTableDataSource<any>;
+  dataSourceProducto: MatTableDataSource<any>;
   expandedElement: any | null;
 
 
@@ -70,16 +70,17 @@ export class ControlComponent {
     
     this.dataSource = new MatTableDataSource<any>([]);
     this.dataSourceProyecto = new MatTableDataSource<any>([]);
-    this.dataSource3 = new MatTableDataSource<any>([]);
+    this.dataSourceProducto = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
     this.obtenerUsuarios();
     this.obtenerProyectos();
+    this.obtenerProductos();
     this.searchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
       this.dataSourceProyecto.filter = query.trim().toLowerCase();
-      this.dataSource3.filter = query.trim().toLowerCase();
+      this.dataSourceProducto.filter = query.trim().toLowerCase();
     });
   }
 
@@ -103,6 +104,19 @@ export class ControlComponent {
       },
       (error) => {
         console.error('Error al obtener proyectos:', error);
+      }
+    );
+  }
+
+  obtenerProductos() {
+    this.proyectoyproductoService.getProductos().subscribe(
+      (producto) => {
+        console.log('obtenerProductos => ',producto)
+        const dataSort = producto.sort((a, b) => (a.codigo < b.codigo ? -1 : 1))
+        this.dataSourceProducto.data = dataSort;
+      },
+      (error) => {
+        console.error('Error al obtener productos:', error);
       }
     );
   }
@@ -142,6 +156,22 @@ export class ControlComponent {
   cambiarEstadoProyecto(data: any,proyecto: Proyecto): void {
     proyecto.estadoProceso = data;
     this.proyectoyproductoService.actualizarProyecto(proyecto).subscribe(
+      () => {
+        this._snackBar.open('Registro actualizado correctamente', 'Estado',{
+          duration: 2000,
+        });
+        console.log('Estado actualizado correctamente');
+        this.ngOnInit();
+      },
+      (error) => {
+        console.error('Error al actualizar estado:', error);
+      }
+    );
+  }
+
+  cambiarEstadoProducto(data: any,producto: any): void {
+    producto.estadoProceso = data;
+    this.proyectoyproductoService.actualizarProducto(producto).subscribe(
       () => {
         this._snackBar.open('Registro actualizado correctamente', 'Estado',{
           duration: 2000,

@@ -247,6 +247,12 @@ class estudiantesRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 class productoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = productoSerializer
+    
+    def put(self, request, *args, **kwargs):
+        obj = Producto.objects.get(pk=request.data.get('id'))
+        obj.estadoProceso = request.data.get('estadoProceso')
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #---------------------------- PROYECTOS ----------------------------
 
@@ -294,6 +300,22 @@ class entregableAdministrativoProyectoList(generics.ListCreateAPIView):
 class entregableAdministrativoProductoList(generics.ListCreateAPIView):
     queryset = EntregableAdministrativoProducto.objects.all()
     serializer_class = entregableAdministrativoProductoSerializer
+    
+    def post(self, request, *args, **kwargs):
+        admin_data = {
+            'id': EntregableAdministrativoProducto.objects.count()+1,
+            'nombre': request.data.get('nombre'),
+            'titulo': request.data.get('titulo'),
+            'calidad': request.data.get('calidad'),
+            'entregable': request.data.get('entregable'),
+            'pendiente': request.data.get('pendiente'),
+            'clasificacion': request.data.get('clasificacion'),
+            'producto_id': Producto.objects.get(pk=request.data.get('producto_id_id')),
+        }
+        admin = EntregableAdministrativoProducto.objects.create(**admin_data)
+        serializer = entregableAdministrativoProductoSerializer(admin) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class estadoProyectoList(generics.ListCreateAPIView):
     queryset = EstadoProyecto.objects.all()

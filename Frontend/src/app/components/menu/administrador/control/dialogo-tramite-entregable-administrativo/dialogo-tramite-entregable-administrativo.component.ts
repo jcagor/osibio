@@ -98,23 +98,31 @@ export class DialogoTramiteEntregableAdministrativoComponent implements OnInit {
         pendiente: this.pendiente?.value,
         clasificacion: this.clasificacion?.value,
       };
-
       if(this.type === 'Proyecto') {
         entregableAdministrativo.proyecto_id_id = this.data.codigo;
+        this.proyectoyproductoService.crearEntregableAdministrativoProyecto(entregableAdministrativo).subscribe(
+          (resp) => {
+            console.log('Se ha registrado la notificación:', resp);
+            this.registroForm.reset();
+            this.dialogRef.close(true);
+          },
+          (error) => {
+            console.error('Error al notificar:', error);
+          }
+        );
       } else {
-
+        entregableAdministrativo.producto_id_id = this.data.id;
+        this.proyectoyproductoService.crearEntregableAdministrativoProducto(entregableAdministrativo).subscribe(
+          (resp) => {
+            console.log('Se ha registrado la notificación:', resp);
+            this.registroForm.reset();
+            this.dialogRef.close(true);
+          },
+          (error) => {
+            console.error('Error al notificar:', error);
+          }
+        );
       }
-      console.log('guardarEntregableAdministrativo => ',entregableAdministrativo);
-      this.proyectoyproductoService.crearEntregableAdministrativoProyecto(entregableAdministrativo).subscribe(
-        (resp) => {
-          console.log('Se ha registrado la notificación:', resp);
-          this.registroForm.reset();
-          this.dialogRef.close(true);
-        },
-        (error) => {
-          console.error('Error al notificar:', error);
-        }
-      );
     }
   }
 

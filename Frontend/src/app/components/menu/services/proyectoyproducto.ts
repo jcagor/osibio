@@ -97,37 +97,47 @@ export class ProyectoyproductoService {
   private apiProyecto = 'http://localhost:8000/proyecto'; 
   actualizarProyecto(proyecto: Proyecto) {
     console.log('actualizarProyecto =>',proyecto);
-
     const url = `${this.apiProyecto}/${proyecto.codigo}`;
-  
     return this.http.put(url, proyecto).pipe(
-  
       catchError(error => {
-  
         if(error instanceof HttpErrorResponse) {
-  
           switch (error.status) {
             case 404:
               // El investigador no existe
               return throwError('Investigador no encontrado');
-  
             case 400:
               // Datos inválidos
               return throwError('Datos de investigador inválidos'); 
-  
             default:
               return throwError('Error al actualizar investigador');
-          
           }
-  
         }
-  
         return throwError('Error desconocido');
-  
       })
-  
     );
-  
+  }
+
+  private apiProducto = 'http://localhost:8000/producto'; 
+  actualizarProducto(proyecto: any) {
+    console.log('actualizarProyecto =>',proyecto);
+    const url = `${this.apiProducto}/${proyecto.id}`;
+    return this.http.put(url, proyecto).pipe(
+      catchError(error => {
+        if(error instanceof HttpErrorResponse) {
+          switch (error.status) {
+            case 404:
+              // El investigador no existe
+              return throwError('Investigador no encontrado');
+            case 400:
+              // Datos inválidos
+              return throwError('Datos de investigador inválidos'); 
+            default:
+              return throwError('Error al actualizar investigador');
+          }
+        }
+        return throwError('Error desconocido');
+      })
+    );
   }
   
   private apiEntregableProyecto = 'http://localhost:8000/entregableAdministrativoProyecto'; 
@@ -138,6 +148,15 @@ export class ProyectoyproductoService {
 
   obtenerEntregableAdministrativoProyecto(): Observable<any[]> {
     return this.http.get<any[]>(this.apiEntregableProyecto);
+  }
+
+  private apiEntregableProducto = 'http://localhost:8000/entregableAdministrativoProducto'; 
+  crearEntregableAdministrativoProducto(entregable: any): Observable<Producto> {
+    return this.http.post<any>(this.apiEntregableProducto, entregable);
+  }
+
+  obtenerEntregableAdministrativoProducto(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiEntregableProducto);
   }
 
 }
