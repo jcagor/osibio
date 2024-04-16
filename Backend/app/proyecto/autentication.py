@@ -182,17 +182,26 @@ class CrearProyecto(APIView):
         proyecto = Proyecto.objects.create(**proyecto_data)  # Crea el objeto Proyecto con los datos relacionados
 
         # vinculación coinvestigadores
-        coinvestigadores_ids = request.data.get('coinvestigadores')
+        coinvestigadores_base =request.data.get('coinvestigadores')
+        coinvestigadores_proceso = str(coinvestigadores_base).split(',')
+
+        coinvestigadores_ids = coinvestigadores_proceso
         coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
         proyecto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
         
         # vinculación estudiantes
-        estudiantes_ids = request.data.get('estudiantes')
+        estudiantes_base =request.data.get('estudiantes')
+        estudiantes_proceso = str(estudiantes_base).split(',')
+        
+        estudiantes_ids = estudiantes_proceso
         estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
         proyecto.estudiantes.set(estudiantes)
         
         # vinculación participantesExternos
-        participantesExternos_ids = request.data.get('participantesExternos')
+        participantes_base =request.data.get('participantesExternos')
+        participantes_proceso = str(participantes_base).split(',')
+
+        participantesExternos_ids = participantes_proceso
         participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
         proyecto.participantesExternos.set(participantes_externos)
 
@@ -210,28 +219,17 @@ class CrearProyecto(APIView):
         list_producto = producto.get('listaProducto')
 
         coinvestiga_base =producto.get('coinvestigadoresProducto')
-        coinvestiga_proceso = []
-        for item in coinvestiga_base:
-            items = item.split(',')
-            remove_array = str(items).replace("['", "").replace("']", "")
-            coinvestiga_proceso.append(str(remove_array))
-        coinvestiga_fin =str(coinvestiga_proceso)
+        items_coinvestiga = str(coinvestiga_base).replace("['", "").replace("']", "").replace("'", "").replace(" ", "")
+        coinvestiga_fin = items_coinvestiga.split(',')
         
         estudiantes_base =producto.get('estudiantesProducto')
-        estudiantes_proceso = []
-        for item in estudiantes_base:
-            items = item.split(',')
-            remove_array = str(items).replace("['", "").replace("']", "")
-            estudiantes_proceso.append(str(remove_array))
-        estudiantes_fin =str(estudiantes_proceso)
-        
+        items_estudiantes = str(estudiantes_base).replace("['", "").replace("']", "").replace("'", "").replace(" ", "")
+        estudiantes_fin = items_estudiantes.split(',')
+
         participantes_base =producto.get('participantesExternosProducto')
-        participantes_proceso = []
-        for item in participantes_base:
-            items = item.split(',')
-            remove_array = str(items).replace("['", "").replace("']", "")
-            participantes_proceso.append(str(remove_array))
-        participantes_fin =str(participantes_proceso)
+        items_participantes = str(participantes_base).replace("['", "").replace("']", "").replace("'", "").replace(" ", "")
+        participantes_fin = items_participantes.split(',')
+
 
         evento_data = list_producto.get('evento')
         evento = None
@@ -709,15 +707,21 @@ class CrearNuevoProducto(APIView):
 
         producto = Producto.objects.create(**producto_data) 
         # vinculación coinvestigadores
-        coinvestigadores_ids = request.data.get('coinvestigadoresProducto')
+        coinvestigadores_base =request.data.get('coinvestigadoresProducto')
+        coinvestigadores_proceso = str(coinvestigadores_base).split(',')
+        coinvestigadores_ids = coinvestigadores_proceso
         coinvestigadores = Investigador.objects.filter(correo__in=coinvestigadores_ids)
         producto.coinvestigador.set(coinvestigadores)  # Asigna los coinvestigadores al proyecto usando set()     
         # vinculación estudiantes
-        estudiantes_ids = request.data.get('estudiantesProducto')
+        estudiantes_base =request.data.get('estudiantesProducto')
+        estudiantes_proceso = str(estudiantes_base).split(',')
+        estudiantes_ids = estudiantes_proceso
         estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
         producto.estudiantes.set(estudiantes)
         # vinculación participantesExternos
-        participantesExternos_ids = request.data.get('participantesExternosProducto')
+        participantes_base =request.data.get('participantesExternosProducto')
+        participantes_proceso = str(participantes_base).split(',')
+        participantesExternos_ids = participantes_proceso
         participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
         producto.participantesExternos.set(participantes_externos)
         
