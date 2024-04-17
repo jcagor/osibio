@@ -159,4 +159,14 @@ export class ProyectoyproductoService {
     return this.http.get<any[]>(this.apiEntregableProducto);
   }
 
+
+  obtenerEstadosProyecto(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiEstadoProyecto);
+  }
+
+  private apiEstadoProducto = 'http://localhost:8000/estadoproducto'; 
+  obtenerEstadosProducto(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiEstadoProducto);
+  }
+
 }

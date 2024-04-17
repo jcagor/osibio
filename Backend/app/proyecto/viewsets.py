@@ -251,6 +251,8 @@ class productoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         obj = Producto.objects.get(pk=request.data.get('id'))
         obj.estadoProceso = request.data.get('estadoProceso')
+        obj.estadoProducto = EstadoProducto.objects.get(pk=request.data.get('estadoProducto'))
+        obj.observacion = request.data.get('observacion')
         obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -391,5 +393,7 @@ class proyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         obj = Proyecto.objects.get(pk=request.data.get('codigo'))
         obj.estadoProceso = request.data.get('estadoProceso')
+        obj.estado = EstadoProyecto.objects.get(pk=request.data.get('estado'))
+        obj.observacion = request.data.get('observacion')
         obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

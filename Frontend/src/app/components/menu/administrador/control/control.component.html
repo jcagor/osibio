@@ -58,12 +58,17 @@
                     <ng-container matColumnDef="estado">
                         <th mat-header-cell *matHeaderCellDef> Estado </th>
                         <td mat-cell *matCellDef="let proyecto">
-                            <mat-select [(value)]="proyecto.estadoProceso" panelClass="matRole" (selectionChange)="cambiarEstadoProyecto($event.value,proyecto)" >
-                                <mat-option *ngFor="let data of estadosProceso" [value]="data">
-                                    {{data}}
+                            <mat-select [disabled]="proyecto.estadoProceso == 'Aprobado' ? false : true" [(value)]="proyecto.estado" panelClass="matRole" (selectionChange)="cambiarEstadoProyecto($event.value,proyecto)" >
+                                <mat-option *ngFor="let data of estadosProyectos" [value]="data.id">
+                                    {{data.estado}}
                                 </mat-option>
                             </mat-select>
                         </td>
+                    </ng-container>
+                    <!-- Estado Column -->
+                    <ng-container matColumnDef="estadoProceso">
+                        <th mat-header-cell *matHeaderCellDef> Proceso </th>
+                        <td mat-cell *matCellDef="let proyecto"> {{ proyecto.estadoProceso }} </td>
                     </ng-container>
                     <ng-container matColumnDef="created_at">
                         <th mat-header-cell *matHeaderCellDef> Fecha Creación </th>
@@ -76,16 +81,13 @@
                     <ng-container matColumnDef="accion">
                         <th mat-header-cell *matHeaderCellDef> Acción </th>
                         <td mat-cell *matCellDef="let proyecto">
-                            <button  matTooltip="Notificar" matTooltipPosition="above" mat-icon-button color="primary" (click)="openDialogEntregableAdministrativo(proyecto, 'Proyecto')">
-                                <mat-icon>notifications</mat-icon>
-                            </button>
-                            <button  matTooltip="Historial" matTooltipPosition="above" mat-icon-button color="warn" (click)="openDialogHistorialEntregableAdministrativo(proyecto, 'Proyecto')">
-                                <mat-icon>history</mat-icon>
+                            <button  matTooltip="Tramitar" matTooltipPosition="above" mat-icon-button color="primary" (click)="openDialogoTramite(proyecto, 'Proyecto')">
+                                <mat-icon>add_alert</mat-icon>
                             </button>
                         </td>
                     </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="['codigo', 'lider', 'estado','updated_at','created_at','accion']; sticky: true"></tr>
-                    <tr mat-row *matRowDef="let proyecto; columns: ['codigo', 'lider', 'estado','updated_at','created_at','accion'];"></tr>
+                    <tr mat-header-row *matHeaderRowDef="['codigo', 'lider', 'estado','estadoProceso','updated_at','created_at','accion']; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let proyecto; columns: ['codigo', 'lider', 'estado','estadoProceso','updated_at','created_at','accion'];"></tr>
                 </table>
             </section>
         </mat-tab>
@@ -106,12 +108,16 @@
                     <ng-container matColumnDef="estado">
                         <th mat-header-cell *matHeaderCellDef> Estado </th>
                         <td mat-cell *matCellDef="let producto">
-                            <mat-select [(value)]="producto.estadoProceso" panelClass="matRole" (selectionChange)="cambiarEstadoProducto($event.value,producto)" >
-                                <mat-option *ngFor="let data of estadosProceso" [value]="data">
-                                    {{data}}
+                            <mat-select [disabled]="producto.estadoProceso == 'Aprobado' ? false : true" [(value)]="producto.estadoProducto" panelClass="matRole" (selectionChange)="cambiarEstadoProducto($event.value,producto)" >
+                                <mat-option *ngFor="let data of estadosProductos" [value]="data.id">
+                                    {{data.estado}}
                                 </mat-option>
                             </mat-select>
                         </td>
+                    </ng-container>
+                    <ng-container matColumnDef="estadoProceso">
+                        <th mat-header-cell *matHeaderCellDef> Proceso </th>
+                        <td mat-cell *matCellDef="let producto"> {{ producto.estadoProceso }} </td>
                     </ng-container>
                     <ng-container matColumnDef="updated_at">
                         <th mat-header-cell *matHeaderCellDef> Fecha Modificación </th>
@@ -124,16 +130,13 @@
                     <ng-container matColumnDef="accion">
                         <th mat-header-cell *matHeaderCellDef> Acción </th>
                         <td mat-cell *matCellDef="let producto">
-                            <button  matTooltip="Notificar" matTooltipPosition="above" mat-icon-button color="primary" (click)="openDialogEntregableAdministrativo(producto, 'Producto')">
-                                <mat-icon>notifications</mat-icon>
-                            </button>
-                            <button  matTooltip="Historial" matTooltipPosition="above" mat-icon-button color="warn" (click)="openDialogHistorialEntregableAdministrativo(producto, 'Producto')">
-                                <mat-icon>history</mat-icon>
+                            <button  matTooltip="Tramitar" matTooltipPosition="above" mat-icon-button color="primary" (click)="openDialogoTramite(producto, 'Producto')">
+                                <mat-icon>add_alert</mat-icon>
                             </button>
                         </td>
                     </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="['nombre', 'lider', 'estado','updated_at','created_at','accion']; sticky: true"></tr>
-                    <tr mat-row *matRowDef="let producto; columns: ['nombre', 'lider', 'estado','updated_at','created_at','accion'];"></tr>
+                    <tr mat-header-row *matHeaderRowDef="['nombre', 'lider', 'estado','estadoProceso','updated_at','created_at','accion']; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let producto; columns: ['nombre', 'lider', 'estado','estadoProceso','updated_at','created_at','accion'];"></tr>
                 </table>
             </section>
         </mat-tab>

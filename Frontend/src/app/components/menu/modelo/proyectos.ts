@@ -216,6 +216,7 @@ export interface Proyecto {
   lineaInvestigacion?: string;
   estudiantes?: Estudiante[];
   participantesExternos?: ParticipanteExterno[];
+  estado?: string;
 }
 
 export interface Estudiante {

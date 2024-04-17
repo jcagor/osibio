@@ -20,7 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Proyecto } from '../../modelo/proyectos';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { DialogoTramiteEntregableAdministrativoComponent } from './dialogo-tramite-entregable-administrativo/dialogo-tramite-entregable-administrativo.component';
+import { DialogoTramiteComponent } from './dialogo-tramite/dialogo-tramite.component';
 import Swal from 'sweetalert2'
 import { DialogoConsultaEntregableAdministrativoComponent } from './dialogo-consulta-entregable-administrativo/dialogo-consulta-entregable-administrativo.component';
 @Component({
@@ -47,19 +47,13 @@ import { DialogoConsultaEntregableAdministrativoComponent } from './dialogo-cons
 })
 export class ControlComponent {
   usuarios: any[] = [];
+  estadosProyectos: any[] = [];
+  estadosProductos: any[] = [];
 
   dataSource: MatTableDataSource<any>;
   dataSourceProyecto: MatTableDataSource<any>;
   dataSourceProducto: MatTableDataSource<any>;
   expandedElement: any | null;
-
-
-  estadosProceso: string[] = [
-    'Aprobado',
-    'Rechazado',
-    'Corregir',
-    'Espera'
-  ];
 
   constructor(
     private investigadorService: InvestigadorService, 
@@ -77,11 +71,35 @@ export class ControlComponent {
     this.obtenerUsuarios();
     this.obtenerProyectos();
     this.obtenerProductos();
+    this.obtenerEstadosProyecto();
+    this.obtenerEstadosProducto();
     this.searchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
       this.dataSourceProyecto.filter = query.trim().toLowerCase();
       this.dataSourceProducto.filter = query.trim().toLowerCase();
     });
+  }
+
+  obtenerEstadosProyecto() {
+    this.proyectoyproductoService.obtenerEstadosProyecto().subscribe(
+      (proyecto) => {
+        this.estadosProyectos = proyecto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  obtenerEstadosProducto() {
+    this.proyectoyproductoService.obtenerEstadosProducto().subscribe(
+      (producto) => {
+        this.estadosProductos = producto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
   }
 
   obtenerUsuarios() {
@@ -110,9 +128,8 @@ export class ControlComponent {
 
   obtenerProductos() {
     this.proyectoyproductoService.getProductos().subscribe(
-      (producto) => {
-        console.log('obtenerProductos => ',producto)
-        const dataSort = producto.sort((a, b) => (a.codigo < b.codigo ? -1 : 1))
+      (producto) => {        
+        const dataSort = producto.sort((a, b) => (a.id < b.id ? -1 : 1))
         this.dataSourceProducto.data = dataSort;
       },
       (error) => {
@@ -154,7 +171,7 @@ export class ControlComponent {
   }
 
   cambiarEstadoProyecto(data: any,proyecto: Proyecto): void {
-    proyecto.estadoProceso = data;
+    proyecto.estado = data;
     this.proyectoyproductoService.actualizarProyecto(proyecto).subscribe(
       () => {
         this._snackBar.open('Registro actualizado correctamente', 'Estado',{
@@ -170,7 +187,7 @@ export class ControlComponent {
   }
 
   cambiarEstadoProducto(data: any,producto: any): void {
-    producto.estadoProceso = data;
+    producto.estadoProducto = data;
     this.proyectoyproductoService.actualizarProducto(producto).subscribe(
       () => {
         this._snackBar.open('Registro actualizado correctamente', 'Estado',{
@@ -185,15 +202,15 @@ export class ControlComponent {
     );
   }
 
-  openDialogEntregableAdministrativo(data: any, tipo:string): void {
-    const dialogRef = this.dialog.open(DialogoTramiteEntregableAdministrativoComponent, {
+  openDialogoTramite(data: any, tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoTramiteComponent, {
       data: {
-        title: 'Entregable Administrativo',
+        title: 'Tramitar '+tipo,
         buttonTitle: 'CREAR',
         type:tipo,
         data:data,
       },
-      width: '30%',
+      width: '15%',
       disableClose: true,
       panelClass: 'custom-modalbox',
     });
