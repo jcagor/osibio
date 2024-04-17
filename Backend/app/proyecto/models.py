@@ -315,6 +315,7 @@ class Producto(models.Model):
     porcentajeRealMensual = models.IntegerField()
     fecha = models.DateTimeField(default=datetime.datetime.now)
     origen = models.CharField(max_length=5000)
+    observacion = models.CharField(max_length=5000,default='')
     Soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
     estadoProceso = [
         ("Aprobado","Aprobado"),
@@ -342,6 +343,38 @@ class EntregableAdministrativoProducto(models.Model):
     producto_id = models.ForeignKey(Producto,null=False,blank=False,on_delete=models.CASCADE)
     class Meta:
         db_table = 'proyecto_EntregableAdministrativoProducto'
+        
+
+class ConfiguracionEntregableProducto(models.Model):
+    id = models.AutoField(primary_key=True)
+    descripcion = models.CharField(max_length=150)
+    fecha = models.DateField()
+    estado = models.BooleanField(default=False)
+    producto_id = models.ForeignKey(Producto,null=False,blank=False,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    class Meta:
+        db_table = 'proyecto_ConfiguracionEntregableProducto'
+        
+class AvanceEntregableProducto(models.Model):
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(max_length=250,blank=True)
+    soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
+    fecha = models.DateField()
+    estadoProceso = [
+        ("Aprobado","Aprobado"),
+        ("Rechazado","Rechazado"),
+        ("Corregir","Corregir"),
+        ("Espera","Espera")
+    ]
+    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
+    configuracionEntregableProducto_id = models.ForeignKey(ConfiguracionEntregableProducto,null=False,blank=False,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    class Meta:
+        db_table = 'proyecto_AvanceEntregableProducto'
+
+
 
 #---------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------- Proyecto -----------------------
@@ -399,6 +432,7 @@ class Proyecto(models.Model):
     grupoInvestigacionPro =  models.CharField(max_length=50)
     porcentajeEjecucionFinCorte = models.IntegerField()
     porcentajeAvance = models.IntegerField()
+    observacion = models.CharField(max_length=5000,default='')
     Soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
     transacciones = models.ForeignKey(Transacciones,null=False,blank=False,on_delete=models.CASCADE)
     origen = [
@@ -449,6 +483,35 @@ class EntregableAdministrativoProyecto(models.Model):
     proyecto_id = models.ForeignKey(Proyecto,null=False,blank=False,on_delete=models.CASCADE)
     class Meta:
         db_table = 'proyecto_EntregableAdministrativoProyecto'
+        
+class ConfiguracionEntregableProyecto(models.Model):
+    id = models.AutoField(primary_key=True)
+    descripcion = models.CharField(max_length=150)
+    fecha = models.DateField()
+    estado = models.BooleanField(default=False)
+    proyecto_id = models.ForeignKey(Proyecto,null=False,blank=False,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    class Meta:
+        db_table = 'proyecto_ConfiguracionEntregableProyecto'
+        
+class AvanceEntregableProyecto(models.Model):
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(max_length=250,blank=True)
+    soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
+    fecha = models.DateField()
+    estadoProceso = [
+        ("Aprobado","Aprobado"),
+        ("Rechazado","Rechazado"),
+        ("Corregir","Corregir"),
+        ("Espera","Espera")
+    ]
+    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
+    configuracionEntregableProyecto_id = models.ForeignKey(ConfiguracionEntregableProyecto,null=False,blank=False,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    class Meta:
+        db_table = 'proyecto_AvanceEntregableProyecto'
 
 #--------------------------Actividades o avances ----------
 class AvanceProyecto(models.Model):

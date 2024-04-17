@@ -2,10 +2,10 @@ from rest_framework import serializers
 
 from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
-                     CuartilEsperado, EntidadPostulo, EntregableAdministrativoProducto,
-                     EntregableAdministrativoProyecto, EstadoProducto, EstadoProyecto, 
-                     Estudiantes, Eventos, Financiacion, Grupoinvestigacion, Imagen, 
-                     Industrial, Investigador, Libros, Licencia, ListaProducto, Maestria,
+                     CuartilEsperado, EntidadPostulo, EntregableAdministrativoProducto, ConfiguracionEntregableProducto,
+                     EntregableAdministrativoProyecto, EstadoProducto, EstadoProyecto, AvanceEntregableProducto, 
+                     Estudiantes, Eventos, Financiacion, Grupoinvestigacion, Imagen, AvanceEntregableProyecto, 
+                     Industrial, Investigador, Libros, Licencia, ListaProducto, Maestria, ConfiguracionEntregableProyecto,
                      ParticipantesExternos, Posgrado, PregFinalizadoyCurso,
                      Pregrado, Producto, Proyecto, Reconocimientos, Software,
                      TipoEventos, Transacciones, Ubicacion, UbicacionProyecto)
@@ -161,6 +161,16 @@ class entidadPostuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = EntidadPostulo
         fields = '__all__'
+        
+class avanceEntregableProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvanceEntregableProducto
+        fields = '__all__'
+        
+class avanceEntregableProyectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvanceEntregableProyecto
+        fields = '__all__'
 
 class financiacionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -192,6 +202,17 @@ class entregableAdministrativoProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = EntregableAdministrativoProducto
         fields = '__all__'
+        
+class configuracionEntregableProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracionEntregableProducto
+        fields = '__all__'
+        
+class configuracionEntregableProyectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracionEntregableProyecto
+        fields = '__all__'
+
 
 class estadoProyecotSerializer(serializers.ModelSerializer):
     class Meta:
