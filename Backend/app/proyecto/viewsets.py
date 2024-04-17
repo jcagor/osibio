@@ -331,6 +331,18 @@ class configuracionEntregableProductoList(generics.ListCreateAPIView):
     queryset = ConfiguracionEntregableProducto.objects.all()
     serializer_class = configuracionEntregableProductoSerializer
     
+    def post(self, request, *args, **kwargs):
+        admin_data = {
+            'descripcion': request.data.get('descripcion'),
+            'fecha': request.data.get('fecha'),
+            'estado': request.data.get('estado'),
+            'producto_id': Producto.objects.get(pk=request.data.get('producto_id_id')),
+        }
+        admin = ConfiguracionEntregableProducto.objects.create(**admin_data)
+        serializer = configuracionEntregableProductoSerializer(admin) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 class configuracionEntregableProductoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = ConfiguracionEntregableProducto.objects.all()
     serializer_class =configuracionEntregableProductoSerializer
@@ -338,6 +350,18 @@ class configuracionEntregableProductoRetrieveUpdateDestroy(generics.RetrieveUpda
 class configuracionEntregableProyectoList(generics.ListCreateAPIView):
     queryset = ConfiguracionEntregableProyecto.objects.all()
     serializer_class = configuracionEntregableProyectoSerializer
+    
+    def post(self, request, *args, **kwargs):
+        admin_data = {
+            'descripcion': request.data.get('descripcion'),
+            'fecha': request.data.get('fecha'),
+            'estado': request.data.get('estado'),
+            'proyecto_id': Proyecto.objects.get(pk=request.data.get('proyecto_id_id')),
+        }
+        admin = ConfiguracionEntregableProyecto.objects.create(**admin_data)
+        serializer = configuracionEntregableProyectoSerializer(admin) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class configuracionEntregableProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = ConfiguracionEntregableProyecto.objects.all()

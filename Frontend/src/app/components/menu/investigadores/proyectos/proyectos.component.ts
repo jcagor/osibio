@@ -55,6 +55,8 @@ import { UsuarioSesion } from '../../modelo/usuario';
 import { DialogoCreacionEstudiantesComponent } from '../../dialogo-creacion-estudiantes/dialogo-creacion-estudiantes.component';
 import { ParticipantesExternosService } from '../../services/participantesExternos';
 import { DialogoCreacionParticipantesComponent } from '../../dialogo-creacion-participantes/dialogo-creacion-participantes.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DialogoConfiguracionEntregableComponent } from './dialogo-configuracion-entregable/dialogo-configuracion-entregable.component';
 
 @Component({
   selector: 'app-proyectos',
@@ -91,7 +93,8 @@ import { DialogoCreacionParticipantesComponent } from '../../dialogo-creacion-pa
     HttpClientModule,
     MatButtonModule, 
     MatDialogModule, 
-    DialogoCreacionEstudiantesComponent
+    DialogoCreacionEstudiantesComponent,
+    MatTooltipModule,
   ],
 })
 export class ProyectosComponent implements OnInit {
@@ -423,6 +426,31 @@ export class ProyectosComponent implements OnInit {
     this.obtenerEstudiantes();
     this.obtenerParticipantesExternos();
     this.obtenerEventos();
+  }
+
+  openDialogoConfiguracionEntregable(data: any, tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoConfiguracionEntregableComponent, {
+      data: {
+        title: 'Entregables '+tipo,
+        buttonTitle: 'CREAR',
+        type:tipo,
+        data:data,
+      },
+      width: '25%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado una notificación',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        
+      } 
+    });
   }
 
   estudiantesData: Estudiantes[] = [];
@@ -1362,6 +1390,7 @@ thumbLabel6 = false;
       const proyectosAjustados = proyectos.reverse().map(proyecto => ({
         tituloProducto: proyecto.titulo,
         etapa: proyecto.etapa,
+        id: proyecto.codigo,
         fecha: proyecto.fecha,
         estadoProceso: proyecto.estadoProceso,
         tipo: 'Proyecto',

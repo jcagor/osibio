@@ -169,4 +169,26 @@ export class ProyectoyproductoService {
     return this.http.get<any[]>(this.apiEstadoProducto);
   }
 
+  private apiConfiguracionEntregableProducto = 'http://localhost:8000/configuracionEntregableProducto'; 
+
+  configurarEntregablesProducto(registro: any) {
+    console.log('configurarEntregablesProducto =>',registro);
+    return this.http.post<any>(this.apiConfiguracionEntregableProducto, registro);
+  }
+
+  obtenerEntregablesProducto() {
+    return this.http.get<any[]>(`${this.apiConfiguracionEntregableProducto}`);
+  }
+
+  private apiConfiguracionEntregableProyecto = 'http://localhost:8000/configuracionEntregableProyecto'; 
+
+  configurarEntregablesProyecto(registro: any) {
+    console.log('apiConfiguracionEntregableProyecto =>',registro);
+    return this.http.post<any>(this.apiConfiguracionEntregableProyecto, registro);
+  }
+
+  obtenerEntregablesProyecto() {
+    return this.http.get<any[]>(`${this.apiConfiguracionEntregableProyecto}`);
+  }
+
 }
