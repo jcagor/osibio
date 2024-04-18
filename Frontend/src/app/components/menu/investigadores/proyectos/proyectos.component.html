@@ -3,7 +3,7 @@
     <mat-tab label="Proyectos y Productos">
       <!-- tabla -->
       <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource">
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
 
           <!-- Columnas de la tabla -->
           <ng-container matColumnDef="tipo">
@@ -46,11 +46,53 @@
               </button>
             </td>
           </ng-container>
+          <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+              <div class="example-element-detail"
+                  [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="example-element-description">
+                  <div *ngIf="element.tipo == 'Proyecto'; else elseProducto">
+                    <div *ngFor="let item of proyectosData; index as i; trackBy: trackByFn">
+                      <div *ngIf="item.proyecto_id === element.id">
+                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left">folder</mat-icon>
+                        <div style="margin-top: 10px;margin-left: 40px;">
+                          {{item.descripcion}}<br>
+                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-template #elseProducto>
+                    <div *ngFor="let item of productosData; index as i; trackBy: trackByFn">
+                      <div *ngIf="item.producto_id === element.id">
+                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left">note</mat-icon>
+                        <div style="margin-top: 10px;margin-left: 40px;">
+                          {{item.descripcion}}<br>
+                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </td>
+          </ng-container>
         
           <!-- Filas de la tabla -->
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
         </table> <!-- Esta etiqueta debe estar aquí -->
         
         <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10]" showFirstLastButtons aria-label="Select page of periodic elements">

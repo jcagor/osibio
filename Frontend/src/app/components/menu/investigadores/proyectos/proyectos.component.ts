@@ -57,12 +57,20 @@ import { ParticipantesExternosService } from '../../services/participantesExtern
 import { DialogoCreacionParticipantesComponent } from '../../dialogo-creacion-participantes/dialogo-creacion-participantes.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DialogoConfiguracionEntregableComponent } from './dialogo-configuracion-entregable/dialogo-configuracion-entregable.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-proyectos',
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.css'],
   standalone: true,
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   imports: [
     MatTabsModule,
     MatSelectModule,
@@ -94,7 +102,7 @@ import { DialogoConfiguracionEntregableComponent } from './dialogo-configuracion
     MatButtonModule, 
     MatDialogModule, 
     DialogoCreacionEstudiantesComponent,
-    MatTooltipModule,
+    MatTooltipModule
   ],
 })
 export class ProyectosComponent implements OnInit {
@@ -129,6 +137,9 @@ export class ProyectosComponent implements OnInit {
   ];
   // índice de las pestaña Proyectos y Nuevo
   demo1TabIndex!: number;
+  expandedElement: any | null;
+  proyectosData: any[] = [];
+  productosData: any[] = [];
 
 
   @ViewChild('investigatorInput')
@@ -426,6 +437,48 @@ export class ProyectosComponent implements OnInit {
     this.obtenerEstudiantes();
     this.obtenerParticipantesExternos();
     this.obtenerEventos();
+    this.obtenerEntregableProyecto();
+    this.obtenerEntregableProducto();
+  }
+
+  obtenerEntregableProyecto(){
+    this.ProyectoyproductoService.obtenerEntregablesProyecto().subscribe((data) => {    
+      const dataProject = data.reverse();
+      this.proyectosData = dataProject.map(x => {
+        const date1 = moment(x.fecha);
+        const date2 = moment(new Date());
+        return {
+          created_at: x.created_at,
+          descripcion: x.descripcion,
+          estado: x.estado,
+          fecha: x.fecha,
+          id: x.id,
+          proyecto_id: x.proyecto_id,
+          updated_at: x.updated_at,
+          diferenciaDias: date1.diff(date2, 'days')
+        }
+      })
+    });
+  }
+
+  obtenerEntregableProducto(){
+    this.ProyectoyproductoService.obtenerEntregablesProducto().subscribe((data) => {    
+      const dataProduct = data.reverse();
+      this.productosData = dataProduct.map(x => {
+        const date1 = moment(x.fecha);
+        const date2 = moment(new Date());
+        return {
+          created_at: x.created_at,
+          descripcion: x.descripcion,
+          estado: x.estado,
+          fecha: x.fecha,
+          id: x.id,
+          producto_id: x.producto_id,
+          updated_at: x.updated_at,
+          diferenciaDias: date1.diff(date2, 'days')
+        }
+      })
+    });
   }
 
   openDialogoConfiguracionEntregable(data: any, tipo:string): void {
@@ -442,6 +495,7 @@ export class ProyectosComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.ngOnInit();
         Swal.fire({
           title: 'Registro Exitoso !!!',
           text: 'Se ha registrado una notificación',
@@ -1359,9 +1413,11 @@ thumbLabel6 = false;
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
  
-  displayedColumns: string[] = ['tipo', 'titulo', 'fecha', 'estado', 'etapa', 'acciones'];
+  displayedColumns: string[] = ['tipo', 'titulo', 'fecha', 'estado', 'etapa', 'acciones', 'expand'];
+  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
   dataSource = new MatTableDataSource<any>([]);
   
+  expandedDetail = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
