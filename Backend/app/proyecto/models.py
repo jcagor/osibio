@@ -359,7 +359,7 @@ class ConfiguracionEntregableProducto(models.Model):
 class AvanceEntregableProducto(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=250,blank=True)
-    soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
+    soporte = models.FileField(upload_to ='uploadsAvancesProducto/',max_length=1000, blank=True)
     fecha = models.DateField()
     estadoProceso = [
         ("Aprobado","Aprobado"),
@@ -498,7 +498,7 @@ class ConfiguracionEntregableProyecto(models.Model):
 class AvanceEntregableProyecto(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=250,blank=True)
-    soporte = models.FileField(upload_to ='uploadsProducto/',max_length=1000, blank=True)
+    soporte = models.FileField(upload_to ='uploadsAvanceProyecto/',max_length=1000, blank=True)
     fecha = models.DateField()
     estadoProceso = [
         ("Aprobado","Aprobado"),

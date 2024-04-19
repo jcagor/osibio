@@ -6,6 +6,7 @@ from urllib import response
 from django.forms import ValidationError
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 
 from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
@@ -266,10 +267,44 @@ class entidadPostuloList(generics.ListCreateAPIView):
 class avanceEntregableProductoList(generics.ListCreateAPIView):
     queryset = AvanceEntregableProducto.objects.all()
     serializer_class = avanceEntregableProductoSerializer
+    parser_class = (FileUploadParser,)
+    
+    def post(self, request, *args, **kwargs):
+        soporte = request.FILES.get('soporte')
+        admin_data = {
+            'url': request.data.get('url'),
+            'fecha': request.data.get('fecha'),
+            'estadoProceso': request.data.get('estadoProceso'),
+            'configuracionEntregableProducto_id': ConfiguracionEntregableProducto.objects.get(pk=int(request.data.get('configuracionEntregableProducto_id_id'))),
+        }
+        avance = AvanceEntregableProducto.objects.create(**admin_data)
+        if soporte:
+            avance.soporte = soporte
+            avance.save()
+
+        serializer = avanceEntregableProductoSerializer(avance) 
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class avanceEntregableProyectoList(generics.ListCreateAPIView):
     queryset = AvanceEntregableProyecto.objects.all()
     serializer_class = avanceEntregableProyectoSerializer
+    parser_class = (FileUploadParser,)
+    
+    def post(self, request, *args, **kwargs):
+        soporte = request.FILES.get('soporte')
+        admin_data = {
+            'url': request.data.get('url'),
+            'fecha': request.data.get('fecha'),
+            'estadoProceso': request.data.get('estadoProceso'),
+            'configuracionEntregableProyecto_id': ConfiguracionEntregableProyecto.objects.get(pk=int(request.data.get('configuracionEntregableProyecto_id_id'))),
+        }
+        avance = AvanceEntregableProyecto.objects.create(**admin_data)
+        if soporte:
+            avance.soporte = soporte
+            avance.save()
+
+        serializer = avanceEntregableProyectoSerializer(avance) 
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class financiacionList(generics.ListCreateAPIView):
     queryset = Financiacion.objects.all()

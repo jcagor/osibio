@@ -65,7 +65,7 @@
                   <div *ngIf="element.tipo == 'Proyecto'; else elseProducto">
                     <div *ngFor="let item of proyectosData; index as i; trackBy: trackByFn">
                       <div *ngIf="item.proyecto_id === element.id">
-                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left">folder</mat-icon>
+                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left" (click)="openDialogoConfiguracionAvance(item, 'Proyecto')">folder</mat-icon>
                         <div style="margin-top: 10px;margin-left: 40px;">
                           {{item.descripcion}}<br>
                           <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
@@ -76,7 +76,7 @@
                   <ng-template #elseProducto>
                     <div *ngFor="let item of productosData; index as i; trackBy: trackByFn">
                       <div *ngIf="item.producto_id === element.id">
-                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left">note</mat-icon>
+                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left" (click)="openDialogoConfiguracionAvance(item, 'Producto')">note</mat-icon>
                         <div style="margin-top: 10px;margin-left: 40px;">
                           {{item.descripcion}}<br>
                           <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>

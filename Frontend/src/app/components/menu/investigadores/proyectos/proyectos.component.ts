@@ -58,6 +58,7 @@ import { DialogoCreacionParticipantesComponent } from '../../dialogo-creacion-pa
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DialogoConfiguracionEntregableComponent } from './dialogo-configuracion-entregable/dialogo-configuracion-entregable.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DialogoAvanceEntregableComponent } from './dialogo-avance-entregable/dialogo-avance-entregable.component';
 
 @Component({
   selector: 'app-proyectos',
@@ -498,7 +499,33 @@ export class ProyectosComponent implements OnInit {
         this.ngOnInit();
         Swal.fire({
           title: 'Registro Exitoso !!!',
-          text: 'Se ha registrado una notificación',
+          text: 'Se ha registrado una nueva configuración',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        
+      } 
+    });
+  }
+
+  openDialogoConfiguracionAvance(data: any, tipo:string):void {
+    const dialogRef = this.dialog.open(DialogoAvanceEntregableComponent, {
+      data: {
+        title: data.descripcion,
+        buttonTitle: 'CREAR',
+        type:tipo,
+        data:data,
+      },
+      width: '25%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.ngOnInit();
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado el Avance',
           icon: 'success',
           confirmButtonText: 'Aceptar'
         });

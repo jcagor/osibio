@@ -71,7 +71,6 @@ export class ProyectoyproductoService {
     
   private apiUrl2 = 'http://localhost:8000/CrearProducto';
   crearProducto(producto: Producto): Observable<Producto> {
-    console.log('crearProducto => ',producto);
     return this.http.post<Producto>(this.apiUrl2, this.convertirObjetoProductoAFormData(producto));
   }
 
@@ -96,7 +95,6 @@ export class ProyectoyproductoService {
 
   private apiProyecto = 'http://localhost:8000/proyecto'; 
   actualizarProyecto(proyecto: Proyecto) {
-    console.log('actualizarProyecto =>',proyecto);
     const url = `${this.apiProyecto}/${proyecto.codigo}`;
     return this.http.put(url, proyecto).pipe(
       catchError(error => {
@@ -119,7 +117,6 @@ export class ProyectoyproductoService {
 
   private apiProducto = 'http://localhost:8000/producto'; 
   actualizarProducto(proyecto: any) {
-    console.log('actualizarProyecto =>',proyecto);
     const url = `${this.apiProducto}/${proyecto.id}`;
     return this.http.put(url, proyecto).pipe(
       catchError(error => {
@@ -142,7 +139,6 @@ export class ProyectoyproductoService {
   
   private apiEntregableProyecto = 'http://localhost:8000/entregableAdministrativoProyecto'; 
   crearEntregableAdministrativoProyecto(entregable: any): Observable<Producto> {
-    console.log('entregable => ',entregable);
     return this.http.post<any>(this.apiEntregableProyecto, entregable);
   }
 
@@ -172,7 +168,6 @@ export class ProyectoyproductoService {
   private apiConfiguracionEntregableProducto = 'http://localhost:8000/configuracionEntregableProducto'; 
 
   configurarEntregablesProducto(registro: any) {
-    console.log('configurarEntregablesProducto =>',registro);
     return this.http.post<any>(this.apiConfiguracionEntregableProducto, registro);
   }
 
@@ -183,12 +178,41 @@ export class ProyectoyproductoService {
   private apiConfiguracionEntregableProyecto = 'http://localhost:8000/configuracionEntregableProyecto'; 
 
   configurarEntregablesProyecto(registro: any) {
-    console.log('apiConfiguracionEntregableProyecto =>',registro);
     return this.http.post<any>(this.apiConfiguracionEntregableProyecto, registro);
   }
 
   obtenerEntregablesProyecto() {
     return this.http.get<any[]>(`${this.apiConfiguracionEntregableProyecto}`);
+  }
+
+
+  private apiAvanceEntregableProyecto = 'http://127.0.0.1:8000/avanceEntregableProyecto'; 
+
+  avanceEntregablesProyecto(registro: any) {
+    return this.http.post<any>(this.apiAvanceEntregableProyecto, this.convertirObjetoAvanceAFormData(registro));
+  }
+
+  obtenerAvancesProyecto() {
+    return this.http.get<any[]>(`${this.apiAvanceEntregableProyecto}`);
+  }
+
+  private apiAvanceEntregableProducto = 'http://127.0.0.1:8000/avanceEntregableProducto'; 
+
+  avanceEntregablesProducto(registro: any) {
+    return this.http.post<any>(this.apiAvanceEntregableProducto, this.convertirObjetoAvanceAFormData(registro));
+  }
+
+  obtenerAvancesProducto() {
+    return this.http.get<any[]>(`${this.apiAvanceEntregableProducto}`);
+  }
+
+  convertirObjetoAvanceAFormData(datosFormulario: any): FormData {
+    const keys = Object.keys(datosFormulario);
+    const form = new FormData();
+    keys.forEach(key => {
+      form.append(key, datosFormulario[key]);
+    });
+    return form;
   }
 
 }
