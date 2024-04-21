@@ -2,8 +2,8 @@ from rest_framework import serializers
 
 from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
-                     CuartilEsperado, EntidadPostulo, EntregableAdministrativoProducto, ConfiguracionEntregableProducto,
-                     EntregableAdministrativoProyecto, EstadoProducto, EstadoProyecto, AvanceEntregableProducto, 
+                     CuartilEsperado, EntidadPostulo, ConfiguracionEntregableProducto,
+                    EstadoProducto, EstadoProyecto, AvanceEntregableProducto, 
                      Estudiantes, Eventos, Financiacion, Grupoinvestigacion, Imagen, AvanceEntregableProyecto, 
                      Industrial, Investigador, Libros, Licencia, ListaProducto, Maestria, ConfiguracionEntregableProyecto,
                      ParticipantesExternos, Posgrado, PregFinalizadoyCurso,
@@ -193,16 +193,6 @@ class avanceProyectoSerializer(serializers.ModelSerializer):
         model = AvanceProyecto
         fields = '__all__'
 
-class entregableAdministrativoProyectoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EntregableAdministrativoProyecto
-        fields = '__all__'
-        
-class entregableAdministrativoProductoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EntregableAdministrativoProducto
-        fields = '__all__'
-        
 class configuracionEntregableProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConfiguracionEntregableProducto

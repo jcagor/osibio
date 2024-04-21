@@ -136,26 +136,6 @@ export class ProyectoyproductoService {
       })
     );
   }
-  
-  private apiEntregableProyecto = 'http://localhost:8000/entregableAdministrativoProyecto'; 
-  crearEntregableAdministrativoProyecto(entregable: any): Observable<Producto> {
-    return this.http.post<any>(this.apiEntregableProyecto, entregable);
-  }
-
-  obtenerEntregableAdministrativoProyecto(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiEntregableProyecto);
-  }
-
-
-
-  private apiEntregableProducto = 'http://localhost:8000/entregableAdministrativoProducto'; 
-  crearEntregableAdministrativoProducto(entregable: any): Observable<Producto> {
-    return this.http.post<any>(this.apiEntregableProducto, entregable);
-  }
-
-  obtenerEntregableAdministrativoProducto(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiEntregableProducto);
-  }
 
   obtenerEstadosProyecto(): Observable<any[]> {
     return this.http.get<any[]>(this.apiEstadoProyecto);

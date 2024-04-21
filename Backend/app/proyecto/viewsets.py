@@ -10,7 +10,7 @@ from rest_framework.parsers import FileUploadParser
 
 from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
-                     CuartilEsperado, EntidadPostulo, AvanceEntregableProducto ,  AvanceEntregableProyecto ,EntregableAdministrativoProyecto, EntregableAdministrativoProducto,
+                     CuartilEsperado, EntidadPostulo, AvanceEntregableProducto ,  AvanceEntregableProyecto , 
                      EstadoProducto, EstadoProyecto, Estudiantes, Eventos, ConfiguracionEntregableProducto, ConfiguracionEntregableProyecto,
                      Financiacion, Grupoinvestigacion, Imagen, Industrial,
                      Investigador, Libros, Licencia, ListaProducto, Maestria,
@@ -22,7 +22,6 @@ from .serializer import (apropiacionSerializer, articulosSerializer,
                          categoriaMincienciasSerializer, consultoriaSerializer,
                          contenidoSerializer, contratoSerializer,
                          cuartilEsperadoSerializer, entidadPostuloSerializer, avanceEntregableProductoSerializer, avanceEntregableProyectoSerializer, 
-                         entregableAdministrativoProyectoSerializer,entregableAdministrativoProductoSerializer,
                          estadoProductoSerializer, estadoProyecotSerializer, configuracionEntregableProductoSerializer, configuracionEntregableProyectoSerializer,
                          estudiantesSerializer, eventosSerializer,
                          financiacionSerializer, grupoinvestigacionSerializer,
@@ -322,46 +321,6 @@ class avanceProyectoList(generics.ListCreateAPIView):
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
 
-class entregableAdministrativoProyectoList(generics.ListCreateAPIView):
-    queryset = EntregableAdministrativoProyecto.objects.all()
-    serializer_class = entregableAdministrativoProyectoSerializer
-    
-    def post(self, request, *args, **kwargs):
-        admin_data = {
-            'id': EntregableAdministrativoProyecto.objects.count()+1,
-            'nombre': request.data.get('nombre'),
-            'titulo': request.data.get('titulo'),
-            'calidad': request.data.get('calidad'),
-            'entregable': request.data.get('entregable'),
-            'pendiente': request.data.get('pendiente'),
-            'clasificacion': request.data.get('clasificacion'),
-            'proyecto_id': Proyecto.objects.get(pk=request.data.get('proyecto_id_id')),
-        }
-        admin = EntregableAdministrativoProyecto.objects.create(**admin_data)
-        serializer = entregableAdministrativoProyectoSerializer(admin) 
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-class entregableAdministrativoProductoList(generics.ListCreateAPIView):
-    queryset = EntregableAdministrativoProducto.objects.all()
-    serializer_class = entregableAdministrativoProductoSerializer
-    
-    def post(self, request, *args, **kwargs):
-        admin_data = {
-            'id': EntregableAdministrativoProducto.objects.count()+1,
-            'nombre': request.data.get('nombre'),
-            'titulo': request.data.get('titulo'),
-            'calidad': request.data.get('calidad'),
-            'entregable': request.data.get('entregable'),
-            'pendiente': request.data.get('pendiente'),
-            'clasificacion': request.data.get('clasificacion'),
-            'producto_id': Producto.objects.get(pk=request.data.get('producto_id_id')),
-        }
-        admin = EntregableAdministrativoProducto.objects.create(**admin_data)
-        serializer = entregableAdministrativoProductoSerializer(admin) 
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 class configuracionEntregableProductoList(generics.ListCreateAPIView):
     queryset = ConfiguracionEntregableProducto.objects.all()
     serializer_class = configuracionEntregableProductoSerializer
@@ -450,14 +409,6 @@ class avanceProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView)
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
 
-class entregableAdministrativoProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EntregableAdministrativoProyecto.objects.all()
-    serializer_class = entregableAdministrativoProyectoSerializer
-    
-class entregableAdministrativoProductoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EntregableAdministrativoProducto.objects.all()
-    serializer_class = entregableAdministrativoProductoSerializer
-    
 class avanceEntregableProductoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = AvanceEntregableProducto.objects.all()
     serializer_class = avanceEntregableProductoSerializer

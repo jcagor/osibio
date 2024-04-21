@@ -15,7 +15,7 @@ from django.utils.timezone import make_aware
 import ast
 
 from .models import (Apropiacion, Articulos, Capitulos, Consultoria, Contenido,
-                     Contrato, EntidadPostulo, EntregableAdministrativoProyecto, EntregableAdministrativoProducto, EstadoProyecto,
+                     Contrato, EntidadPostulo, EstadoProyecto,
                      Estudiantes, Eventos, Financiacion, Industrial, ConfiguracionEntregableProducto, ConfiguracionEntregableProyecto, 
                      Investigador, Libros, Licencia, ListaProducto, Maestria, AvanceEntregableProducto, AvanceEntregableProyecto,
                      PregFinalizadoyCurso, Producto, Proyecto, Reconocimientos,

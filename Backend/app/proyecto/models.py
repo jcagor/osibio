@@ -331,19 +331,7 @@ class Producto(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     class Meta:
         db_table = 'proyecto_Producto'
-        
-class EntregableAdministrativoProducto(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
-    nombre = models.CharField(max_length=50)
-    titulo = models.CharField(max_length=50)
-    calidad = models.CharField(max_length=50)
-    entregable = models.CharField(max_length=50)
-    pendiente = models.CharField(max_length=50)
-    clasificacion = models.CharField(max_length=50)
-    producto_id = models.ForeignKey(Producto,null=False,blank=False,on_delete=models.CASCADE)
-    class Meta:
-        db_table = 'proyecto_EntregableAdministrativoProducto'
-        
+
 
 class ConfiguracionEntregableProducto(models.Model):
     id = models.AutoField(primary_key=True)
@@ -466,7 +454,6 @@ class Proyecto(models.Model):
         ("Espera","Espera")
     ]
     estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
-    #entregableAdministrativo = models.ForeignKey(EntregableAdministrativo,null=False,blank=False,on_delete=models.CASCADE)
     estudiantes = models.ManyToManyField(Estudiantes)
     participantesExternos = models.ManyToManyField(ParticipantesExternos)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -474,18 +461,6 @@ class Proyecto(models.Model):
     class Meta:
         db_table = 'proyecto_Proyecto'
 
-class EntregableAdministrativoProyecto(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
-    nombre = models.CharField(max_length=50)
-    titulo = models.CharField(max_length=50)
-    calidad = models.CharField(max_length=50)
-    entregable = models.CharField(max_length=50)
-    pendiente = models.CharField(max_length=50)
-    clasificacion = models.CharField(max_length=50)
-    proyecto_id = models.ForeignKey(Proyecto,null=False,blank=False,on_delete=models.CASCADE)
-    class Meta:
-        db_table = 'proyecto_EntregableAdministrativoProyecto'
-        
 class ConfiguracionEntregableProyecto(models.Model):
     id = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=150)

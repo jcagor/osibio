@@ -28,7 +28,7 @@
         
           <ng-container matColumnDef="etapa">
             <th mat-header-cell *matHeaderCellDef> Etapa </th>
-            <td mat-cell *matCellDef="let element"> {{element.etapa}} </td>
+            <td mat-cell *matCellDef="let element" matTooltip="{{element.observacion}}" matTooltipPosition="above"> {{element.etapa}} </td>
           </ng-container>
         
           <ng-container matColumnDef="acciones">

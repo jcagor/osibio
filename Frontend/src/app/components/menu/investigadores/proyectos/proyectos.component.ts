@@ -141,6 +141,8 @@ export class ProyectosComponent implements OnInit {
   expandedElement: any | null;
   proyectosData: any[] = [];
   productosData: any[] = [];
+  estadosProyectos: any[] = [];
+  estadosProductos: any[] = [];
 
 
   @ViewChild('investigatorInput')
@@ -440,6 +442,8 @@ export class ProyectosComponent implements OnInit {
     this.obtenerEventos();
     this.obtenerEntregableProyecto();
     this.obtenerEntregableProducto();
+    this.obtenerEstadosProyecto();
+    this.obtenerEstadosProducto();
   }
 
   obtenerEntregableProyecto(){
@@ -1442,6 +1446,28 @@ thumbLabel6 = false;
     x.select = !x.select;
   }
 
+  obtenerEstadosProyecto() {
+    this.ProyectoyproductoService.obtenerEstadosProyecto().subscribe(
+      (proyecto) => {
+        this.estadosProyectos = proyecto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  obtenerEstadosProducto() {
+    this.ProyectoyproductoService.obtenerEstadosProducto().subscribe(
+      (producto) => {
+        this.estadosProductos = producto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
   //------------------------------------------TABLA -----------------------------------
@@ -1464,7 +1490,6 @@ thumbLabel6 = false;
       this.ProyectoyproductoService.getProductosDelUsuario(),
       this.ProyectoyproductoService.getProyectosDelUsuario()
     ]).subscribe(([productos, proyectos]) => {
-
       // Ajustar los datos de los productos para asegurarse de que tengan todas las propiedades definidas en la interfaz Producto
       const productosAjustados = productos.reverse().map(producto => ({
         ...producto,
@@ -1473,18 +1498,20 @@ thumbLabel6 = false;
         tituloProducto: producto.tituloProducto || '', // Asegurar que todas las propiedades definidas en la interfaz Producto estén presentes
         fecha: producto.fecha || '',
         estadoProducto: producto.estadoProceso || '',
-        etapa:producto.etapa|| '',
+        etapa: this.estadosProductos.find(p => p.id === producto.estadoProducto).estado,
         tipologiaProducto: producto.tipologiaProducto || '',
+        observacion: producto.observacion,
       }));
       
       // Convertir los datos de proyectos a la misma estructura que productos
       const proyectosAjustados = proyectos.reverse().map(proyecto => ({
         tituloProducto: proyecto.titulo,
-        etapa: proyecto.etapa,
+        etapa: this.estadosProductos.find(p => p.id === proyecto.estado).estado,
         id: proyecto.codigo,
         fecha: proyecto.fecha,
         estadoProceso: proyecto.estadoProceso,
         tipo: 'Proyecto',
+        observacion: proyecto.observacion,
         // Añadir las demás propiedades según sea necesario
       }));
     
