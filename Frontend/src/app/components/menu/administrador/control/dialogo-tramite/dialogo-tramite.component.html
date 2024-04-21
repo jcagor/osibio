@@ -3,7 +3,7 @@
     <div class="example-container">
         <form [formGroup]="registroForm">
             <div class="example-form-fields">
-                <mat-form-field class="form-field-spacing" appearance="fill">
+                <mat-form-field appearance="fill">
                     <mat-label>Estado proceso</mat-label>
                     <mat-select [(value)]="estadoProcesoData" panelClass="matRole" formControlName="estadoProceso">
                         <mat-option *ngFor="let data of estadosProceso" [value]="data">
@@ -13,7 +13,7 @@
                 </mat-form-field>
             </div>
             <div class="example-form-fields">
-                <mat-form-field class="form-field-spacing" appearance="fill">
+                <mat-form-field appearance="fill">
                     <mat-label>Observacion</mat-label>
                     <input matInput autocomplete="off" formControlName="observacion">
                 </mat-form-field>

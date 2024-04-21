@@ -146,6 +146,8 @@ export class ProyectoyproductoService {
     return this.http.get<any[]>(this.apiEntregableProyecto);
   }
 
+
+
   private apiEntregableProducto = 'http://localhost:8000/entregableAdministrativoProducto'; 
   crearEntregableAdministrativoProducto(entregable: any): Observable<Producto> {
     return this.http.post<any>(this.apiEntregableProducto, entregable);
@@ -154,7 +156,6 @@ export class ProyectoyproductoService {
   obtenerEntregableAdministrativoProducto(): Observable<any[]> {
     return this.http.get<any[]>(this.apiEntregableProducto);
   }
-
 
   obtenerEstadosProyecto(): Observable<any[]> {
     return this.http.get<any[]>(this.apiEstadoProyecto);
@@ -175,6 +176,27 @@ export class ProyectoyproductoService {
     return this.http.get<any[]>(`${this.apiConfiguracionEntregableProducto}`);
   }
 
+  actualizarEntregableProducto(proyecto: any) {
+    const url = `${this.apiConfiguracionEntregableProducto}/${proyecto.id}`;
+    return this.http.put(url, proyecto).pipe(
+      catchError(error => {
+        if(error instanceof HttpErrorResponse) {
+          switch (error.status) {
+            case 404:
+              // El investigador no existe
+              return throwError('Investigador no encontrado');
+            case 400:
+              // Datos inválidos
+              return throwError('Datos de investigador inválidos'); 
+            default:
+              return throwError('Error al actualizar investigador');
+          }
+        }
+        return throwError('Error desconocido');
+      })
+    );
+  }
+
   private apiConfiguracionEntregableProyecto = 'http://localhost:8000/configuracionEntregableProyecto'; 
 
   configurarEntregablesProyecto(registro: any) {
@@ -183,6 +205,27 @@ export class ProyectoyproductoService {
 
   obtenerEntregablesProyecto() {
     return this.http.get<any[]>(`${this.apiConfiguracionEntregableProyecto}`);
+  }
+
+  actualizarEntregableProyecto(proyecto: any) {
+    const url = `${this.apiConfiguracionEntregableProyecto}/${proyecto.id}`;
+    return this.http.put(url, proyecto).pipe(
+      catchError(error => {
+        if(error instanceof HttpErrorResponse) {
+          switch (error.status) {
+            case 404:
+              // El investigador no existe
+              return throwError('Investigador no encontrado');
+            case 400:
+              // Datos inválidos
+              return throwError('Datos de investigador inválidos'); 
+            default:
+              return throwError('Error al actualizar investigador');
+          }
+        }
+        return throwError('Error desconocido');
+      })
+    );
   }
 
 

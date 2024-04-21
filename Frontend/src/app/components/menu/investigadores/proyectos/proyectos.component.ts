@@ -449,9 +449,10 @@ export class ProyectosComponent implements OnInit {
         const date1 = moment(x.fecha);
         const date2 = moment(new Date());
         return {
-          created_at: x.created_at,
           descripcion: x.descripcion,
           estado: x.estado,
+          estadoProceso: x.estadoProceso,
+          observacion: x.observacion,
           fecha: x.fecha,
           id: x.id,
           proyecto_id: x.proyecto_id,
@@ -472,6 +473,8 @@ export class ProyectosComponent implements OnInit {
           created_at: x.created_at,
           descripcion: x.descripcion,
           estado: x.estado,
+          estadoProceso: x.estadoProceso,
+          observacion: x.observacion,
           fecha: x.fecha,
           id: x.id,
           producto_id: x.producto_id,
@@ -485,8 +488,8 @@ export class ProyectosComponent implements OnInit {
   openDialogoConfiguracionEntregable(data: any, tipo:string): void {
     const dialogRef = this.dialog.open(DialogoConfiguracionEntregableComponent, {
       data: {
-        title: 'Entregables '+tipo,
-        buttonTitle: 'CREAR',
+        title: 'Entregables '+data?.tituloProducto,
+        buttonTitle: 'Crear',
         type:tipo,
         data:data,
       },
@@ -511,10 +514,11 @@ export class ProyectosComponent implements OnInit {
   openDialogoConfiguracionAvance(data: any, tipo:string):void {
     const dialogRef = this.dialog.open(DialogoAvanceEntregableComponent, {
       data: {
-        title: data.descripcion,
-        buttonTitle: 'CREAR',
+        title: `Avance ${data.descripcion}`,
+        buttonTitle: 'Crear',
         type:tipo,
         data:data,
+        admin: false
       },
       width: '25%',
       disableClose: true,
@@ -1432,7 +1436,11 @@ thumbLabel6 = false;
           confirmButtonText: 'Aceptar'
         });
     }
-}
+  }
+
+  addEvent(x:any) {
+    x.select = !x.select;
+  }
 
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------

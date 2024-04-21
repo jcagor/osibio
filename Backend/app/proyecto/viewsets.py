@@ -274,7 +274,7 @@ class avanceEntregableProductoList(generics.ListCreateAPIView):
         admin_data = {
             'url': request.data.get('url'),
             'fecha': request.data.get('fecha'),
-            'estadoProceso': request.data.get('estadoProceso'),
+            'estado': request.data.get('estado'),
             'configuracionEntregableProducto_id': ConfiguracionEntregableProducto.objects.get(pk=int(request.data.get('configuracionEntregableProducto_id_id'))),
         }
         avance = AvanceEntregableProducto.objects.create(**admin_data)
@@ -295,7 +295,7 @@ class avanceEntregableProyectoList(generics.ListCreateAPIView):
         admin_data = {
             'url': request.data.get('url'),
             'fecha': request.data.get('fecha'),
-            'estadoProceso': request.data.get('estadoProceso'),
+            'estado': request.data.get('estado'),
             'configuracionEntregableProyecto_id': ConfiguracionEntregableProyecto.objects.get(pk=int(request.data.get('configuracionEntregableProyecto_id_id'))),
         }
         avance = AvanceEntregableProyecto.objects.create(**admin_data)
@@ -371,6 +371,8 @@ class configuracionEntregableProductoList(generics.ListCreateAPIView):
             'descripcion': request.data.get('descripcion'),
             'fecha': request.data.get('fecha'),
             'estado': request.data.get('estado'),
+            'estadoProceso': request.data.get('estadoProceso'),
+            'observacion': request.data.get('observacion'),
             'producto_id': Producto.objects.get(pk=request.data.get('producto_id_id')),
         }
         admin = ConfiguracionEntregableProducto.objects.create(**admin_data)
@@ -382,6 +384,14 @@ class configuracionEntregableProductoRetrieveUpdateDestroy(generics.RetrieveUpda
     queryset = ConfiguracionEntregableProducto.objects.all()
     serializer_class =configuracionEntregableProductoSerializer
     
+    def put(self, request, *args, **kwargs):
+        obj = ConfiguracionEntregableProducto.objects.get(pk=request.data.get('id'))
+        obj.estadoProceso = request.data.get('estadoProceso')
+        obj.observacion = request.data.get('observacion')
+        obj.estado = request.data.get('estado')
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 class configuracionEntregableProyectoList(generics.ListCreateAPIView):
     queryset = ConfiguracionEntregableProyecto.objects.all()
     serializer_class = configuracionEntregableProyectoSerializer
@@ -391,6 +401,8 @@ class configuracionEntregableProyectoList(generics.ListCreateAPIView):
             'descripcion': request.data.get('descripcion'),
             'fecha': request.data.get('fecha'),
             'estado': request.data.get('estado'),
+            'estadoProceso': request.data.get('estadoProceso'),
+            'observacion': request.data.get('observacion'),
             'proyecto_id': Proyecto.objects.get(pk=request.data.get('proyecto_id_id')),
         }
         admin = ConfiguracionEntregableProyecto.objects.create(**admin_data)
@@ -401,6 +413,14 @@ class configuracionEntregableProyectoList(generics.ListCreateAPIView):
 class configuracionEntregableProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = ConfiguracionEntregableProyecto.objects.all()
     serializer_class =configuracionEntregableProyectoSerializer
+    
+    def put(self, request, *args, **kwargs):
+        obj = ConfiguracionEntregableProyecto.objects.get(pk=request.data.get('id'))
+        obj.estadoProceso = request.data.get('estadoProceso')
+        obj.observacion = request.data.get('observacion')
+        obj.estado = request.data.get('estado')
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class estadoProyectoList(generics.ListCreateAPIView):
     queryset = EstadoProyecto.objects.all()

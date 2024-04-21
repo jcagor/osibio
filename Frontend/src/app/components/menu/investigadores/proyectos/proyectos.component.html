@@ -41,7 +41,7 @@
               <button mat-icon-button color="black" (click)="accionDos(element)">
                 <mat-icon>visibility</mat-icon>
               </button>
-              <button mat-icon-button color="warn"  matTooltip="Configurar Entregables" matTooltipPosition="above" (click)="openDialogoConfiguracionEntregable(element,element.tipo)">
+              <button mat-icon-button color="warn" [disabled]="element.estadoProceso == 'Aprobado' ? false : true " matTooltip="Configurar Entregables" matTooltipPosition="above" (click)="openDialogoConfiguracionEntregable(element,element.tipo)">
                 <mat-icon>settings</mat-icon>
               </button>
             </td>
@@ -65,10 +65,10 @@
                   <div *ngIf="element.tipo == 'Proyecto'; else elseProducto">
                     <div *ngFor="let item of proyectosData; index as i; trackBy: trackByFn">
                       <div *ngIf="item.proyecto_id === element.id">
-                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left" (click)="openDialogoConfiguracionAvance(item, 'Proyecto')">folder</mat-icon>
+                        <mat-icon matListItemIcon [ngStyle]="{'color': item.estado ? '#acc686' : '#c9c9c9' }" style="float:left" (click)="openDialogoConfiguracionAvance(item, 'Proyecto');addEvent(item)">{{item.select ? 'folder_copy' : 'folder'}}</mat-icon>
                         <div style="margin-top: 10px;margin-left: 40px;">
                           {{item.descripcion}}<br>
-                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
+                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span *ngIf="item.estado" style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
                         </div>
                       </div>
                     </div>
@@ -76,10 +76,10 @@
                   <ng-template #elseProducto>
                     <div *ngFor="let item of productosData; index as i; trackBy: trackByFn">
                       <div *ngIf="item.producto_id === element.id">
-                        <mat-icon matListItemIcon style="color:#c9c9c9; float:left" (click)="openDialogoConfiguracionAvance(item, 'Producto')">note</mat-icon>
+                        <mat-icon matListItemIcon [ngStyle]="{'color': item.estado ? '#acc686' : '#c9c9c9' }"  style="float:left" (click)="openDialogoConfiguracionAvance(item, 'Producto');addEvent(item)">{{item.select ? 'folder_copy' : 'folder'}}</mat-icon>
                         <div style="margin-top: 10px;margin-left: 40px;">
                           {{item.descripcion}}<br>
-                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
+                          <span class="example-element-description-attribution">-- {{item.fecha | date }} <span *ngIf="item.estado" style="font-size: 10px;">({{item.diferenciaDias}} días de plazo)</span></span>
                         </div>
                       </div>
                     </div>

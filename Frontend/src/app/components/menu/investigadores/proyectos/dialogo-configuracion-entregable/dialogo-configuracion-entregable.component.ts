@@ -115,6 +115,8 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
           descripcion: this.descripcion?.value,
           fecha: moment(this.fecha?.value).format('YYYY-MM-DD'),
           estado: this.estado?.value,
+          estadoProceso: 'Espera',
+          observacion: '',
           proyecto_id_id: this.data?.id,
         };
         
@@ -133,6 +135,8 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
           descripcion: this.descripcion?.value,
           fecha: moment(this.fecha?.value).format('YYYY-MM-DD'),
           estado: this.estado?.value,
+          estadoProceso: 'Espera',
+          observacion: '',
           producto_id_id: this.data?.id,
         };
         this.proyectoyproductoService.configurarEntregablesProducto(tramiteGeneral).subscribe(

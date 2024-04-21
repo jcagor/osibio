@@ -349,7 +349,15 @@ class ConfiguracionEntregableProducto(models.Model):
     id = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=150)
     fecha = models.DateField()
-    estado = models.BooleanField(default=False)
+    estado = models.BooleanField(default=True)
+    estadoProceso = [
+        ("Aprobado","Aprobado"),
+        ("Rechazado","Rechazado"),
+        ("Corregir","Corregir"),
+        ("Espera","Espera")
+    ]
+    observacion = models.CharField(max_length=5000,default='')
+    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
     producto_id = models.ForeignKey(Producto,null=False,blank=False,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -361,13 +369,7 @@ class AvanceEntregableProducto(models.Model):
     url = models.CharField(max_length=250,blank=True)
     soporte = models.FileField(upload_to ='uploadsAvancesProducto/',max_length=1000, blank=True)
     fecha = models.DateField()
-    estadoProceso = [
-        ("Aprobado","Aprobado"),
-        ("Rechazado","Rechazado"),
-        ("Corregir","Corregir"),
-        ("Espera","Espera")
-    ]
-    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
+    estado = models.BooleanField(default=True)
     configuracionEntregableProducto_id = models.ForeignKey(ConfiguracionEntregableProducto,null=False,blank=False,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -489,6 +491,14 @@ class ConfiguracionEntregableProyecto(models.Model):
     descripcion = models.CharField(max_length=150)
     fecha = models.DateField()
     estado = models.BooleanField(default=False)
+    estadoProceso = [
+        ("Aprobado","Aprobado"),
+        ("Rechazado","Rechazado"),
+        ("Corregir","Corregir"),
+        ("Espera","Espera")
+    ]
+    observacion = models.CharField(max_length=5000,default='')
+    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
     proyecto_id = models.ForeignKey(Proyecto,null=False,blank=False,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -500,13 +510,7 @@ class AvanceEntregableProyecto(models.Model):
     url = models.CharField(max_length=250,blank=True)
     soporte = models.FileField(upload_to ='uploadsAvanceProyecto/',max_length=1000, blank=True)
     fecha = models.DateField()
-    estadoProceso = [
-        ("Aprobado","Aprobado"),
-        ("Rechazado","Rechazado"),
-        ("Corregir","Corregir"),
-        ("Espera","Espera")
-    ]
-    estadoProceso=models.CharField(max_length=50, choices=estadoProceso, default='Espera')
+    estado = models.BooleanField(default=False)
     configuracionEntregableProyecto_id = models.ForeignKey(ConfiguracionEntregableProyecto,null=False,blank=False,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)

@@ -23,6 +23,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogoTramiteComponent } from './dialogo-tramite/dialogo-tramite.component';
 import Swal from 'sweetalert2'
 import { DialogoConsultaEntregableAdministrativoComponent } from './dialogo-consulta-entregable-administrativo/dialogo-consulta-entregable-administrativo.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import * as moment from 'moment';
+import { DialogoAvanceEntregableComponent } from '../../investigadores/proyectos/dialogo-avance-entregable/dialogo-avance-entregable.component';
+
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
@@ -44,16 +48,39 @@ import { DialogoConsultaEntregableAdministrativoComponent } from './dialogo-cons
     MatSelectModule,
     MatTooltipModule,
     MatDialogModule],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
+  
 })
 export class ControlComponent {
   usuarios: any[] = [];
   estadosProyectos: any[] = [];
   estadosProductos: any[] = [];
 
+
   dataSource: MatTableDataSource<any>;
   dataSourceProyecto: MatTableDataSource<any>;
   dataSourceProducto: MatTableDataSource<any>;
   expandedElement: any | null;
+
+  displayedColumnsProyecto: string[] = ['codigo', 'lider', 'estado','estadoProceso','updated_at','created_at','accion','expand'];
+  columnsToDisplayWithExpandProyecto = [...this.displayedColumnsProyecto, 'expand'];
+  expandedElementProyecto: any | null;
+
+  displayedColumnsProducto: string[] = ['nombre', 'lider', 'estado','estadoProceso','updated_at','created_at','accion','expand'];
+  columnsToDisplayWithExpandProducto = [...this.displayedColumnsProducto, 'expand'];
+  expandedElementProducto: any | null;
+
+  expandedDetail = false;
+  expandedDetailProducto = false;
+
+  proyectosData: any[] = [];
+  productosData: any[] = [];
 
   constructor(
     private investigadorService: InvestigadorService, 
@@ -73,6 +100,8 @@ export class ControlComponent {
     this.obtenerProductos();
     this.obtenerEstadosProyecto();
     this.obtenerEstadosProducto();
+    this.obtenerEntregableProyecto(); 
+    this.obtenerEntregableProducto();
     this.searchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
       this.dataSourceProyecto.filter = query.trim().toLowerCase();
@@ -118,7 +147,7 @@ export class ControlComponent {
     this.proyectoyproductoService.getProyectos().subscribe(
       (proyecto) => {
         const dataSort = proyecto.sort((a, b) => (a.codigo < b.codigo ? -1 : 1))
-        this.dataSourceProyecto.data = dataSort;
+        this.dataSourceProyecto.data = dataSort.reverse();
       },
       (error) => {
         console.error('Error al obtener proyectos:', error);
@@ -130,7 +159,7 @@ export class ControlComponent {
     this.proyectoyproductoService.getProductos().subscribe(
       (producto) => {        
         const dataSort = producto.sort((a, b) => (a.id < b.id ? -1 : 1))
-        this.dataSourceProducto.data = dataSort;
+        this.dataSourceProducto.data = dataSort.reverse();
       },
       (error) => {
         console.error('Error al obtener productos:', error);
@@ -210,7 +239,7 @@ export class ControlComponent {
         type:tipo,
         data:data,
       },
-      width: '15%',
+      width: '20%',
       disableClose: true,
       panelClass: 'custom-modalbox',
     });
@@ -244,6 +273,81 @@ export class ControlComponent {
         Swal.fire({
           title: 'Registro Exitoso !!!',
           text: 'Se ha registrado una notificación',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        
+      } 
+    });
+  }
+
+  obtenerEntregableProyecto(){
+    this.proyectoyproductoService.obtenerEntregablesProyecto().subscribe((data) => {    
+      const dataProject = data.reverse();
+      this.proyectosData = dataProject.map(x => {
+        const date1 = moment(x.fecha);
+        const date2 = moment(new Date());
+        return {
+          created_at: x.created_at,
+          descripcion: x.descripcion,
+          estado: x.estado,
+          estadoProceso: x.estadoProceso,
+          observacion: x.observacion,
+          fecha: x.fecha,
+          id: x.id,
+          proyecto_id: x.proyecto_id,
+          updated_at: x.updated_at,
+          diferenciaDias: date1.diff(date2, 'days')
+        }
+      })
+    });
+  }
+
+  obtenerEntregableProducto(){
+    this.proyectoyproductoService.obtenerEntregablesProducto().subscribe((data) => {    
+      const dataProduct = data.reverse();
+      this.productosData = dataProduct.map(x => {
+        const date1 = moment(x.fecha);
+        const date2 = moment(new Date());
+        return {
+          created_at: x.created_at,
+          descripcion: x.descripcion,
+          estado: x.estado,
+          estadoProceso: x.estadoProceso,
+          observacion: x.observacion,
+          fecha: x.fecha,
+          id: x.id,
+          producto_id: x.producto_id,
+          updated_at: x.updated_at,
+          diferenciaDias: date1.diff(date2, 'days')
+        }
+      })
+    });
+  }
+
+  addEvent(x:any) {
+    x.select = !x.select;
+  }
+
+  openDialogoConfiguracionAvance(data: any, tipo:string):void {
+    const dialogRef = this.dialog.open(DialogoAvanceEntregableComponent, {
+      data: {
+        title: `Entregable ${data.descripcion}`,
+        buttonTitle: 'Registrar',
+        type:tipo,
+        data:data,
+        admin: true
+      },
+      width: '25%',
+      disableClose: true,
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.ngOnInit();
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado el Avance',
           icon: 'success',
           confirmButtonText: 'Aceptar'
         });

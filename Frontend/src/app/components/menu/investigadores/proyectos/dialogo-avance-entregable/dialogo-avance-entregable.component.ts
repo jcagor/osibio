@@ -14,6 +14,8 @@ import { ProyectoyproductoService } from '../../../services/proyectoyproducto';
 import * as moment from 'moment';
 import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-dialogo-avance-entregable',
@@ -36,7 +38,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatRadioModule,
     FormsModule,
     AsyncPipe,
-    HttpClientModule
+    HttpClientModule,
+    MatListModule,
+    MatTooltipModule
   ],
 })
 export class DialogoAvanceEntregableComponent implements OnInit {
@@ -45,21 +49,24 @@ export class DialogoAvanceEntregableComponent implements OnInit {
   title!: string;
   type!: string;
   data!: any;
+  admin!: boolean;
   hide = true;
   estadoProcesoData!: string;
   registroForm: any;
   proyectosData: any[] = [];
   productosData: any[] = [];
+  estadoProcesoSelected!: string;
+  demo1TabIndex!: number;
 
   tipoAvance = 'Url';
   opcionAvance: string[] = ['Url', 'Adjunto'];
   selectedFile: File = null!;
 
-  estadosProceso: string[] = [
-    'Aprobado',
-    'Rechazado',
-    'Corregir',
-    'Espera'
+  estadosProceso: any[] = [
+    {value: 'Aprobado', viewValue: 'Aprobado'},
+    {value: 'Rechazado', viewValue: 'Rechazado'},
+    {value: 'Corregir', viewValue: 'Corregir'},
+    {value: 'Espera', viewValue: 'Espera'},
   ];
 
   @ViewChild('fileUpload')
@@ -71,6 +78,7 @@ export class DialogoAvanceEntregableComponent implements OnInit {
       buttonTitle: string,
       type: string,
       data: any,
+      admin: boolean,
     },
     private formBuilder: FormBuilder,
     private proyectoyproductoService: ProyectoyproductoService,
@@ -82,11 +90,22 @@ export class DialogoAvanceEntregableComponent implements OnInit {
     this.buttonTitle = this.dialogData.buttonTitle;
     this.type = this.dialogData.type;
     this.data = this.dialogData.data;
+    this.admin = this.dialogData.admin;
 
-    this.registroForm = this.formBuilder.group({
-      url: ['', ],
-      soporte: ['',this.selectedFile],
-    });
+    if(this.admin) {
+      this.demo1TabIndex = 1;
+      this.estadoProcesoSelected = this.data?.estadoProceso;
+      this.registroForm = this.formBuilder.group({
+        estadoProceso: [this.data?.estadoProceso, Validators.required],
+        observacion: ['', Validators.required],
+        estado: [this.data?.estado, Validators.required],
+      });
+    } else {
+      this.registroForm = this.formBuilder.group({
+        url: [{value:'', disabled: !this.data?.estado} ],
+        soporte: ['',this.selectedFile],
+      });
+    }
 
     this.estadoProcesoData = this.data?.estadoProceso;
     if(this.type === 'Proyecto') {
@@ -115,6 +134,16 @@ export class DialogoAvanceEntregableComponent implements OnInit {
     });
   }
 
+  get estadoProceso() {
+    return this.registroForm.get('estadoProceso');
+  }
+  get observacion() {
+    return this.registroForm.get('observacion');
+  }
+  get estado() {
+    return this.registroForm.get('estado');
+  }
+
   get soporte() {
     return this.registroForm.get('soporte');
   }
@@ -123,13 +152,23 @@ export class DialogoAvanceEntregableComponent implements OnInit {
   }
 
   guardarTramite() {
+    if(this.admin){
+      this.actualizarEntregable();
+    } else {
+      if(this.url?.value !== "" || this.selectedFile !== null){
+        this.registrarAvance();
+      }
+    }
+  }
+
+  registrarAvance(): void {
     if (this.registroForm.valid) {
       if(this.type === 'Proyecto') {
         const tramiteGeneral = {
           soporte: this.selectedFile,
           url: this.url?.value,
           fecha: moment(new Date()).format('YYYY-MM-DD'),
-          estadoProceso: 'Espera',
+          estado: 'True',
           configuracionEntregableProyecto_id_id: this.data?.id,
         };
         this.proyectoyproductoService.avanceEntregablesProyecto(tramiteGeneral).subscribe(
@@ -147,7 +186,7 @@ export class DialogoAvanceEntregableComponent implements OnInit {
           soporte: this.selectedFile,
           url: this.url?.value,
           fecha: moment(new Date()).format('YYYY-MM-DD'),
-          estadoProceso: 'Espera',
+          estado: 'True',
           configuracionEntregableProducto_id_id: this.data?.id,
         };
         this.proyectoyproductoService.avanceEntregablesProducto(tramiteGeneral).subscribe(
@@ -161,6 +200,38 @@ export class DialogoAvanceEntregableComponent implements OnInit {
           }
         );
       }
+    }
+  }
+
+  actualizarEntregable(): void {
+    const tramiteGeneral = {
+      estadoProceso: this.estadoProceso?.value,
+      observacion: this.observacion?.value,
+      estado: this.estado?.value,
+      id: this.data?.id,
+    };
+    if(this.type === 'Proyecto') {
+      this.proyectoyproductoService.actualizarEntregableProyecto(tramiteGeneral).subscribe(
+        (resp) => {
+          console.log('Se ha evaluado el avance:', resp);
+          this.registroForm.reset();
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          console.error('Error al notificar:', error);
+        }
+      );
+    } else {
+      this.proyectoyproductoService.actualizarEntregableProducto(tramiteGeneral).subscribe(
+        (resp) => {
+          console.log('Se ha registrado el avance:', resp);
+          this.registroForm.reset();
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          console.error('Error al notificar:', error);
+        }
+      );
     }
   }
 
