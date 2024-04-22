@@ -500,3 +500,16 @@ class AvanceProyecto(models.Model):
     entregablesReal = models.CharField(max_length=50)
     class Meta:
         db_table = 'proyecto_Avanceproyecto'
+        
+        
+class Notificaciones(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
+    asunto = models.CharField(max_length=150)
+    remitente = models.CharField(max_length=150)
+    destinatario = models.CharField(max_length=150)
+    mensaje = models.CharField(max_length=500)
+    estado = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    class Meta:
+        db_table = 'proyecto_Notificaciones'

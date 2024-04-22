@@ -238,4 +238,11 @@ export class ProyectoyproductoService {
     return form;
   }
 
+  //Crear notificacion
+  private apiNotificacion = 'http://localhost:8000/notificaciones';
+  notificar(notificacion: any): Observable<Proyecto> {
+    return this.http.post<any>(this.apiNotificacion, notificacion);
+  }
+
+
 }

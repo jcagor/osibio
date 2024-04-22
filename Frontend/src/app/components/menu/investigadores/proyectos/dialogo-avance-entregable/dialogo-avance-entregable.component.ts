@@ -16,6 +16,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { InvestigadorService } from '../../../services/registroInvestigador';
+import { UsuarioSesion } from '../../../modelo/usuario';
+import { AutenticacionService } from '../../../services/autenticacion';
 
 @Component({
   selector: 'app-dialogo-avance-entregable',
@@ -49,6 +52,7 @@ export class DialogoAvanceEntregableComponent implements OnInit {
   title!: string;
   type!: string;
   data!: any;
+  origin!: any;
   admin!: boolean;
   hide = true;
   estadoProcesoData!: string;
@@ -78,10 +82,13 @@ export class DialogoAvanceEntregableComponent implements OnInit {
       buttonTitle: string,
       type: string,
       data: any,
+      origin: any,
       admin: boolean,
     },
     private formBuilder: FormBuilder,
     private proyectoyproductoService: ProyectoyproductoService,
+    private investigatorService: InvestigadorService,
+    private AutenticacionService:AutenticacionService,
     private readonly dialogRef: MatDialogRef<DialogoAvanceEntregableComponent>
   ) { }
 
@@ -91,6 +98,7 @@ export class DialogoAvanceEntregableComponent implements OnInit {
     this.type = this.dialogData.type;
     this.data = this.dialogData.data;
     this.admin = this.dialogData.admin;
+    this.origin = this.dialogData.origin;
 
     if(this.admin) {
       this.demo1TabIndex = 1;
@@ -113,6 +121,13 @@ export class DialogoAvanceEntregableComponent implements OnInit {
     } else {
       this.obtenerEntregableProducto();
     }
+    this.obtenerUsuarios();
+    this.obtenerDatosUsuarioSesion();
+  }
+
+  usuarioSesion!: UsuarioSesion;
+  obtenerDatosUsuarioSesion(){
+    this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
   }
 
   radioChange(event:any):void {
@@ -175,6 +190,12 @@ export class DialogoAvanceEntregableComponent implements OnInit {
           (resp) => {
             console.log('Se ha registrado el avance:', resp);
             this.registroForm.reset();
+            this.notificar(
+              `Proyecto ${this.data?.proyecto_id} - Nuevo Avance`,
+              this.origin?.investigador,
+              this.usuariosAdmin,
+              `Se ha configurado un nuevo avance al entregable ${this.data?.descripcion} del proyecto ${this.data?.proyecto_id}`
+            );
             this.dialogRef.close(true);
           },
           (error) => {
@@ -193,6 +214,12 @@ export class DialogoAvanceEntregableComponent implements OnInit {
           (resp) => {
             console.log('Se ha registrado el avance:', resp);
             this.registroForm.reset();
+            this.notificar(
+              `Producto ${this.data?.producto_id} - Nuevo Avance`,
+              this.origin?.investigador,
+              this.usuariosAdmin,
+              `Se ha configurado un nuevo avance al entregable ${this.data?.descripcion} del proyecto ${this.data?.producto_id}`
+            );
             this.dialogRef.close(true);
           },
           (error) => {
@@ -214,6 +241,12 @@ export class DialogoAvanceEntregableComponent implements OnInit {
       this.proyectoyproductoService.actualizarEntregableProyecto(tramiteGeneral).subscribe(
         (resp) => {
           console.log('Se ha evaluado el avance:', resp);
+          this.notificarClasificacion(
+            `Proyecto ${this.data?.proyecto_id} - Calificación Avance`,
+            this.usuarioSesion.numerodocumento,
+            this.origin?.investigador,
+            `El avance del entregable ${this.data?.descripcion} ha sido evaluado con el estado ${tramiteGeneral.estadoProceso}`
+          );
           this.registroForm.reset();
           this.dialogRef.close(true);
         },
@@ -225,6 +258,12 @@ export class DialogoAvanceEntregableComponent implements OnInit {
       this.proyectoyproductoService.actualizarEntregableProducto(tramiteGeneral).subscribe(
         (resp) => {
           console.log('Se ha registrado el avance:', resp);
+          this.notificarClasificacion(
+            `Producto ${this.data?.producto_id} - Calificación Avance`,
+            this.usuarioSesion.numerodocumento,
+            this.origin?.investigador,
+            `El avance del entregable ${this.data?.descripcion} ha sido evaluado con el estado ${tramiteGeneral.estadoProceso}`
+          );
           this.registroForm.reset();
           this.dialogRef.close(true);
         },
@@ -233,6 +272,52 @@ export class DialogoAvanceEntregableComponent implements OnInit {
         }
       );
     }
+  }
+
+  usuariosAdmin: any[] = [];
+  obtenerUsuarios(){
+    this.investigatorService.getUsuarios().subscribe((data) => {   
+      const usersAdmin = data.filter(u => u.rolinvestigador === 'Administrador');
+      usersAdmin.forEach(element => {
+        this.usuariosAdmin.push(element.numerodocumento);
+      });
+    });
+  }
+
+  notificar(asunto:string,remitente:any,destinatario:string[],mensaje:string):void {
+    destinatario.forEach(admin => {
+      const notificacion = {
+        asunto: asunto,
+        remitente: remitente,
+        destinatario: admin,
+        mensaje: mensaje
+      }
+      this.proyectoyproductoService.notificar(notificacion).subscribe(
+        (resp: any) => {
+          console.log('Se ha notificado exitosamente:', resp);
+        },
+        (error: any) => {
+          console.error('Error al notificado el proyecto:', error);
+        }
+      );
+    });
+  }
+
+  notificarClasificacion(asunto:string,remitente:any,destinatario:string[],mensaje:string):void {
+    const notificacion = {
+      asunto: asunto,
+      remitente: remitente,
+      destinatario: destinatario,
+      mensaje: mensaje
+    }
+    this.proyectoyproductoService.notificar(notificacion).subscribe(
+      (resp: any) => {
+        console.log('Se ha notificado exitosamente:', resp);
+      },
+      (error: any) => {
+        console.error('Error al notificado el proyecto:', error);
+      }
+    );
   }
 
 }

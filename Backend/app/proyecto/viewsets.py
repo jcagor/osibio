@@ -8,7 +8,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
 
-from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
+from .models import (Apropiacion, Articulos, AvanceProyecto, Notificaciones, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
                      CuartilEsperado, EntidadPostulo, AvanceEntregableProducto ,  AvanceEntregableProyecto , 
                      EstadoProducto, EstadoProyecto, Estudiantes, Eventos, ConfiguracionEntregableProducto, ConfiguracionEntregableProyecto,
@@ -18,7 +18,7 @@ from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
                      Pregrado, Producto, Proyecto, Reconocimientos, Software,
                      TipoEventos, Transacciones, Ubicacion, UbicacionProyecto)
 from .serializer import (apropiacionSerializer, articulosSerializer,
-                         avanceProyectoSerializer, capitulosSerializer,
+                         avanceProyectoSerializer, notificacionesSerializer,capitulosSerializer,
                          categoriaMincienciasSerializer, consultoriaSerializer,
                          contenidoSerializer, contratoSerializer,
                          cuartilEsperadoSerializer, entidadPostuloSerializer, avanceEntregableProductoSerializer, avanceEntregableProyectoSerializer, 
@@ -321,6 +321,23 @@ class avanceProyectoList(generics.ListCreateAPIView):
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
 
+class notificacionesList(generics.ListCreateAPIView):
+    queryset = Notificaciones.objects.all()
+    serializer_class = notificacionesSerializer
+    
+    def post(self, request, *args, **kwargs):
+        notification_data = {
+            'id': Notificaciones.objects.count() + 1,
+            'asunto': request.data.get('asunto'),
+            'remitente': request.data.get('remitente'),
+            'destinatario': request.data.get('destinatario'),
+            'mensaje': request.data.get('mensaje')
+        }
+        admin = Notificaciones.objects.create(**notification_data)
+        serializer = notificacionesSerializer(admin) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 class configuracionEntregableProductoList(generics.ListCreateAPIView):
     queryset = ConfiguracionEntregableProducto.objects.all()
     serializer_class = configuracionEntregableProductoSerializer
@@ -408,6 +425,16 @@ class ubicacionProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIVi
 class avanceProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = AvanceProyecto.objects.all()
     serializer_class = avanceProyectoSerializer
+
+class notificacionesRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Notificaciones.objects.all()
+    serializer_class = notificacionesSerializer
+    
+    def put(self, request, *args, **kwargs):
+        obj = Notificaciones.objects.get(pk=request.data.get('id'))
+        obj.estado = request.data.get('estado')
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class avanceEntregableProductoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = AvanceEntregableProducto.objects.all()

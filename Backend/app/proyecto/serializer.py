@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import (Apropiacion, Articulos, AvanceProyecto, Capitulos,
+from .models import (Apropiacion, Articulos, AvanceProyecto, Notificaciones, Capitulos,
                      CategoriaMinciencias, Consultoria, Contenido, Contrato,
                      CuartilEsperado, EntidadPostulo, ConfiguracionEntregableProducto,
                     EstadoProducto, EstadoProyecto, AvanceEntregableProducto, 
@@ -191,6 +191,11 @@ class ubicacionProyectoSerializer(serializers.ModelSerializer):
 class avanceProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvanceProyecto
+        fields = '__all__'
+        
+class notificacionesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notificaciones
         fields = '__all__'
 
 class configuracionEntregableProductoSerializer(serializers.ModelSerializer):

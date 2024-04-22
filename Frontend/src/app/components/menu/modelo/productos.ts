@@ -116,6 +116,7 @@ export interface Eventos {
     porcentanjeAvanFinSemestre?: number;
     observaciones?: string;
     estadoProducto?: string;
+    estadoProceso?: string;
     porcentajeComSemestral?: number;
     porcentajeRealMensual?: number;
     fecha?: string | Date;

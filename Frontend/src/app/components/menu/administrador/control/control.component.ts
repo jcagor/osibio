@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
@@ -25,6 +24,8 @@ import Swal from 'sweetalert2'
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import * as moment from 'moment';
 import { DialogoAvanceEntregableComponent } from '../../investigadores/proyectos/dialogo-avance-entregable/dialogo-avance-entregable.component';
+import { UsuarioSesion } from '../../modelo/usuario';
+import { AutenticacionService } from '../../services/autenticacion';
 
 @Component({
   selector: 'app-control',
@@ -86,6 +87,7 @@ export class ControlComponent {
     private searchService: SearchService,
     private proyectoyproductoService: ProyectoyproductoService,
     private _snackBar: MatSnackBar,
+    private AutenticacionService:AutenticacionService,
     public dialog: MatDialog) {
     
     this.dataSource = new MatTableDataSource<any>([]);
@@ -101,6 +103,7 @@ export class ControlComponent {
     this.obtenerEstadosProducto();
     this.obtenerEntregableProyecto(); 
     this.obtenerEntregableProducto();
+    this.obtenerDatosUsuarioSesion();
     this.searchService.getSearchQuery().subscribe(query => {
       this.dataSource.filter = query.trim().toLowerCase();
       this.dataSourceProyecto.filter = query.trim().toLowerCase();
@@ -165,6 +168,11 @@ export class ControlComponent {
       }
     );
   }
+  usuarioSesion!: UsuarioSesion;
+  obtenerDatosUsuarioSesion(){
+    this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
+    console.log('usuarioSesion => ',this.usuarioSesion)
+  }
 
   cambiarRol(usuario: any, nuevoRol: string) {
     usuario.rolinvestigador = nuevoRol;
@@ -205,7 +213,13 @@ export class ControlComponent {
         this._snackBar.open('Registro actualizado correctamente', 'Estado',{
           duration: 2000,
         });
-        console.log('Estado actualizado correctamente');
+        console.log('Estado actualizado correctamente', this.estadosProyectos.filter(x => x.id==proyecto.estado)[0].estado);
+        this.notificar(
+          `Proyecto ${proyecto.codigo} - ${this.estadosProyectos.filter(x => x.id==proyecto.estado)[0].estado}`,
+          this.usuarioSesion.numerodocumento,
+          proyecto.investigador,
+          `El proyecto ${proyecto.codigo} ha sido actualizado con el estado ${this.estadosProyectos.filter(x => x.id==proyecto.estado)[0].estado}`
+        );
         this.ngOnInit();
       },
       (error) => {
@@ -222,6 +236,12 @@ export class ControlComponent {
           duration: 2000,
         });
         console.log('Estado actualizado correctamente');
+        this.notificar(
+          `Producto ${producto.id} - ${this.estadosProductos.filter(x => x.id==producto.estadoProducto)[0].estado}`,
+          this.usuarioSesion.numerodocumento,
+          producto.investigador,
+          `El producto ${producto.id} ha sido actualizado con el estado ${this.estadosProductos.filter(x => x.id==producto.estadoProducto)[0].estado}`
+        );
         this.ngOnInit();
       },
       (error) => {
@@ -250,9 +270,44 @@ export class ControlComponent {
           icon: 'success',
           confirmButtonText: 'Aceptar'
         });
-        
+        // notificar
+        if(tipo === 'Proyecto') {
+          this.notificar(
+            `Proyecto ${data.codigo} - ${data.estadoProceso}`,
+            this.usuarioSesion.numerodocumento,
+            data.investigador,
+            `El proyecto ${data.codigo} ha sido actualizado con el estado ${data.estadoProceso}`
+          );
+        } else {
+          this.notificar(
+            `Producto ${data.id} - ${data.estadoProceso}`,
+            this.usuarioSesion.numerodocumento,
+            data.investigador,
+            `El producto ${data.id} ha sido actualizado con el estado ${data.estadoProceso}`
+          );
+        }
       } 
     });
+  }
+
+  notificar(asunto:string,remitente:any,destinatario:any,mensaje:string):void {
+    
+    const notificacion = {
+      asunto: asunto,
+      remitente: remitente,
+      destinatario: destinatario,
+      mensaje: mensaje
+    }
+    console.log('notificacion => ',notificacion)
+    this.proyectoyproductoService.notificar(notificacion).subscribe(
+      (resp: any) => {
+        console.log('Se ha registrado el proyecto exitosamente:', resp);
+      },
+      (error: any) => {
+        console.error('Error al registrar el proyecto:', error);
+      }
+    );
+    
   }
 
   obtenerEntregableProyecto(){
@@ -303,13 +358,14 @@ export class ControlComponent {
     x.select = !x.select;
   }
 
-  openDialogoConfiguracionAvance(data: any, tipo:string):void {
+  openDialogoConfiguracionAvance(origin: any,data: any, tipo:string):void {
     const dialogRef = this.dialog.open(DialogoAvanceEntregableComponent, {
       data: {
         title: `Entregable ${data.descripcion}`,
         buttonTitle: 'Registrar',
         type:tipo,
         data:data,
+        origin:origin,
         admin: true
       },
       width: '25%',

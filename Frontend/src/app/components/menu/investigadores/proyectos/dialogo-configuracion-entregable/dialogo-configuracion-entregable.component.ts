@@ -12,6 +12,8 @@ import { ProyectoyproductoService } from '../../../services/proyectoyproducto';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import * as moment from 'moment';
+import { UsuarioSesion } from '../../../modelo/usuario';
+import { InvestigadorService } from '../../../services/registroInvestigador';
 
 @Component({
   selector: 'app-dialogo-configuracion-entregable',
@@ -61,6 +63,7 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
     },
     private formBuilder: FormBuilder,
     private proyectoyproductoService: ProyectoyproductoService,
+    private investigatorService: InvestigadorService,
     private readonly dialogRef: MatDialogRef<DialogoConfiguracionEntregableComponent>
   ) { }
 
@@ -82,6 +85,7 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
     } else {
       this.obtenerEntregableProducto();
     }
+    this.obtenerUsuarios();
 
   }
 
@@ -124,6 +128,12 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
           (resp) => {
             console.log('Se ha registrado el entregable:', resp);
             this.registroForm.reset();
+            this.notificar(
+              `Proyecto ${this.data?.id} - Nuevo Entregable`,
+              this.data?.investigador,
+              this.usuariosAdmin,
+              `Se ha configurado un nuevo entregable ${tramiteGeneral.descripcion} con plazo ${tramiteGeneral.fecha} al proyecto ${this.data?.id}`
+            );
             this.dialogRef.close(true);
           },
           (error) => {
@@ -143,6 +153,12 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
           (resp) => {
             console.log('Se ha registrado el entregable:', resp);
             this.registroForm.reset();
+            this.notificar(
+              `Producto ${this.data?.id} - Nuevo Entregable`,
+              this.data?.investigador,
+              this.usuariosAdmin,
+              `Se ha configurado un nuevo entregable ${tramiteGeneral.descripcion} con plazo ${tramiteGeneral.fecha} al producto ${this.data?.id}`
+            );
             this.dialogRef.close(true);
           },
           (error) => {
@@ -151,6 +167,35 @@ export class DialogoConfiguracionEntregableComponent implements OnInit {
         );
       }
     }
+  }
+
+  usuariosAdmin: any[] = [];
+  obtenerUsuarios(){
+    this.investigatorService.getUsuarios().subscribe((data) => {   
+      const usersAdmin = data.filter(u => u.rolinvestigador === 'Administrador');
+      usersAdmin.forEach(element => {
+        this.usuariosAdmin.push(element.numerodocumento);
+      });
+    });
+  }
+
+  notificar(asunto:string,remitente:any,destinatario:string[],mensaje:string):void {
+    destinatario.forEach(admin => {
+      const notificacion = {
+        asunto: asunto,
+        remitente: remitente,
+        destinatario: admin,
+        mensaje: mensaje
+      }
+      this.proyectoyproductoService.notificar(notificacion).subscribe(
+        (resp: any) => {
+          console.log('Se ha registrado el proyecto exitosamente:', resp);
+        },
+        (error: any) => {
+          console.error('Error al registrar el proyecto:', error);
+        }
+      );
+    });
   }
 
 }
