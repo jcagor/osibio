@@ -44,7 +44,18 @@
   transition: color 0.3s;
 }
 
+.menu ul li span {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  transition: color 0.3s;
+}
+
 .menu ul li a:hover {
+  color: #000;
+}
+
+.menu ul li span:hover {
   color: #000;
 }
 

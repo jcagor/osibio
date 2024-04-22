@@ -432,7 +432,7 @@ class notificacionesRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView)
     
     def put(self, request, *args, **kwargs):
         obj = Notificaciones.objects.get(pk=request.data.get('id'))
-        obj.estado = request.data.get('estado')
+        obj.estado = False
         obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

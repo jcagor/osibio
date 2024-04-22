@@ -10,12 +10,38 @@ export class InvestigadorService {
   private apiUrl = 'http://localhost:8000/investigador'; 
   private apiUrl2 = 'http://localhost:8000/grupoinvestigacion'; 
   private apiUrl3 = 'http://localhost:8000/mostrarInvestigador'; 
+  private apiNotificaciones = 'http://localhost:8000/notificaciones'; 
 
   constructor(private http: HttpClient) { }
 
   // mostrar la informacion de todos los investigadores
   getUsuarios(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}`);
+  }
+
+  getNotifications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiNotificaciones}`);
+  }
+
+  leerNotificacion(notifica: any) {
+    const url = `${this.apiNotificaciones}/${notifica.id}`;
+    return this.http.put(url, notifica).pipe(
+      catchError(error => {
+        if(error instanceof HttpErrorResponse) {
+          switch (error.status) {
+            case 404:
+              // El investigador no existe
+              return throwError('Investigador no encontrado');
+            case 400:
+              // Datos inválidos
+              return throwError('Datos de investigador inválidos'); 
+            default:
+              return throwError('Error al actualizar investigador');
+          }
+        }
+        return throwError('Error desconocido');
+      })
+    );
   }
 
   getInvestigadores(): Observable<any[]> {

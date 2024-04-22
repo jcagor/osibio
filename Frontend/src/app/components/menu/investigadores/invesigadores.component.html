@@ -21,10 +21,20 @@
             </a></li>
             
             <li>
-                <a  mat-icon-button color="primary" aria-label="Notificaciones" class="tooltip">
-                  <mat-icon>notifications_outline</mat-icon>
-                </a>
-              </li>
+                <span mat-icon-button color="primary" >
+                    <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>
+                    <mat-menu #beforeMenu="matMenu" xPosition="before">
+                        <button mat-menu-item (click)="openDialogoNotificaciones()">
+                            <span>Ver historial</span>
+                        </button>
+                        <button mat-menu-item *ngFor="let item of notificaciones" (click)="limpiarNotificacion(item)">
+                            <mat-icon>delete</mat-icon>
+                            <span style="font-size: 10px;"><strong>{{item.asunto}}</strong></span><br>
+                            <span style="font-size: 10px;">{{item.created_at | date:'medium'}}</span>
+                        </button>
+                    </mat-menu>
+                </span>
+            </li>
               
             <li>
                 <a href="#" mat-icon-button color="primary" aria-label="Cerrar Sesion" class="tooltip" (click)="logout()">
