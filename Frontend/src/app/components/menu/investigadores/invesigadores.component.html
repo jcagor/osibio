@@ -22,7 +22,12 @@
             
             <li>
                 <span mat-icon-button color="primary" >
-                    <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>
+                    <span *ngIf="notificaciones.length > 0; else elseBlock">
+                        <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>
+                    </span>
+                    <ng-template #elseBlock>
+                        <mat-icon [matMenuTriggerFor]="beforeMenu" >notifications_outline</mat-icon>
+                    </ng-template>
                     <mat-menu #beforeMenu="matMenu" xPosition="before">
                         <button mat-menu-item (click)="openDialogoNotificaciones()">
                             <span>Ver historial</span>

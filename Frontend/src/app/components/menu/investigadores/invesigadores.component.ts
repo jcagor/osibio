@@ -66,8 +66,8 @@ export class InvesigadoresComponent implements OnInit {
   obtenerNotificaciones() {
     this.investigadorService.getNotifications().subscribe(
       (data) => {
-        this.notificaciones = data.filter(x => x.destinatario === this.usuarioSesion.numerodocumento && x.estado).reverse();
-        this.notificacionesHistorial = data.filter(x => x.destinatario === this.usuarioSesion.numerodocumento).reverse();
+        this.notificaciones = data.filter(x => x.destinatario === this.usuarioSesion.numerodocumento && x.estado).sort((a, b) => (Number(a.id) > Number(b.id) ? -1 : 1));
+        this.notificacionesHistorial = data.filter(x => x.destinatario === this.usuarioSesion.numerodocumento).sort((a, b) => (Number(a.id) > Number(b.id) ? -1 : 1));
       },
       (error) => {
         console.error('Error al obtener notificaciones:', error);

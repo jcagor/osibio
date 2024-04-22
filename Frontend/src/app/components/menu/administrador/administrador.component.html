@@ -7,29 +7,26 @@
     
     <div class="menu">
         <ul>
-            <li>
-                <a href="administrador/perfil" mat-icon-button color="primary"  aria-label="Perfil" class="tooltip">
-                    <mat-icon>person</mat-icon>
-                </a>
-            </li>           
-            <li>
-                <a href="administrador/control" mat-icon-button color="primary"  aria-label="Permisos" class="tooltip">
-                    <mat-icon>check</mat-icon>
-                </a>
-            </li>
-            <li>
-                <a href="administrador/consulta" mat-icon-button color="primary"  aria-label="Participacion" class="tooltip">
-                    <mat-icon>group</mat-icon>
-                </a>
-            </li>
-            <li>
-                <a href="administrador/estados" mat-icon-button color="primary"  aria-label="Estado" class="tooltip">
-                    <mat-icon>grading</mat-icon>
-                </a>
-            </li>
-            <li>
+            <li><a href="administrador/perfil" mat-icon-button color="primary"  aria-label="Perfil" class="tooltip">
+                <mat-icon>person</mat-icon>
+            </a></li>           
+            <li><a href="administrador/control" mat-icon-button color="primary"  aria-label="Permisos" class="tooltip">
+                <mat-icon>check</mat-icon>
+            </a></li>
+            <li><a href="administrador/consulta" mat-icon-button color="primary"  aria-label="Participacion" class="tooltip">
+                <mat-icon>group</mat-icon>
+            </a></li>
+            <li><a href="administrador/estados" mat-icon-button color="primary"  aria-label="Estado" class="tooltip">
+                <mat-icon>grading</mat-icon>
+            </a></li>
+            <li *ngIf="notificaciones.length > 0">
                 <span mat-icon-button color="primary" >
-                    <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>
+                    <span *ngIf="notificaciones.length > 0; else elseBlock">
+                        <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>
+                    </span>
+                    <ng-template #elseBlock>
+                        <mat-icon [matMenuTriggerFor]="beforeMenu" >notifications_outline</mat-icon>
+                    </ng-template>
                     <mat-menu #beforeMenu="matMenu" xPosition="before">
                         <button mat-menu-item (click)="openDialogoNotificaciones()">
                             <span>Ver historial</span>
