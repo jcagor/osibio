@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx'
 import { DialogoEstadisticaComponent } from './dialogo-estadistica/dialogo-estadistica.component';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-consulta',
@@ -26,7 +27,8 @@ import { DialogoEstadisticaComponent } from './dialogo-estadistica/dialogo-estad
     MatTableModule,
     MatIconModule,
     MatSelectModule,
-    MatTooltipModule    
+    MatTooltipModule,
+    MatPaginatorModule   
   ],
 })
 export class ConsultaComponent {
@@ -36,8 +38,8 @@ export class ConsultaComponent {
   dataSourceProducto: MatTableDataSource<any>;
 
   displayedColumnsInvestigador: string[] = ['nombre', 'rolinvestigador', 'estado','updated_at','created_at','accion'];
-  displayedColumnsProyecto: string[] = ['codigo', 'lider','estadoProceso','updated_at','created_at','accion'];
-  displayedColumnsProducto: string[] = ['nombre', 'lider','estadoProceso','updated_at','created_at','accion'];
+  displayedColumnsProyecto: string[] = ['codigo', 'lider','estadoProceso','estadoProyecto','updated_at','created_at','accion'];
+  displayedColumnsProducto: string[] = ['nombre', 'lider','estadoProceso','estadoProducto','updated_at','created_at','accion'];
 
   proyectosData: any[] =[];
   productosData: any[] =[];
@@ -57,6 +59,8 @@ export class ConsultaComponent {
     this.dataSourceProducto = new MatTableDataSource<any>([]);
   }
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   ngOnInit() {
     this.obtenerUsuarios();
     this.obtenerProyectos();
@@ -70,12 +74,28 @@ export class ConsultaComponent {
     });
   }
 
+  ngAfterViewInit() {
+    this.dataSourceInvestigador.paginator = this.paginator;
+    this.dataSourceProyecto.paginator = this.paginator;
+    this.dataSourceProducto.paginator = this.paginator;
+  }
+
   
   obtenerProyectos() {
     this.proyectoyproductoService.getProyectos().subscribe(
       (proyecto) => {
         const dataSort = proyecto.sort((a, b) => (a.codigo < b.codigo ? -1 : 1))
-        this.dataSourceProyecto.data = dataSort.reverse();
+        this.dataSourceProyecto.data = dataSort.map(data => {
+          return {
+            codigo: data.codigo,
+            investigador: data.investigador,
+            observacion: data.observacion,
+            estadoProceso: data.estadoProceso,
+            estadoProyecto: this.estadosProyectos.filter(x => x.id == data.estado)[0].estado,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+          }
+        });
         this.proyectosData = dataSort.map(data => {
           return {
             codigo: data.codigo,
@@ -113,7 +133,16 @@ export class ConsultaComponent {
     this.proyectoyproductoService.getProductos().subscribe(
       (producto) => {        
         const dataSort = producto.sort((a, b) => (a.id < b.id ? -1 : 1))
-        this.dataSourceProducto.data = dataSort.reverse();
+        this.dataSourceProducto.data = dataSort.map(data => {
+          return {
+            id: data.id,
+            investigador: data.investigador,
+            estadoProceso: data.estadoProceso,
+            estadoProducto: this.estadosProductos.filter(x => x.id == data.estadoProducto)[0].estado,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+          }
+        });
         this.productosData = dataSort.map(data => {
           return {
             id: data.id,

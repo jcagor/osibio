@@ -76,7 +76,25 @@ export class DialogoEstadisticaComponent implements OnInit {
       datasets: [{
         label: ` Total ${this.type}`,
         data: labelCountData,
-        hoverOffset: 4
+        hoverOffset: 4,
+        tooltip: {
+          callbacks: {
+            label: function(context: { label: any; formattedValue: any; chart: { data: { datasets: { data: any; }[]; }; }; }) {
+              let label = context.label;
+              let value = context.formattedValue;
+              if (!label){
+                label = 'Unknown'
+              }
+              let sum = 0;
+              let dataArr = context.chart.data.datasets[0].data;
+              dataArr.map((data: any) => {
+                sum += Number(data);
+              });
+              let percentage = (value * 100 / sum).toFixed(2) + '%';
+              return ` ${label}: ${value} (${percentage})`;
+            }
+          }
+        }
       }]
     };
     this.chartGeneral = new Chart("chartGeneral", {
@@ -86,10 +104,10 @@ export class DialogoEstadisticaComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: 'Resumen '+this.type
-          }
-        }
-      }
+            text: 'Resumen '+this.type,
+          },   
+        },
+      },
     })
   }
 
@@ -109,7 +127,25 @@ export class DialogoEstadisticaComponent implements OnInit {
       datasets: [{
         label: ` Total ${this.type}`,
         data: labelCountData,
-        hoverOffset: 4
+        hoverOffset: 4,
+        tooltip: {
+          callbacks: {
+            label: function(context: { label: any; formattedValue: any; chart: { data: { datasets: { data: any; }[]; }; }; }) {
+              let label = context.label;
+              let value = context.formattedValue;
+              if (!label){
+                label = 'Unknown'
+              }
+              let sum = 0;
+              let dataArr = context.chart.data.datasets[0].data;
+              dataArr.map((data: any) => {
+                  sum += Number(data);
+              });
+              let percentage = (value * 100 / sum).toFixed(2) + '%';
+              return ` ${label}: ${value} (${percentage})`;
+            }
+          }
+        }
       }]
     };
     this.chartGeneral = new Chart("chartGeneral", {
