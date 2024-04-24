@@ -1,87 +1,245 @@
-import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'; // Asegúrate de importar MatPaginator desde '@angular/material/paginator'
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { InvestigadorService } from '../../services/registroInvestigador';
+import { CommonModule } from '@angular/common';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { SearchService } from '../../services/search.service';
+import { ProyectoyproductoService } from '../../services/proyectoyproducto';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
+import * as XLSX from 'xlsx'
+import { DialogoEstadisticaComponent } from './dialogo-estadistica/dialogo-estadistica.component';
+
 @Component({
   selector: 'app-consulta',
   templateUrl: './consulta.component.html',
   styleUrls: ['./consulta.component.css'],
   standalone: true,
-  imports: [MatTabsModule, MatTableModule, MatPaginatorModule, MatExpansionModule, CommonModule],
+  imports: [
+    MatTabsModule, 
+    MatButtonModule,
+    CommonModule,
+    MatTableModule,
+    MatIconModule,
+    MatSelectModule,
+    MatTooltipModule    
+  ],
 })
 export class ConsultaComponent {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
- 
+  @ViewChild('TABLE') table: any;
+  dataSourceInvestigador: MatTableDataSource<any>;
+  dataSourceProyecto: MatTableDataSource<any>;
+  dataSourceProducto: MatTableDataSource<any>;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;  
-  @ViewChild(MatPaginator) paginator2!: MatPaginator;
-  constructor(private searchService: SearchService) {}
+  displayedColumnsInvestigador: string[] = ['nombre', 'rolinvestigador', 'estado','updated_at','created_at','accion'];
+  displayedColumnsProyecto: string[] = ['codigo', 'lider','estadoProceso','updated_at','created_at','accion'];
+  displayedColumnsProducto: string[] = ['nombre', 'lider','estadoProceso','updated_at','created_at','accion'];
+
+  proyectosData: any[] =[];
+  productosData: any[] =[];
+  investigadoresData: any[] =[];
+
+  estadosProyectos: any[] = [];
+  estadosProductos: any[] = [];
+
+  constructor(
+    private investigadorService: InvestigadorService, 
+    private searchService: SearchService,
+    private proyectoyproductoService: ProyectoyproductoService,
+    public dialog: MatDialog) {
+    
+    this.dataSourceInvestigador = new MatTableDataSource<any>([]);
+    this.dataSourceProyecto = new MatTableDataSource<any>([]);
+    this.dataSourceProducto = new MatTableDataSource<any>([]);
+  }
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    this.obtenerUsuarios();
+    this.obtenerProyectos();
+    this.obtenerProductos();
+    this.obtenerEstadosProyecto();
+    this.obtenerEstadosProducto();
     this.searchService.getSearchQuery().subscribe(query => {
-      this.dataSource.filter = query.trim().toLowerCase();
+      this.dataSourceInvestigador.filter = query.trim().toLowerCase();
+      this.dataSourceProyecto.filter = query.trim().toLowerCase();
+      this.dataSourceProducto.filter = query.trim().toLowerCase();
     });
-    this.searchService.getSearchQuery().subscribe(query => {
-      this.dataSource2.filter = query.trim().toLowerCase(); 
-    }); 
   }
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+
+  
+  obtenerProyectos() {
+    this.proyectoyproductoService.getProyectos().subscribe(
+      (proyecto) => {
+        const dataSort = proyecto.sort((a, b) => (a.codigo < b.codigo ? -1 : 1))
+        this.dataSourceProyecto.data = dataSort.reverse();
+        this.proyectosData = dataSort.map(data => {
+          return {
+            codigo: data.codigo,
+            fecha: data.lider,
+            titulo: data.estadoProceso,
+            investigador: data.investigador,
+            unidadAcademica: data.unidadAcademica,
+            area: data.area,
+            porcentajeEjecucionCorte: data.porcentajeEjecucionCorte,
+            grupoInvestigacionPro: data.grupoInvestigacionPro,
+            porcentajeEjecucionFinCorte: data.porcentajeEjecucionFinCorte,
+            porcentajeAvance: data.porcentajeAvance,
+            observacion: data.observacion,
+            Soporte: data.Soporte,
+            origen: data.origen,
+            convocatoria: data.convocatoria,
+            modalidad: data.modalidad,
+            nivelRiesgoEtico: data.nivelRiesgoEtico,
+            lineaInvestigacion: data.lineaInvestigacion,
+            estadoProceso: data.estadoProceso,
+            estadoProyecto: this.estadosProyectos.filter(x => x.id == data.estado)[0].estado,
+            producto: data.producto,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          }
+        });
+      },
+      (error) => {
+        console.error('Error al obtener proyectos:', error);
+      }
+    );
   }
- 
-  // segunda tabla
-  ELEMENT_DATA_2: Element[] = [
-    { name: 'Persona 1', age: 25 },
-    { name: 'Persona 2', age: 30 },
-    // Agrega más datos si es necesario
-  ];
-  dataSource2 = new MatTableDataSource<Element>(this.ELEMENT_DATA_2);
 
-  displayedColumns2: string[] = ['name', 'age', 'details']; // Actualiza las columnas a mostrar
-
-  expandedElement: Element | null = null;
-
-  toggleExpansion(element: Element): void {
-    this.expandedElement = this.expandedElement === element ? null : element;
+  obtenerProductos() {
+    this.proyectoyproductoService.getProductos().subscribe(
+      (producto) => {        
+        const dataSort = producto.sort((a, b) => (a.id < b.id ? -1 : 1))
+        this.dataSourceProducto.data = dataSort.reverse();
+        this.productosData = dataSort.map(data => {
+          return {
+            id: data.id,
+            Soporte: data.Soporte,
+            tituloProducto: data.tituloProducto,
+            investigador: data.investigador,
+            publicacion: data.publicacion,
+            porcentanjeAvanFinSemestre: data.porcentanjeAvanFinSemestre,
+            observaciones: data.observaciones,
+            porcentajeComSemestral: data.porcentajeComSemestral,
+            porcentajeRealMensual: data.porcentajeRealMensual,
+            fecha: data.fecha,
+            origen: data.origen,
+            observacion: data.observacion,
+            estadoProceso: data.estadoProceso,
+            estadoProducto: this.estadosProductos.filter(x => x.id == data.estadoProducto)[0].estado,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+          }
+        });
+      },
+      (error) => {
+        console.error('Error al obtener productos:', error);
+      }
+    );
   }
-}
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
-  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
-  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
-  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
-  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
-  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
-  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
-  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
-  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
-  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
-];
+  obtenerUsuarios() {
+    this.investigadorService.getUsuarios().subscribe(
+      (usuarios) => {
+        const dataSort = usuarios.sort((a, b) => (a.nombre < b.nombre ? -1 : 1))
+        this.dataSourceInvestigador.data = dataSort;
+        this.investigadoresData = dataSort.map(data => {
+          return {
+            tipodocumento: data.tipodocumento,
+            numerodocumento: data.numerodocumento,
+            correo: data.correo,
+            nombre: data.nombre,
+            apellidos: data.apellidos,
+            estado: data.estado ? 'Activo' : 'Inactivo',
+            horasestricto: data.horasestricto,
+            horasformacion: data.horasformacion,
+            categoriaminciencias: data.categoriaminciencias,
+            rolinvestigador: data.rolinvestigador,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          }
+        });
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
 
-// segunda tabla
-export interface Element {
-  name: string;
-  age: number;
+  obtenerEstadosProyecto() {
+    this.proyectoyproductoService.obtenerEstadosProyecto().subscribe(
+      (proyecto) => {
+        this.estadosProyectos = proyecto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  obtenerEstadosProducto() {
+    this.proyectoyproductoService.obtenerEstadosProducto().subscribe(
+      (producto) => {
+        this.estadosProductos = producto;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  // excel 
+  exportAsXLSX(data: any = undefined, tipo: string): void {
+    let filter: any [] = [];
+    switch(tipo) { 
+      case 'Proyectos': {
+        if(data == undefined){
+          filter = this.proyectosData;
+        } else {
+          filter = this.proyectosData.filter(x => x.codigo == data.codigo);
+        }
+        break; 
+      } 
+      case 'Productos': {
+        if(data == undefined){
+          filter = this.productosData;
+        } else {
+          filter = this.productosData.filter(x => x.id == data.id);
+        }
+        break; 
+      } 
+      default: {        
+        if(data == undefined){
+          filter = this.investigadoresData;
+        } else {
+          filter = this.investigadoresData.filter(x => x.numerodocumento == data.numerodocumento);
+        }
+        break; 
+      } 
+    } 
+    const ws:XLSX.WorkSheet = XLSX.utils.json_to_sheet(filter);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, tipo);
+    XLSX.writeFile(wb, `Reporte${tipo}.xls`);
+  }
+
+  openDialogoEstadistica(data: any = undefined, type:string, detail:boolean): void {
+    const dialogRef = this.dialog.open(DialogoEstadisticaComponent, {
+      data: {
+        type: type,
+        data: data,
+        detail:detail,
+      },
+      width: '30%',
+      panelClass: 'custom-modalbox',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+      } 
+    });
+  }
+
 }
