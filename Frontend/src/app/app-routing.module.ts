@@ -4,7 +4,6 @@ import { AuthGuard } from './auth.guard';
 import { AdministradorComponent } from './components/menu/administrador/administrador.component';
 import { ConsultaComponent } from './components/menu/administrador/consulta/consulta.component';
 import { ControlComponent } from './components/menu/administrador/control/control.component';
-import { EstadosComponent } from './components/menu/administrador/estados/estados.component';
 import { PerfilAdministradorComponent } from './components/menu/administrador/perfil-administrador/perfil-administrador.component';
 import { ConsultasComponent } from './components/menu/investigadores/consultas/consultas.component';
 import { InvesigadoresComponent } from './components/menu/investigadores/invesigadores.component';
@@ -32,7 +31,6 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'perfil', pathMatch: 'full' },
       { path: 'control', component: ControlComponent },
-      { path: 'estados', component: EstadosComponent },
       { path: 'perfil', component: PerfilAdministradorComponent },
       { path: 'consulta', component: ConsultaComponent }
     ]

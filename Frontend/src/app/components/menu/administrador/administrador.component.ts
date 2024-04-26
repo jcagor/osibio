@@ -6,7 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { PerfilAdministradorComponent } from "./perfil-administrador/perfil-administrador.component";
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SearchService } from '../services/search.service';
 import {MatBadgeModule} from '@angular/material/badge';
 import { InvestigadorService } from '../services/registroInvestigador';
@@ -16,6 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { DialogoNotificacionesComponent } from './dialogo-notificaciones/dialogo-notificaciones.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
     selector: 'app-administrador',
     templateUrl: './administrador.component.html',
@@ -32,7 +33,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
       MatBadgeModule,
       MatMenuModule,
       CommonModule,
-      MatDialogModule
+      MatDialogModule,
+      MatTooltipModule
     ]
 })
 
@@ -47,7 +49,8 @@ export class AdministradorComponent implements OnInit {
       private searchService: SearchService,
       private investigadorService: InvestigadorService,
       private AutenticacionService:AutenticacionService,
-      private dialog: MatDialog
+      private dialog: MatDialog,
+      private router: Router,
     ) {}
 
     ngOnInit() {
@@ -62,9 +65,7 @@ export class AdministradorComponent implements OnInit {
           buttonTitle: 'CREAR',
           data: this.notificacionesHistorial
         },
-        width: '50%',
         disableClose: true,
-        panelClass: 'custom-modalbox',
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
@@ -102,5 +103,13 @@ export class AdministradorComponent implements OnInit {
 
     onSearchInputChange(event: any) {
       this.searchService.setSearchQuery(event.target.value);
+    }
+
+    navigateSection(route:string): any {
+      this.router.navigate([route]);
+    }
+
+    logout() {
+      this.AutenticacionService.logout(); // Llama al método logout() del servicio de autenticación
     }
 }

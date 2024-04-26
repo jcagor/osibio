@@ -15,7 +15,14 @@ import { SearchService } from '../../services/search.service';
   templateUrl: './consultas.component.html',
   styleUrls: ['./consultas.component.css'],
   standalone: true,
-  imports: [MatTabsModule, MatTableModule, MatPaginatorModule, MatExpansionModule, CommonModule, MatListModule],
+  imports: [
+    MatTabsModule, 
+    MatTableModule, 
+    MatPaginatorModule, 
+    MatExpansionModule, 
+    CommonModule, 
+    MatListModule
+  ],
 })
 
 export class ConsultasComponent {
@@ -68,6 +75,7 @@ export class ConsultasComponent {
     
   
     this.searchService.getSearchQuery().subscribe(query => {
+      this.dataSource.filter = query.trim().toLowerCase();
       this.dataSource2.filter = query.trim().toLowerCase();
     });
     

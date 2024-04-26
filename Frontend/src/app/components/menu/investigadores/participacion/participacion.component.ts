@@ -8,13 +8,27 @@ import { SearchService } from '../../services/search.service';
 import { forkJoin } from 'rxjs';
 import { UsuarioSesion } from '../../modelo/usuario';
 import { AutenticacionService } from '../../services/autenticacion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-participacion',
   templateUrl: './participacion.component.html',
   styleUrls: ['./participacion.component.css'],
   standalone: true,
-  imports: [MatCardModule, MatTableModule, MatPaginatorModule, MatIconModule],
+  imports: [
+    MatCardModule, 
+    MatTableModule, 
+    MatPaginatorModule, 
+    MatIconModule,
+    MatTabsModule,
+    MatTabsModule, 
+    MatTableModule, 
+    MatPaginatorModule, 
+    CommonModule, 
+    MatListModule
+  ],
 })
 export class ParticipacionComponent {
 

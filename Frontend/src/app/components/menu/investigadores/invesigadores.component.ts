@@ -5,7 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AutenticacionService } from '../services/autenticacion';
 import { SearchService } from '../services/search.service';
 import { DialogoNotificacionesComponent } from '../administrador/dialogo-notificaciones/dialogo-notificaciones.component';
@@ -16,6 +16,7 @@ import { PerfilAdministradorComponent } from '../administrador/perfil-administra
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-invesigadores',
@@ -33,7 +34,8 @@ import { CommonModule } from '@angular/common';
     MatBadgeModule,
     MatMenuModule,
     CommonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ],
 })
 
@@ -46,7 +48,8 @@ export class InvesigadoresComponent implements OnInit {
     private searchService: SearchService, 
     private AutenticacionService:AutenticacionService,
     private investigadorService: InvestigadorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -82,9 +85,7 @@ export class InvesigadoresComponent implements OnInit {
         buttonTitle: 'CREAR',
         data: this.notificacionesHistorial
       },
-      width: '50%',
       disableClose: true,
-      panelClass: 'custom-modalbox',
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -101,6 +102,10 @@ export class InvesigadoresComponent implements OnInit {
         console.error('Error al obtener notificaciones:', error);
       }
     );
+  }
+
+  navigateSection(route:string): any {
+    this.router.navigate([route]);
   }
 
   logout() {

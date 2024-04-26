@@ -94,7 +94,16 @@ export class DialogoEstadisticaComponent implements OnInit {
               return ` ${label}: ${value} (${percentage})`;
             }
           }
-        }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        },
       }]
     };
     this.chartGeneral = new Chart("chartGeneral", {

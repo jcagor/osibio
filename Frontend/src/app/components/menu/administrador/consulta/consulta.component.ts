@@ -59,7 +59,9 @@ export class ConsultaComponent {
     this.dataSourceProducto = new MatTableDataSource<any>([]);
   }
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('paginatorInvestigador') paginator!: MatPaginator;
+  @ViewChild('paginatorProyecto') paginator2!: MatPaginator;
+  @ViewChild('paginatorProducto') paginator3!: MatPaginator;
 
   ngOnInit() {
     this.obtenerUsuarios();
@@ -76,8 +78,8 @@ export class ConsultaComponent {
 
   ngAfterViewInit() {
     this.dataSourceInvestigador.paginator = this.paginator;
-    this.dataSourceProyecto.paginator = this.paginator;
-    this.dataSourceProducto.paginator = this.paginator;
+    this.dataSourceProyecto.paginator = this.paginator2;
+    this.dataSourceProducto.paginator = this.paginator3;
   }
 
   
@@ -262,8 +264,7 @@ export class ConsultaComponent {
         data: data,
         detail:detail,
       },
-      width: '30%',
-      panelClass: 'custom-modalbox',
+      width: '60%'
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

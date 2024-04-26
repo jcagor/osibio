@@ -497,9 +497,7 @@ export class ProyectosComponent implements OnInit {
         type:tipo,
         data:data,
       },
-      width: '25%',
-      disableClose: true,
-      panelClass: 'custom-modalbox',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -525,9 +523,7 @@ export class ProyectosComponent implements OnInit {
         origin:origin,
         admin: false
       },
-      width: '25%',
-      disableClose: true,
-      panelClass: 'custom-modalbox',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -611,9 +607,7 @@ export class ProyectosComponent implements OnInit {
         title: 'Creación Estudiante',
         buttonTitle: 'CREAR',
       },
-      width: '30%',
-      disableClose: true,
-      panelClass: 'custom-modalbox',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -634,9 +628,7 @@ export class ProyectosComponent implements OnInit {
         title: 'Creación Participante',
         buttonTitle: 'CREAR',
       },
-      width: '30%',
-      disableClose: true,
-      panelClass: 'custom-modalbox',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
