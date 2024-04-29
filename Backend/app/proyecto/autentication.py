@@ -760,8 +760,10 @@ class MostrarInvestigadores(APIView):
             investigador_data = {
                 'nombre': investigador.nombre,
                 'apellidos': investigador.apellidos,
+                'correo': investigador.correo,
                 'numerodocumento': investigador.numerodocumento,
                 'Grupoinvestigacion':investigador.grupoinvestigacion.nombre,
+                'created_at':investigador.created_at,
                 'proyectos': proyectos_data,
                 'productos': productos_data
                 # otros campos del investigador si los hay

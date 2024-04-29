@@ -69,9 +69,24 @@
         <mat-tab label="Investigadores">
           <table mat-table [dataSource]="dataSource2">
       
+            <ng-container matColumnDef="numerodocumento">
+              <th mat-header-cell *matHeaderCellDef> Numero Documento </th>
+              <td mat-cell *matCellDef="let element"> {{element.numerodocumento}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="nombres">
               <th mat-header-cell *matHeaderCellDef> Nombres </th>
               <td mat-cell *matCellDef="let element"> {{element.nombre}} {{element.apellidos}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="correo">
+              <th mat-header-cell *matHeaderCellDef> Correo </th>
+              <td mat-cell *matCellDef="let element"> {{element.correo}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef> Fecha creación </th>
+              <td mat-cell *matCellDef="let element"> {{element.created_at | date:'medium'}}</td>
             </ng-container>
       
             <ng-container matColumnDef="grupo">
@@ -84,9 +99,8 @@
               <th mat-header-cell *matHeaderCellDef> Proyectos y productos </th>
               <td mat-cell *matCellDef="let element">
                 <button mat-flat-button color="primary" (click)="toggleExpansion(element)" class="custom-button">Ver detalles</button>
-                <mat-expansion-panel *ngIf="expandedElement === element">
-
-                  <mat-expansion-panel-header *ngFor="let proyecto of element.proyectos">
+                <mat-expansion-panel *ngIf="expandedElement === element" disabled>
+                  <mat-expansion-panel-header *ngFor="let proyecto of element.proyectos" >
                     <mat-panel-title>
                       {{ proyecto.titulo }}
                     </mat-panel-title>
@@ -96,16 +110,7 @@
                       {{ producto.tituloProducto }}
                     </mat-panel-title>
                   </mat-expansion-panel-header>
-                  <mat-list *ngIf="element.productos && element.productos.length > 0">
-                    <mat-list-item *ngFor="let producto of element.productos">
-                      <!-- Aquí puedes agregar más detalles del producto si lo deseas -->
-                    </mat-list-item>
-                  </mat-list>
-                  <mat-list *ngIf="element.proyectos && element.proyectos.length > 0">
-                    <mat-list-item *ngFor="let proyecto of element.proyectos">
-                      <!-- Aquí puedes agregar más detalles del proyecto si lo deseas -->
-                    </mat-list-item>
-                  </mat-list>
+                 
                   <p *ngIf="!(element.productos && element.productos.length > 0) && !(element.proyectos && element.proyectos.length > 0)">No hay proyectos ni productos asociados.</p>
                 </mat-expansion-panel>
                 

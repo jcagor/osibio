@@ -40,7 +40,7 @@ export class ConsultasComponent {
   displayedColumns: string[] = ['tipo','titulo', 'investigador', 'fecha','updated_at','created_at', 'estado','acciones'];
   //investigadores
   dataSource2 = new MatTableDataSource<any>([]);
-  displayedColumns2: string[] = ['nombres', 'grupo', 'detalles'];
+  displayedColumns2: string[] = ['numerodocumento', 'nombres','correo','created_at','grupo', 'detalles'];
   expandedElement: any | null = null;
 
   proyectosData: any[] =[];
@@ -97,6 +97,7 @@ export class ConsultasComponent {
     //INVESTIGADORES
 
     this.InvestigadorService.getInvestigadores().subscribe(investigadores => {
+      console.log('investigadores =>',investigadores);
       this.dataSource2.data = investigadores;
     });
     
