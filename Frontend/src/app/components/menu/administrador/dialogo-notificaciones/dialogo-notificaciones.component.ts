@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { InvestigadorService } from '../../services/registroInvestigador';
 
 @Component({
   selector: 'app-dialogo-notificaciones',
@@ -28,6 +29,7 @@ export class DialogoNotificacionesComponent implements OnInit {
   buttonTitle!: string;
   title!: string;
   data!: any;
+  usuariosData: any[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: {
@@ -35,7 +37,8 @@ export class DialogoNotificacionesComponent implements OnInit {
       buttonTitle: string,
       data: any,
     },
-    private readonly dialogRef: MatDialogRef<DialogoNotificacionesComponent>
+    private readonly dialogRef: MatDialogRef<DialogoNotificacionesComponent>,
+    private investigatorService: InvestigadorService,
   ) { 
     this.dataSource = new MatTableDataSource<any>([]);
   }
@@ -46,11 +49,27 @@ export class DialogoNotificacionesComponent implements OnInit {
     this.title = this.dialogData.title;
     this.buttonTitle = this.dialogData.buttonTitle;
     this.data = this.dialogData.data;
-    this.dataSource.data = this.data;
+    this.procesaNotificaciones();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  procesaNotificaciones(){
+    this.investigatorService.getUsuarios().subscribe((data) => {
+      this.usuariosData = data;
+      this.dataSource.data = this.data.map((x: { remitente: any;estado: any; asunto: any; mensaje: any; created_at: any; }) => {
+        const user = this.usuariosData.find(data => data.numerodocumento === x.remitente);
+        return {
+          asunto: x.asunto,
+          mensaje: x.mensaje,
+          remitente: `${user.nombre} ${user.apellidos} ${user.correo}`,
+          estado: x.estado,
+          created_at: x.created_at,
+        }
+      })
+    });
   }
 
 }

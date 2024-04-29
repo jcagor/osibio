@@ -54,6 +54,7 @@ export class DialogoDetalleComponent implements OnInit {
   usuarioSesion!: UsuarioSesion;
   participanteExternoData: ParticipanteExterno[] = [];
   usuariosData: UsuarioSesion[] = [];
+  usuariosCoinvestigaData: UsuarioSesion[] = [];
   filteredInvestigators!: Observable<{ correo: string; }[]>;
   investigatorCtrl = new FormControl('');
 
@@ -116,20 +117,21 @@ export class DialogoDetalleComponent implements OnInit {
     this.obtenerEstudiantes();
     this.obtenerParticipantesExternos();
     this.obtenerUsuarios();
+    this.obtenerDatosUsuarioSesion();
 
     if(this.type == 'Proyecto'){
       this.obtenerEstadosProyecto();
-      this.obtenerDatosUsuarioSesion();
       this.obtenerEstadoProyecto();
 
       this.firstFormGroup = this.formBuilder.group({
-        codigo: [this.data?.codigo,[Validators.required]],
+        codigo: [{value: this.data?.codigo, disabled: this.isEdit ? true : false}, [Validators.required]],
         titulo: [this.data?.titulo,[Validators.required]],
         area: [this.data?.area,[Validators.required]],
+        investigador: [{value: this.data?.investigador, disabled: this.isEdit ? true : false}, [Validators.required]],
         coinvestigador: [this.data?.coinvestigador, [Validators.required]],
         convocatoria: [this.data?.convocatoria,[Validators.required]],
-        estado: [this.data?.estado,[Validators.required]],
-        estadoProceso: [this.data?.estadoProceso,[Validators.required]],
+        estado: [{value: this.data?.estado, disabled: this.isEdit ? true : false},[Validators.required]],
+        estadoProceso: [{value: this.data?.estadoProceso, disabled: this.isEdit ? true : false},[Validators.required]],
         estudiantesProyecto: [this.data?.estudiantes,[Validators.required]],
         participantesExternos: [this.data?.participantesExternos,[Validators.required]],
         fecha: [this.data?.fecha,[Validators.required]], 
@@ -138,7 +140,6 @@ export class DialogoDetalleComponent implements OnInit {
         modalidad: [this.data?.modalidad,[Validators.required]],
         nivelRiesgoEtico: [this.data?.nivelRiesgoEtico,[Validators.required]],
         origen: [this.data?.origen,[Validators.required]],
-        investigador: [this.data?.investigador,[Validators.required]],
 
         porcentajeAvance: [this.data?.porcentajeAvance,[Validators.required]],
         porcentajeEjecucionCorte: [this.data?.porcentajeEjecucionCorte,[Validators.required]],
@@ -160,12 +161,12 @@ export class DialogoDetalleComponent implements OnInit {
         coinvestigador: [this.data?.coinvestigador,[Validators.required]],
         categoriaMinciencias: [this.data?.categoriaMinciencias,[Validators.required]],
         cuartilEsperado: [this.data?.cuartilEsperado,[Validators.required]],
-        estadoProceso: [this.data?.estadoProceso,[Validators.required]],
-        estadoProducto: [this.data?.estadoProducto,[Validators.required]],
+        estadoProceso: [{value: this.data?.estadoProceso, disabled: this.isEdit ? true : false},[Validators.required]],
+        estadoProducto: [{value: this.data?.estadoProducto, disabled: this.isEdit ? true : false},[Validators.required]],
         estudiantes: [this.data?.estudiantes,[Validators.required]],
         fechaProducto: [this.data?.fecha,[Validators.required]],
-        id: [this.data?.id,[Validators.required]],
-        investigadorProducto: [this.data?.investigador,[Validators.required]],
+        id: [{value: this.data?.id, disabled: this.isEdit ? true : false},[Validators.required]],
+        investigadorProducto: [{value: this.data?.investigador, disabled: this.isEdit ? true : false},[Validators.required]],
         observaciones: [this.data?.observaciones,[Validators.required]],
         origenProyecto: [this.data?.origen,[Validators.required]],
         participantesExternosProducto: [this.data?.participantesExternos,[Validators.required]],
@@ -296,18 +297,15 @@ export class DialogoDetalleComponent implements OnInit {
     );
   }
   obtenerUsuarios(){
-    this.activeInvestigators = []; // Inicializa activeInvestigators como un array vacío
-    this.selectedInvestigators = []; // Asegúrate de que selectedInvestigators esté vacío al principio
+    this.activeInvestigators = []; 
+    this.selectedInvestigators = [];
     this.investigatorService.getUsuarios().subscribe((data) => {   
       const usersAdmin = data.filter(u => u.rolinvestigador === 'Administrador');
       usersAdmin.forEach(element => {
         this.usuariosAdmin.push(element.numerodocumento);
       });
       this.usuariosData = data;
-      const activeInvestigators = data.filter(x => x.correo !== this.usuarioSesion.correo).map((investigador) => ({
-        correo: investigador.correo,
-      }));
-
+      this.usuariosCoinvestigaData = data.filter(x => x.correo !== this.usuarioSesion.correo);
     });
   }
 
@@ -346,8 +344,39 @@ export class DialogoDetalleComponent implements OnInit {
 
 
   guardarTramite() {
-    if (this.firstFormGroup.valid) {
-      console.log('firstFormGroup => ',this.firstFormGroup);
+    if (this.firstFormGroup !== undefined && this.firstFormGroup.valid) {
+      const tramiteGeneral = this.firstFormGroup.value;
+      tramiteGeneral.codigo = this.data?.codigo;
+      tramiteGeneral.estadoProceso = this.data?.estadoProceso;
+      tramiteGeneral.estado = this.data?.estado;
+      tramiteGeneral.observacion = this.data?.observacion;
+      tramiteGeneral.type = 'general';
+      this.proyectoyproductoService.actualizarProyecto(tramiteGeneral).subscribe(
+        (resp) => {
+          console.log('Se ha actualizado el proyecto:', resp);
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          console.error('Error al notificar:', error);
+        }
+      );
+    }
+    if (this.secondFormGroup !== undefined && this.secondFormGroup.valid) {
+      const tramiteGeneral = this.secondFormGroup.value;
+      tramiteGeneral.id = this.data?.id;
+      tramiteGeneral.estadoProceso = this.data?.estadoProceso;
+      tramiteGeneral.estado = this.data?.estadoProducto;
+      tramiteGeneral.observacion = this.data?.observacion;
+      tramiteGeneral.type = 'general';
+      this.proyectoyproductoService.actualizarProducto(tramiteGeneral).subscribe(
+        (resp) => {
+          console.log('Se ha actualizado el producto:', resp);
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          console.error('Error al notificar:', error);
+        }
+      );
     }
   }
 

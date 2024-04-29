@@ -23,7 +23,7 @@ export class PerfilAdministradorComponent  implements OnInit {
     
   }
 
-  imagenURL: string = 'https://i.pinimg.com/originals/67/32/52/673252bd4db4eff03c2a07e5c4d60692.jpg'; // URL de tu imagen
+  imagenURL: string = 'https://ps.w.org/simple-user-avatar/assets/icon-256x256.png'; // URL de tu imagen
 
   // Asignando la URL de la imagen a la variable urlDeLaImagen
   urlDeLaImagen: string = this.imagenURL;

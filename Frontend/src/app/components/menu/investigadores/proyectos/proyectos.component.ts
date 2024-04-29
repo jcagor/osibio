@@ -511,7 +511,6 @@ export class ProyectosComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Aceptar'
         });
-        
       } 
     });
   }
@@ -1520,7 +1519,14 @@ thumbLabel6 = false;
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('result',result);
+        this.ngOnInit();
+        this.ngAfterViewInit();
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha editado el registro',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
       } 
     });
   }

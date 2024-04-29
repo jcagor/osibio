@@ -250,10 +250,40 @@ class productoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     
     def put(self, request, *args, **kwargs):
         obj = Producto.objects.get(pk=request.data.get('id'))
+        if request.data.get('EstadoProducto'):
+            obj.estadoProducto = EstadoProducto.objects.get(pk=request.data.get('EstadoProducto'))
+        elif request.data.get('estado'):
+            obj.estadoProducto = EstadoProducto.objects.get(pk=request.data.get('estado'))
         obj.estadoProceso = request.data.get('estadoProceso')
-        obj.estadoProducto = EstadoProducto.objects.get(pk=request.data.get('estadoProducto'))
         obj.observacion = request.data.get('observacion')
+        if request.data.get('type'):
+            obj.tituloProducto = request.data.get('tituloProducto')
+            obj.publicacion = request.data.get('publicacion')
+            obj.cuartilEsperado = CuartilEsperado.objects.get(pk=request.data.get('cuartilEsperado'))
+            obj.fecha = request.data.get('fechaProducto')
+            obj.observaciones = request.data.get('observaciones')
+            obj.origen = request.data.get('origenProyecto')
+            obj.porcentajeComSemestral = request.data.get('porcentajeComSemestral')
+            obj.porcentajeRealMensual = request.data.get('porcentajeRealMensual')
+            obj.porcentanjeAvanFinSemestre = request.data.get('porcentanjeAvanFinSemestre')
+            #coinvestigadores
+            coinvestigadores_ids = request.data.get('coinvestigador')
+            coinvestigadores = Investigador.objects.filter(numerodocumento__in=coinvestigadores_ids)
+            obj.coinvestigador.set(coinvestigadores)  
+            
+            #estudiantes
+            estudiantes_ids = request.data.get('estudiantes')
+            estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
+            obj.estudiantes.set(estudiantes)  
+            
+            #participantesExternos
+            participantesExternos_ids = request.data.get('participantesExternosProducto')
+            participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
+            obj.participantesExternos.set(participantes_externos)  
+            productoSerializer(obj)
+        
         obj.save()
+            
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 #---------------------------- PROYECTOS ----------------------------
@@ -447,10 +477,38 @@ class avanceEntregableProyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestr
 class proyectoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyecto.objects.all()
     serializer_class = proyectoSerializer
-    def put(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):        
         obj = Proyecto.objects.get(pk=request.data.get('codigo'))
         obj.estadoProceso = request.data.get('estadoProceso')
         obj.estado = EstadoProyecto.objects.get(pk=request.data.get('estado'))
         obj.observacion = request.data.get('observacion')
+        if request.data.get('type'):
+            obj.titulo = request.data.get('titulo')
+            obj.area = request.data.get('area')
+            obj.convocatoria = request.data.get('convocatoria')
+            obj.fecha = request.data.get('fecha')
+            obj.grupoInvestigacionPro = request.data.get('grupoInvestigacionPro')
+            obj.lineaInvestigacion = request.data.get('lineaInvestigacion')
+            obj.modalidad = request.data.get('modalidad')
+            obj.nivelRiesgoEtico = request.data.get('nivelRiesgoEtico')
+            obj.origen = request.data.get('origen')
+            obj.porcentajeAvance = request.data.get('porcentajeAvance')
+            obj.porcentajeEjecucionCorte = request.data.get('porcentajeEjecucionCorte')
+            obj.porcentajeEjecucionFinCorte = request.data.get('porcentajeEjecucionFinCorte')
+            #coinvestigadores
+            coinvestigadores_ids = request.data.get('coinvestigador')
+            coinvestigadores = Investigador.objects.filter(numerodocumento__in=coinvestigadores_ids)
+            obj.coinvestigador.set(coinvestigadores)  
+            
+            #estudiantes
+            estudiantes_ids = request.data.get('estudiantesProyecto')
+            estudiantes = Estudiantes.objects.filter(numeroDocumento__in=estudiantes_ids)
+            obj.estudiantes.set(estudiantes)  
+            
+            #participantesExternos
+            participantesExternos_ids = request.data.get('participantesExternos')
+            participantes_externos = ParticipantesExternos.objects.filter(numerodocumento__in=participantesExternos_ids)
+            obj.participantesExternos.set(participantes_externos)  
+            productoSerializer(obj)
         obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

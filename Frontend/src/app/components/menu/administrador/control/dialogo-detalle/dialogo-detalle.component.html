@@ -10,7 +10,7 @@
                                 <th>Código</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
-                                        <input matInput placeholder="" required formControlName="codigo">
+                                        <input matInput placeholder="" required formControlName="codigo" [disabled]="isEdit">
                                     </mat-form-field>
                                 </td>
                             </tr>
@@ -47,7 +47,7 @@
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select formControlName="coinvestigador" multiple>
-                                            <mat-option *ngFor="let data of usuariosData" [value]="data.numerodocumento">
+                                            <mat-option *ngFor="let data of usuariosCoinvestigaData" [value]="data.numerodocumento">
                                                 {{data.correo}}
                                             </mat-option>
                                         </mat-select>
@@ -210,7 +210,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Observacion</th>
+                                <th>Observación Admin</th>
                                 <td>
                                     {{data.observacion.length > 0 ? data.observacion : 'no aplica' }}
                                 </td>
@@ -234,7 +234,7 @@
                     <table>
                         <tbody>
                             <tr>
-                                <th>id</th>
+                                <th>Código ID</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput placeholder="" required formControlName="id">
@@ -242,7 +242,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>tituloProducto</th>
+                                <th>Título</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput placeholder="" required formControlName="tituloProducto">
@@ -250,7 +250,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>publicacion</th>
+                                <th>Publicación</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput placeholder="" required formControlName="publicacion">
@@ -258,7 +258,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>investigador</th>
+                                <th>Investigador</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select formControlName="investigadorProducto">
@@ -270,11 +270,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>coinvestigador</th>
+                                <th>Coinvestigador</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select formControlName="coinvestigador" multiple>
-                                            <mat-option *ngFor="let data of usuariosData" [value]="data.numerodocumento">
+                                            <mat-option *ngFor="let data of usuariosCoinvestigaData" [value]="data.numerodocumento">
                                                 {{data.correo}}
                                             </mat-option>
                                         </mat-select>
@@ -282,7 +282,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>cuartilEsperado</th>
+                                <th>Cuartil Esperado</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select panelClass="matRole" formControlName="cuartilEsperado">
@@ -294,7 +294,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>estadoProceso</th>
+                                <th>Proceso</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select panelClass="matRole" formControlName="estadoProceso">
@@ -306,7 +306,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>estadoProducto</th>
+                                <th>Estado</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select formControlName="estadoProducto">
@@ -318,7 +318,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>estudiantes</th>
+                                <th>Estudiantes</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select panelClass="matRole" formControlName="estudiantes" multiple>
@@ -330,7 +330,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>fecha</th>
+                                <th>Fecha</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-label>Fecha</mat-label>
@@ -342,7 +342,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>observaciones</th>
+                                <th>Observaciones</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput placeholder="" required formControlName="observaciones">
@@ -350,7 +350,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>origen</th>
+                                <th>Origen</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput placeholder="" required formControlName="origenProyecto">
@@ -358,7 +358,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>participantesExternos</th>
+                                <th>Participantes Externos</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <mat-select panelClass="matRole" formControlName="participantesExternosProducto" multiple>
@@ -370,7 +370,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>porcentajeComSemestral</th>
+                                <th>Porcentaje Semestral</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput type="number" placeholder="" required formControlName="porcentajeComSemestral">
@@ -378,7 +378,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>porcentajeRealMensual</th>
+                                <th>Porcentaje Real Mensual</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput type="number" placeholder="" required formControlName="porcentajeRealMensual">
@@ -386,7 +386,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>porcentanjeAvanFinSemestre</th>
+                                <th>Porcentanje Avance Fin Semestre</th>
                                 <td>
                                     <mat-form-field class="form-field-spacing" appearance="fill">
                                         <input matInput type="number" placeholder="" required formControlName="porcentanjeAvanFinSemestre">
@@ -399,17 +399,17 @@
                                 <td><a mat-button href="{{data.Soporte}}" target="_blank" color="primary">Descargar</a></td>
                             </tr>
                             <tr>
-                                <th>observacion</th>
+                                <th>Observacion Admin</th>
                                 <td>
                                     {{data.observacion.length > 0 ? data.observacion : 'no aplica' }}
                                 </td>
                             </tr>
                             <tr>
-                                <th>updated_at</th>
+                                <th>Fecha Actualización</th>
                                 <td>{{data.updated_at | date:'medium'}}</td>
                             </tr>
                             <tr>
-                                <th>created_at</th>
+                                <th>Fecha Creación</th>
                                 <td>{{data.created_at | date:'medium'}}</td>
                             </tr>
                         </tbody>
