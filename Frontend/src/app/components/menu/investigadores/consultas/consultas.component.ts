@@ -9,6 +9,11 @@ import { forkJoin } from 'rxjs';
 import { ProyectoyproductoService } from '../../services/proyectoyproducto';
 import { InvestigadorService } from '../../services/registroInvestigador';
 import { SearchService } from '../../services/search.service';
+import { DialogoDetalleComponent } from '../../administrador/control/dialogo-detalle/dialogo-detalle.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-consultas',
@@ -21,7 +26,10 @@ import { SearchService } from '../../services/search.service';
     MatPaginatorModule, 
     MatExpansionModule, 
     CommonModule, 
-    MatListModule
+    MatListModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
 })
 
@@ -29,16 +37,23 @@ export class ConsultasComponent {
 
   //proyectos y productos
   dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['tipo','titulo', 'investigador', 'fecha', 'estado'];
+  displayedColumns: string[] = ['tipo','titulo', 'investigador', 'fecha','updated_at','created_at', 'estado','acciones'];
   //investigadores
   dataSource2 = new MatTableDataSource<any>([]);
   displayedColumns2: string[] = ['nombres', 'grupo', 'detalles'];
   expandedElement: any | null = null;
 
+  proyectosData: any[] =[];
+  productosData: any[] =[];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatPaginator) paginator2!: MatPaginator;
 
-  constructor(private searchService: SearchService,private ProyectoyproductoService:ProyectoyproductoService, private InvestigadorService:InvestigadorService) {}
+  constructor(
+    private searchService: SearchService,
+    private ProyectoyproductoService:ProyectoyproductoService, 
+    private InvestigadorService:InvestigadorService,
+    public dialog: MatDialog) {}
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
@@ -47,18 +62,30 @@ export class ConsultasComponent {
       this.ProyectoyproductoService.getProyectos(),
       this.ProyectoyproductoService.getProductos()
     ]).subscribe(([proyectos, productos]) => {
+
+      this.proyectosData = proyectos;
+      this.productosData = productos;
+
       const productosConTipo = productos.map(producto => ({
         ...producto,
-        tipo: 'Producto'
+        tipo: 'Producto',
+        tituloProducto: producto.tituloProducto || '', // Asegurar que todas las propiedades definidas en la interfaz Producto estén presentes
+        fecha: producto.fecha || '',
+        estadoProducto: producto.estado_producto || '',
+        tipologiaProducto: producto.tipologiaProducto || '',
+        updated_at: producto.updated_at,
+        created_at: producto.created_at,
       }));
     
       // Convertir los datos de proyectos a la misma estructura que productos
       const proyectosAjustados = proyectos.map(proyecto => ({
+        ...proyecto,
         tituloProducto: proyecto.titulo,
-        investigador: proyecto.investigador, // Debes asegurarte de que "investigador" incluye el nombre y apellido
+        etapa: proyecto.etapa,
         fecha: proyecto.fecha,
-        estadoProducto: proyecto.estadoProyecto,
-        tipo: 'Proyecto'
+        tipo: 'Proyecto',
+        updated_at: proyecto.updated_at,
+        created_at: proyecto.created_at,
       }));
     
       // Concatenar los datos ajustados de proyectos con los datos de productos
@@ -88,6 +115,25 @@ export class ConsultasComponent {
   
   toggleExpansion(element: Element): void {
     this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  openDialogoDetalle(data: any, tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoDetalleComponent, {
+      data: {
+        title: 'Detalle '+tipo,
+        buttonTitle: 'CREAR',
+        type: tipo,
+        data:tipo==='Proyecto' ? this.proyectosData.find(x => x.codigo === data.codigo) : this.productosData.find(x => x.id === data.id),
+        isEdit: false
+      },
+      disableClose: true,
+      panelClass: "dialog-responsive"
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('result',result);
+      } 
+    });
   }
   
 }

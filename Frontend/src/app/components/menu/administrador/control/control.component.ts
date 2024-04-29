@@ -27,6 +27,7 @@ import { DialogoAvanceEntregableComponent } from '../../investigadores/proyectos
 import { UsuarioSesion } from '../../modelo/usuario';
 import { AutenticacionService } from '../../services/autenticacion';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { DialogoDetalleComponent } from './dialogo-detalle/dialogo-detalle.component';
 
 @Component({
   selector: 'app-control',
@@ -183,7 +184,6 @@ export class ControlComponent {
   usuarioSesion!: UsuarioSesion;
   obtenerDatosUsuarioSesion(){
     this.usuarioSesion = this.AutenticacionService.obtenerDatosUsuario();
-    console.log('usuarioSesion => ',this.usuarioSesion)
   }
 
   cambiarRol(usuario: any, nuevoRol: string) {
@@ -301,6 +301,26 @@ export class ControlComponent {
     });
   }
 
+  openDialogoDetalle(data: any, tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoDetalleComponent, {
+      data: {
+        title: 'Detalle '+tipo,
+        buttonTitle: 'CREAR',
+        type:tipo,
+        data:data,
+        estadosProyectoData: this.estadosProyectos,
+        isEdit: false,
+      },
+      disableClose: true,
+      panelClass: "dialog-responsive"
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('result',result);
+      } 
+    });
+  }
+
   notificar(asunto:string,remitente:any,destinatario:any,mensaje:string):void {
     
     const notificacion = {
@@ -318,6 +338,7 @@ export class ControlComponent {
         console.error('Error al registrar el proyecto:', error);
       }
     );
+    
     
   }
 
@@ -377,7 +398,8 @@ export class ControlComponent {
         type:tipo,
         data:data,
         origin:origin,
-        admin: true
+        admin: true,
+        toEdit: false,
       },
       disableClose: true,
       panelClass: "dialog-responsive"

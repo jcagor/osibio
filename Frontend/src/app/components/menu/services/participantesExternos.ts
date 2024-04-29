@@ -10,17 +10,14 @@ import { Estudiante, ParticipanteExterno } from '../modelo/proyectos';
 export class ParticipantesExternosService {
   
   constructor(private http: HttpClient) { }
-  
 
   private apiParticipanteExterno = 'http://localhost:8000/participantesExternos';
-  
 
-    getParticipantesExternos(): Observable<ParticipanteExterno[]> {
-        return this.http.get<any>(`${this.apiParticipanteExterno}`);
-    }
+  getParticipantesExternos(): Observable<ParticipanteExterno[]> {
+      return this.http.get<any>(`${this.apiParticipanteExterno}`);
+  }
 
-    crearParticipantesExternos(proyecto: Estudiante): Observable<ParticipanteExterno> {
-        return this.http.post<ParticipanteExterno>(this.apiParticipanteExterno, proyecto);
-    }
-
+  crearParticipantesExternos(proyecto: Estudiante): Observable<ParticipanteExterno> {
+      return this.http.post<ParticipanteExterno>(this.apiParticipanteExterno, proyecto);
+  }
 }

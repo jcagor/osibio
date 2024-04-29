@@ -45,7 +45,7 @@
     <button (click)="navigateSection('investigadores/proyectos')" matTooltip="Proyectos y Productos" matTooltipPosition="below" mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
         <mat-icon>folder</mat-icon>
     </button>-->
-    <button *ngIf="notificaciones.length > 0" style="background-color: hsla(0, 100%, 50%, 0); color: white; border-color: hsla(0, 100%, 50%, 0);">
+    <button style="background-color: hsla(0, 100%, 50%, 0); color: white; border-color: hsla(0, 100%, 50%, 0);">
         <span mat-icon-button >
             <span *ngIf="notificaciones.length > 0; else elseBlock">
                 <mat-icon [matMenuTriggerFor]="beforeMenu" matBadge="{{notificaciones.length}}" matBadgeColor="warn">notifications_outline</mat-icon>

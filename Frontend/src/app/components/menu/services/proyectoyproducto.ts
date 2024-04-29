@@ -244,5 +244,11 @@ export class ProyectoyproductoService {
     return this.http.post<any>(this.apiNotificacion, notificacion);
   }
 
+  //cuartil esperado
+  private apiCuartilEsperado = 'http://localhost:8000/cuartilEsperado';
+
+  getCuartilEsperado() {
+    return this.http.get<any[]>(`${this.apiCuartilEsperado}`);
+  }
 
 }
