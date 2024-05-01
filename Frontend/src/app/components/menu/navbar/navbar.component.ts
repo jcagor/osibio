@@ -215,8 +215,6 @@ export class NavbarComponent {
         rolinvestigador: "Investigador", // Valor predeterminado o deja en blanco según necesites
         lineainvestigacion: "NA", // Valor predeterminado o deja en blanco según necesites
         ies: "NA", // Valor predeterminado o deja en blanco según necesites
-        tipPosgrado: 1, // Valor predeterminado o deja en blanco según necesites
-        tipPregrado: 1, // Valor predeterminado o deja en blanco según necesites
         grupoinvestigacion: 1, // Valor predeterminado o deja en blanco según necesites
         ubicacion: 1, // Valor predeterminado o deja en blanco según necesites
         imagen: 1, // Valor predeterminado o deja en blanco según necesites

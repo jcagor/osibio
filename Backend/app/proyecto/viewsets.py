@@ -65,6 +65,21 @@ class ubicacionList(generics.ListCreateAPIView):
 class investigadorRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Investigador.objects.all()
     serializer_class = investigadorSerializer
+    
+    def put(self, request, *args, **kwargs):
+        obj = Investigador.objects.get(pk=request.data.get('numerodocumento'))
+        obj.apellidos = request.data.get('apellidos')
+        obj.correo = request.data.get('correo')
+        obj.escalofonodocente = request.data.get('escalofonodocente')
+        obj.horasestricto = request.data.get('horariosestrictos')
+        obj.horasformacion = request.data.get('horariosformacion')
+        obj.lineainvestigacion = request.data.get('lineainvestigacion')
+        obj.nombre = request.data.get('nombre')
+        obj.tipodocumento = request.data.get('tipodocumento')
+        obj.unidadAcademica = request.data.get('unidadacademica')
+        obj.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class imagenRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Imagen.objects.all()

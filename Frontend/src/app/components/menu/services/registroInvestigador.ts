@@ -19,6 +19,10 @@ export class InvestigadorService {
     return this.http.get<any[]>(`${this.apiUrl}`);
   }
 
+  getUsuarioDetail(documento:string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${documento}`);
+  }
+
   getNotifications(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiNotificaciones}`);
   }

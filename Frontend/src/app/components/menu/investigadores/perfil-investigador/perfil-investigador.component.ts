@@ -1,75 +1,141 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AutenticacionService } from '../../services/autenticacion';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { UsuarioSesion } from '../../modelo/usuario';
+import { InvestigadorService } from '../../services/registroInvestigador';
 @Component({
   selector: 'app-perfil-investigador',
   templateUrl: './perfil-investigador.component.html',
   styleUrls: ['./perfil-investigador.component.css'],
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, CommonModule],
+  imports: [
+    FormsModule, 
+    MatFormFieldModule, 
+    MatInputModule,
+    MatSelectModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+  ],
 })
 export class PerfilInvestigadorComponent implements OnInit {
   userData: any;
+  firstFormGroup: any;
+  tipodpcumento: string[] = [
+    'CC',
+    'TI',
+    'CE',
+    'RC',
+    'PA'
+  ];
+  inputDeshabilitado: boolean = true;
+  imagenURL: string = 'https://ps.w.org/simple-user-avatar/assets/icon-256x256.png';
+  urlDeLaImagen: string = this.imagenURL;
+  usuarioSesion!: UsuarioSesion;
 
-  constructor(private autenticacionService: AutenticacionService) { }
+  constructor(
+    private autenticacionService: AutenticacionService, 
+    private investigadorService: InvestigadorService,
+    private formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit(): void {
-    this.userData = this.autenticacionService.obtenerDatosUsuario();
+    this.obtenerDatosUsuarioSesion();
+    this.investigadorService.getUsuarioDetail(this.usuarioSesion.numerodocumento).subscribe(
+      (data) => {
+        this.userData = data;
+        this.firstFormGroup = this.formBuilder.group({
+          numerodocumento: [{value: this.userData?.numerodocumento, disabled: true }, [Validators.required]],
+          nombre: [{value: this.userData.nombre, disabled: this.inputDeshabilitado}, [Validators.required]],
+          apellidos: [{value: this.userData.apellidos, disabled: this.inputDeshabilitado },[Validators.required]],
+          correo: [{value: this.userData?.correo, disabled: this.inputDeshabilitado },[Validators.required]],
+          tipodocumento: [{value: this.userData?.tipodocumento, disabled: this.inputDeshabilitado }, [Validators.required]],
+          escalofonodocente: [{value: this.userData?.escalofonodocente, disabled: this.inputDeshabilitado },[Validators.required]],
+          horariosestrictos: [{value: this.userData?.horasestricto, disabled: this.inputDeshabilitado},[Validators.required]],
+          horariosformacion: [{value: this.userData?.horasformacion, disabled: this.inputDeshabilitado},[Validators.required]],
+          lineainvestigacion: [{value: this.userData?.lineainvestigacion, disabled: this.inputDeshabilitado},[Validators.required]],
+          unidadacademica: [{value: this.userData?.unidadAcademica, disabled: this.inputDeshabilitado},[Validators.required]],
+        });
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
   }
 
-  // imagen
-  imagenURL: string = 'https://ps.w.org/simple-user-avatar/assets/icon-256x256.png'; // URL de tu imagen
-  
-  urlDeLaImagen: string = this.imagenURL;
-  
-  //Agregar nuevo input
-  inputs: any[] = [];
-  agregarInput() {
-    this.inputs.push({
-      tipo: '',
-      titulo: '',
-      fecha: '',
-      lugar: ''
-    });
+  obtenerDatosUsuarioSesion(){
+    this.usuarioSesion = this.autenticacionService.obtenerDatosUsuario();
   }
 
-  inputsP: any[] = [];
-  agregarInputPre() {
-    this.inputsP.push({
-      tipo: '',
-      titulo: '',
-      fecha: '',
-      lugar: ''
-    });
+  get numerodocumento() {
+    return this.firstFormGroup.get('numerodocumento');
   }
-  
-  // activar y inactivar input
-  mostrarNuevo: boolean = false
-  mostrarInput: boolean = false;
-  inputDeshabilitado: boolean = true;
-  deshabilitarNuevosInputs: boolean = true;
-  
+  get nombre() {
+    return this.firstFormGroup.get('nombre');
+  }
+  get apellidos() {
+    return this.firstFormGroup.get('apellidos');
+  }
+  get correo() {
+    return this.firstFormGroup.get('correo');
+  }
+  get tipodocumento() {
+    return this.firstFormGroup.get('tipodocumento');
+  }
+  get escalofonodocente() {
+    return this.firstFormGroup.get('escalofonodocente');
+  }
+  get horariosestrictos() {
+    return this.firstFormGroup.get('horariosestrictos');
+  }
+  get horariosformacion() {
+    return this.firstFormGroup.get('horariosformacion');
+  }
+  get lineainvestigacion() {
+    return this.firstFormGroup.get('lineainvestigacion');
+  }
+  get unidadacademica() {
+    return this.firstFormGroup.get('unidadacademica');
+  }
+
   activarInput() {
     this.inputDeshabilitado = false;
-    this.mostrarInput = true;
-    this.mostrarNuevo = false;
+    this.ngOnInit();
   }
 
   desactivarInput() {
     this.inputDeshabilitado = true;
-    this.mostrarInput = false;
-    this.mostrarNuevo = true;
-    this.deshabilitarNuevosInputs = true;
+    this.ngOnInit();
   }
 
-  cancelarInput(){
-    this.inputDeshabilitado = true;
-    this.mostrarInput = false;
-    this.mostrarNuevo = true;
-    this.inputs = [];
-    this.inputsP = []; // Reiniciar el array inputsP para eliminar los inputs creados
+  guardarDatos() {
+    if (this.firstFormGroup.valid) {
+      const tramiteGeneral = this.firstFormGroup.value;
+      tramiteGeneral.numerodocumento = this.usuarioSesion.numerodocumento;
+      console.log(' guardarDatos => ',tramiteGeneral);
+      this.investigadorService.actualizarInvestigador(tramiteGeneral).subscribe(
+        (resp) => {
+          console.log('Se ha actualizado el perfil:', resp);
+          this.inputDeshabilitado = true;
+          this.ngOnInit();
+        },
+        (error) => {
+          console.error('Error al notificar:', error);
+        }
+      );
+    }
   }
 }
