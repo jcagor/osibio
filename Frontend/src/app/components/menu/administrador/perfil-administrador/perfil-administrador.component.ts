@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { UsuarioSesion } from '../../modelo/usuario';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil-administrador',
@@ -129,7 +130,12 @@ export class PerfilAdministradorComponent  implements OnInit {
       console.log(' guardarDatos => ',tramiteGeneral);
       this.investigadorService.actualizarInvestigador(tramiteGeneral).subscribe(
         (resp) => {
-          console.log('Se ha actualizado el perfil:', resp);
+          Swal.fire({
+            title: 'Registro Exitoso !!!',
+            text: 'Se ha editado el perfil',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
           this.inputDeshabilitado = true;
           this.ngOnInit();
         },

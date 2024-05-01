@@ -53,10 +53,36 @@ class grupoInvestigacionList(generics.ListCreateAPIView):
 class posgradoList(generics.ListCreateAPIView):
     queryset = Posgrado.objects.all()
     serializer_class = posgradoSerializer
+    
+    def post(self, request, *args, **kwargs):
+        data = {
+            'Investigador_id': Investigador.objects.get(pk=request.data.get('investigadorId')),
+            'institucion': request.data.get('institucion2'),
+            'fecha': request.data.get('fecha2'),
+            'titulo': request.data.get('titulo2'),
+            'tipo': request.data.get('tipo2')
+        }
+        pregrado = Posgrado.objects.create(**data)
+        serializer = posgradoSerializer(pregrado) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class pregradoList(generics.ListCreateAPIView):
     queryset = Pregrado.objects.all()
     serializer_class = pregradoSerializer
+    
+    def post(self, request, *args, **kwargs):
+        data = {
+            'Investigador_id': Investigador.objects.get(pk=request.data.get('investigadorId')),
+            'institucion': request.data.get('institucion'),
+            'fecha': request.data.get('fecha'),
+            'titulo': request.data.get('titulo'),
+        }
+        pregrado = Pregrado.objects.create(**data)
+        serializer = pregradoSerializer(pregrado) 
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class ubicacionList(generics.ListCreateAPIView):
     queryset = Ubicacion.objects.all()

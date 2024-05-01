@@ -23,6 +23,24 @@ export class InvestigadorService {
     return this.http.get<any[]>(`${this.apiUrl}/${documento}`);
   }
 
+  //Crear pregrado
+  private apiPregrado = 'http://localhost:8000/pregrado';
+  crearPregrado(data: any): Observable<any> {
+    return this.http.post<any>(this.apiPregrado, data);
+  }
+  obtenerPregrado(): Observable<any> {
+    return this.http.get<any[]>(this.apiPregrado);
+  }
+
+  //Crear posgrado
+  private apiPosgrado = 'http://localhost:8000/posgrado';
+  crearPosgrado(data: any): Observable<any> {
+    return this.http.post<any>(this.apiPosgrado, data);
+  }
+  obtenerPosgrado(): Observable<any> {
+    return this.http.get<any[]>(this.apiPosgrado);
+  }
+
   getNotifications(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiNotificaciones}`);
   }

@@ -5,13 +5,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AutenticacionService } from '../../services/autenticacion';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { UsuarioSesion } from '../../modelo/usuario';
 import { InvestigadorService } from '../../services/registroInvestigador';
+import Swal from 'sweetalert2';
+import { DialogoCargaEstudiosComponent } from './dialogo-carga-estudios/dialogo-carga-estudios.component';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-perfil-investigador',
   templateUrl: './perfil-investigador.component.html',
@@ -28,7 +31,8 @@ import { InvestigadorService } from '../../services/registroInvestigador';
     MatButtonModule,
     MatChipsModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatIconModule
   ],
 })
 export class PerfilInvestigadorComponent implements OnInit {
@@ -50,10 +54,13 @@ export class PerfilInvestigadorComponent implements OnInit {
     private autenticacionService: AutenticacionService, 
     private investigadorService: InvestigadorService,
     private formBuilder: FormBuilder,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.obtenerDatosUsuarioSesion();
+    this.obtenerPregrado();
+    this.obtenerPosgrado();
     this.investigadorService.getUsuarioDetail(this.usuarioSesion.numerodocumento).subscribe(
       (data) => {
         this.userData = data;
@@ -78,6 +85,29 @@ export class PerfilInvestigadorComponent implements OnInit {
 
   obtenerDatosUsuarioSesion(){
     this.usuarioSesion = this.autenticacionService.obtenerDatosUsuario();
+  }
+
+  pregradoData!: any;
+  posgradoData!: any;
+  obtenerPregrado(){
+    this.investigadorService.obtenerPregrado().subscribe(
+      (data) => {
+        this.pregradoData = data;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+  obtenerPosgrado(){
+    this.investigadorService.obtenerPosgrado().subscribe(
+      (data) => {
+        this.posgradoData = data;
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
   }
 
   get numerodocumento() {
@@ -121,6 +151,28 @@ export class PerfilInvestigadorComponent implements OnInit {
     this.ngOnInit();
   }
 
+  openDialogoDetalle(tipo:string): void {
+    const dialogRef = this.dialog.open(DialogoCargaEstudiosComponent, {
+      data: {
+        title: 'Nuevo '+tipo,
+        type:tipo,
+        numerodocumento: this.usuarioSesion.numerodocumento,
+      },
+      disableClose: true,
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Swal.fire({
+          title: 'Registro Exitoso !!!',
+          text: 'Se ha registrado el registro de estudio',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        console.log('result',result);
+      } 
+    });
+  }
+
   guardarDatos() {
     if (this.firstFormGroup.valid) {
       const tramiteGeneral = this.firstFormGroup.value;
@@ -128,7 +180,12 @@ export class PerfilInvestigadorComponent implements OnInit {
       console.log(' guardarDatos => ',tramiteGeneral);
       this.investigadorService.actualizarInvestigador(tramiteGeneral).subscribe(
         (resp) => {
-          console.log('Se ha actualizado el perfil:', resp);
+          Swal.fire({
+            title: 'Registro Exitoso !!!',
+            text: 'Se ha editado el perfil',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
           this.inputDeshabilitado = true;
           this.ngOnInit();
         },
