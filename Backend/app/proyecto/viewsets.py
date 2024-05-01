@@ -97,12 +97,16 @@ class investigadorRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         obj.apellidos = request.data.get('apellidos')
         obj.correo = request.data.get('correo')
         obj.escalofonodocente = request.data.get('escalofonodocente')
-        obj.horasestricto = request.data.get('horariosestrictos')
-        obj.horasformacion = request.data.get('horariosformacion')
+        obj.horasestricto = 0 if request.data.get('horariosestrictos') is None else request.data.get('horariosestrictos')
+        obj.horasformacion = 0 if request.data.get('horariosformacion') is None else request.data.get('horariosformacion')
         obj.lineainvestigacion = request.data.get('lineainvestigacion')
         obj.nombre = request.data.get('nombre')
         obj.tipodocumento = request.data.get('tipodocumento')
-        obj.unidadAcademica = request.data.get('unidadacademica')
+        obj.unidadAcademica = 'N/A' if request.data.get('unidadacademica') is None else request.data.get('unidadacademica')
+        if request.data.get('estado') != None:
+            obj.estado = request.data.get('estado')
+        if request.data.get('rolinvestigador') != None:
+            obj.rolinvestigador = request.data.get('rolinvestigador')
         obj.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

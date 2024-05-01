@@ -45,8 +45,8 @@ class Investigador(models.Model):
         ('PA', 'Pasaporte'),
     ]
     tipodocumento = models.CharField(max_length=2, choices=tipodpcumento, default='CC')
-    horasestricto = models.IntegerField()
-    horasformacion = models.IntegerField()
+    horasestricto = models.IntegerField(default=0)
+    horasformacion = models.IntegerField(default=0)
     unidadAcademica = models.CharField(max_length=50)
     grupoinvestigacion = models.ForeignKey(Grupoinvestigacion,null=False,blank=False,on_delete=models.CASCADE)
     categoriaminciencias = [

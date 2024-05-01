@@ -92,7 +92,7 @@ export class PerfilInvestigadorComponent implements OnInit {
   obtenerPregrado(){
     this.investigadorService.obtenerPregrado().subscribe(
       (data) => {
-        this.pregradoData = data;
+        this.pregradoData = data.filter((x: { Investigador_id: string; }) => x.Investigador_id == this.usuarioSesion.numerodocumento);
       },
       (error) => {
         console.error('Error al obtener usuarios:', error);
@@ -102,7 +102,7 @@ export class PerfilInvestigadorComponent implements OnInit {
   obtenerPosgrado(){
     this.investigadorService.obtenerPosgrado().subscribe(
       (data) => {
-        this.posgradoData = data;
+        this.posgradoData = data.filter((x: { Investigador_id: string; }) => x.Investigador_id == this.usuarioSesion.numerodocumento);
       },
       (error) => {
         console.error('Error al obtener usuarios:', error);
